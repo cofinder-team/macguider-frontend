@@ -1,7 +1,9 @@
 import Image from './Image'
 import Link from './Link'
+import router from 'next/router'
 
 const CardMac = ({ title, imgSrc, href, specs, options }) => {
+  const { year, cpu } = specs
   return (
     <div className="md w-full p-4">
       <div className="rounded-md border-2 border-gray-200 border-opacity-60 dark:border-gray-700">
@@ -36,7 +38,7 @@ const CardMac = ({ title, imgSrc, href, specs, options }) => {
                 title
               )}
             </h2>
-            <p>{specs.cpu}</p>
+            <p>{cpu}</p>
           </div>
         </div>
 
@@ -45,6 +47,16 @@ const CardMac = ({ title, imgSrc, href, specs, options }) => {
             <button
               key={index}
               className={`ml-1 mb-1 rounded border border-gray-100 bg-transparent px-2 py-1 text-sm font-medium  hover:border-transparent hover:bg-blue-500 hover:text-white`}
+              onClick={() => {
+                router.push({
+                  pathname: router.asPath,
+                  query: {
+                    year: year,
+                    ram: option.ram,
+                    ssd: option.ssd,
+                  },
+                })
+              }}
             >
               <p>램 {option.ram},</p>
               <p>SSD {option.ssd}</p>

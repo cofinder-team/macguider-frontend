@@ -4,6 +4,7 @@ const mackbookAir13Data = [
     imgSrc: '/static/images/google.png',
     href: 'https://www.google.com',
     specs: {
+      year: '2020',
       cpu: 'M1 8코어 CPU 7/8코어 GPU',
     },
     options: [
@@ -38,6 +39,7 @@ const mackbookAir13Data = [
     imgSrc: '/static/images/time-machine.jpg',
     href: '/blog/the-time-machine',
     specs: {
+      year: '2022',
       cpu: 'M2 8코어 CPU 8코어 GPU',
     },
     options: [
@@ -68,6 +70,7 @@ const mackbookAir13Data = [
     imgSrc: '/static/images/time-machine.jpg',
     href: '/blog/the-time-machine',
     specs: {
+      year: '2022',
       cpu: 'M2 8코어 CPU 10코어 GPU',
     },
     options: [

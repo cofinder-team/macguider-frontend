@@ -1,7 +1,9 @@
-import CardMac from '@/components/CardMac'
 import { PageSEO } from '@/components/SEO'
 import mackbookAir13Data from '@/data/macs/macbook-air-13'
 import Image from 'next/image'
+
+import Chart from 'chart.js/auto'
+import { Line } from 'react-chartjs-2'
 
 const Price = ({ model }) => {
   let modelData
@@ -292,6 +294,23 @@ const Price = ({ model }) => {
                     </select>
                   </div>
                 </div>
+              </div>
+
+              <div className="mt-3">
+                <p className="text-md font-bold text-gray-900 dark:text-white">가격 그래프</p>
+                <Line
+                  datasetIdKey="id"
+                  data={{
+                    labels: ['5/7', '5/14', '5/12', '5/19'],
+                    datasets: [
+                      {
+                        id: 1,
+                        label: '가격',
+                        data: [120, 114, 119, 120],
+                      },
+                    ],
+                  }}
+                />
               </div>
             </div>
           </div>

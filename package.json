@@ -13,6 +13,9 @@
   },
   "dependencies": {
     "@fontsource/inter": "4.5.2",
+    "@fortawesome/fontawesome-svg-core": "^6.4.0",
+    "@fortawesome/free-solid-svg-icons": "^6.4.0",
+    "@fortawesome/react-fontawesome": "^0.2.0",
     "@mailchimp/mailchimp_marketing": "^3.0.58",
     "@next/bundle-analyzer": "^12.1.4",
     "@react-hook/media-query": "^1.1.1",

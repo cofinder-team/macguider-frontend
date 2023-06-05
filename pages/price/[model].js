@@ -15,8 +15,8 @@ const Price = ({ model, year, ram, ssd }) => {
   return (
     <>
       <PageSEO
-        title={`중고 시세 | ${modelTitle}`}
-        description={`${modelTitle}의 사양별 중고 시세를 알려드립니다.`}
+        title={`맥 시세 | ${modelTitle}`}
+        description={`ChatGPT가 알려주는 사양별 맥 시세 | ${modelTitle}`}
       />
 
       <div className="container md:py-6">

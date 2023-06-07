@@ -1,8 +1,8 @@
 import siteMetadata from '@/data/siteMetadata'
-import macModels from '@/data/macModels'
-import Card from '@/components/Card'
+import macModels from '@/data/models/mac'
+import ModelCard from '@/components/ModelCard'
 import { PageSEO } from '@/components/SEO'
-import ipadModels from '@/data/ipadModels'
+import ipadModels from '@/data/models/ipad'
 
 export default function Projects() {
   return (
@@ -21,7 +21,7 @@ export default function Projects() {
         <div className="mt-2">
           <div className="-m-4 flex flex-wrap">
             {macModels.map((d) => (
-              <Card key={d.title} title={d.title} imgSrc={d.imgSrc} href={d.href} />
+              <ModelCard key={d.title} title={d.title} imgSrc={d.imgSrc} href={d.href} />
             ))}
           </div>
         </div>
@@ -45,7 +45,7 @@ export default function Projects() {
         <div className="mt-2">
           <div className="-m-4 flex flex-wrap">
             {ipadModels.map((d) => (
-              <Card key={d.title} title={d.title} imgSrc={d.imgSrc} href={d.href} />
+              <ModelCard key={d.title} title={d.title} imgSrc={d.imgSrc} href={d.href} />
             ))}
           </div>
         </div>

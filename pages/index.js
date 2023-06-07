@@ -3,9 +3,9 @@ import siteMetadata from '@/data/siteMetadata'
 import { getAllFilesFrontMatter } from '@/lib/mdx'
 
 import NewsletterForm from '@/components/NewsletterForm'
-import macModels from '@/data/macModels'
-import ipadModels from '@/data/ipadModels'
-import Card from '@/components/Card'
+import macModels from '@/data/models/mac'
+import ipadModels from '@/data/models/ipad'
+import ModelCard from '@/components/ModelCard'
 
 const MAX_DISPLAY = 5
 
@@ -45,7 +45,7 @@ export default function Home() {
         <div className="mt-2">
           <div className="-m-4 flex flex-wrap">
             {macModels.map((d) => (
-              <Card key={d.title} title={d.title} imgSrc={d.imgSrc} href={d.href} />
+              <ModelCard key={d.title} title={d.title} imgSrc={d.imgSrc} href={d.href} />
             ))}
           </div>
         </div>
@@ -69,7 +69,7 @@ export default function Home() {
         <div className="mt-2">
           <div className="-m-4 flex flex-wrap">
             {ipadModels.map((d) => (
-              <Card key={d.title} title={d.title} imgSrc={d.imgSrc} href={d.href} />
+              <ModelCard key={d.title} title={d.title} imgSrc={d.imgSrc} href={d.href} />
             ))}
           </div>
         </div>

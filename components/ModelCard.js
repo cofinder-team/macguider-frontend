@@ -1,7 +1,7 @@
 import Image from './Image'
 import Link from './Link'
 
-const Card = ({ title, imgSrc, href }) => (
+const ModelCard = ({ title, imgSrc, href }) => (
   <div className="md p-4 md:w-1/2 xl:w-1/4" style={{ maxWidth: '544px' }}>
     <div
       className={`${
@@ -14,7 +14,7 @@ const Card = ({ title, imgSrc, href }) => (
             <Image
               alt={title}
               src={imgSrc}
-              className="object-cover object-center md:h-36 lg:h-48"
+              className="object-contain object-center md:h-36 lg:h-48"
               width={544}
               height={306}
             />
@@ -52,4 +52,4 @@ const Card = ({ title, imgSrc, href }) => (
   </div>
 )
 
-export default Card
+export default ModelCard

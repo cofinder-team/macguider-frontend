@@ -5,9 +5,7 @@ import Image from 'next/image'
 import Chart from 'chart.js/auto'
 import { Line } from 'react-chartjs-2'
 
-const Price = ({ model }) => {
-  let modelData
-
+const MacModel = ({ model }) => {
   // 모델명 대문자로 변경 ex) macbook-air-13 -> Macbook Air 13
   let modelTitle = model
     .split('-')
@@ -17,8 +15,8 @@ const Price = ({ model }) => {
   return (
     <>
       <PageSEO
-        title={`중고 시세 | ${modelTitle}`}
-        description={`${modelTitle}의 사양별 중고 시세를 알려드립니다.`}
+        title={`맥 시세 | ${modelTitle}`}
+        description={`ChatGPT가 알려주는 사양별 맥 시세 | ${modelTitle}`}
       />
 
       <div className="container md:py-6">
@@ -134,7 +132,7 @@ const Price = ({ model }) => {
               </ul>
 
               <div className="mt-3">
-                <div className="w-full max-w-md">
+                {/* <div className="w-full max-w-md">
                   <label
                     htmlFor="countries"
                     className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
@@ -146,10 +144,50 @@ const Price = ({ model }) => {
                     className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
                   >
                     <option selected value="S급">
-                      S급
+                      M2 (2022)
                     </option>
-                    <option value="미개봉">미개봉</option>
+                    <option selected value="S급">
+                      M1 (2021)
+                    </option>
                   </select>
+                </div> */}
+
+                <div className="grid max-w-md grid-cols-2 gap-2 py-5">
+                  <div className="w-full">
+                    <label
+                      htmlFor="countries"
+                      className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
+                    >
+                      CPU
+                    </label>
+                    <select
+                      id="countries"
+                      className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                    >
+                      <option selected value="S급">
+                        S급
+                      </option>
+                      <option value="미개봉">미개봉</option>
+                    </select>
+                  </div>
+                  <div className="w-full">
+                    <label
+                      htmlFor="countries"
+                      className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
+                    >
+                      SSD
+                    </label>
+                    <select
+                      id="countries"
+                      className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                    >
+                      <option selected value="없음">
+                        없음
+                      </option>
+                      <option value="S급">1년 이상 남음</option>
+                      <option value="S급">2년 이상 남음</option>
+                    </select>
+                  </div>
                 </div>
 
                 <ul className="mt-3 flex w-full  max-w-xl flex-wrap items-center rounded-lg border border-gray-200 bg-white text-sm font-medium text-gray-900 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
@@ -166,7 +204,7 @@ const Price = ({ model }) => {
                         htmlFor="horizontal-list-radio-license"
                         className="ml-2 w-full py-3 text-sm font-medium text-gray-900 dark:text-gray-300"
                       >
-                        Driver License{' '}
+                        WiFi
                       </label>
                     </div>
                   </li>
@@ -183,75 +221,7 @@ const Price = ({ model }) => {
                         htmlFor="horizontal-list-radio-id"
                         className="ml-2 w-full py-3 text-sm font-medium text-gray-900 dark:text-gray-300"
                       >
-                        State ID
-                      </label>
-                    </div>
-                  </li>
-                  <li className="w-full border-b border-gray-200 dark:border-gray-600 sm:border-b-0 md:w-1/2">
-                    <div className="flex items-center pl-3">
-                      <input
-                        id="horizontal-list-radio-id"
-                        type="radio"
-                        value=""
-                        name="list-radio"
-                        className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-500 dark:bg-gray-600 dark:ring-offset-gray-700 dark:focus:ring-blue-600 dark:focus:ring-offset-gray-700"
-                      />
-                      <label
-                        htmlFor="horizontal-list-radio-id"
-                        className="ml-2 w-full py-3 text-sm font-medium text-gray-900 dark:text-gray-300"
-                      >
-                        State ID
-                      </label>
-                    </div>
-                  </li>
-                  <li className="w-full border-b border-gray-200 dark:border-gray-600 sm:border-b-0 md:w-1/2">
-                    <div className="flex items-center pl-3">
-                      <input
-                        id="horizontal-list-radio-id"
-                        type="radio"
-                        value=""
-                        name="list-radio"
-                        className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-500 dark:bg-gray-600 dark:ring-offset-gray-700 dark:focus:ring-blue-600 dark:focus:ring-offset-gray-700"
-                      />
-                      <label
-                        htmlFor="horizontal-list-radio-id"
-                        className="ml-2 w-full py-3 text-sm font-medium text-gray-900 dark:text-gray-300"
-                      >
-                        State ID
-                      </label>
-                    </div>
-                  </li>
-                  <li className="w-full border-b border-gray-200 dark:border-gray-600 sm:border-b-0 md:w-1/2">
-                    <div className="flex items-center pl-3">
-                      <input
-                        id="horizontal-list-radio-id"
-                        type="radio"
-                        value=""
-                        name="list-radio"
-                        className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-500 dark:bg-gray-600 dark:ring-offset-gray-700 dark:focus:ring-blue-600 dark:focus:ring-offset-gray-700"
-                      />
-                      <label
-                        htmlFor="horizontal-list-radio-id"
-                        className="ml-2 w-full py-3 text-sm font-medium text-gray-900 dark:text-gray-300"
-                      >
-                        State ID
-                      </label>
-                    </div>
-                  </li>
-                  <li className="w-full border-b border-gray-200 dark:border-gray-600 sm:border-b-0 md:w-1/2">
-                    <div className="flex items-center pl-3">
-                      <input
-                        id="horizontal-list-radio-id"
-                        type="radio"
-                        value=""
-                        name="list-radio"
-                        className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-500 dark:bg-gray-600 dark:ring-offset-gray-700 dark:focus:ring-blue-600 dark:focus:ring-offset-gray-700"
-                      />
-                      <label
-                        htmlFor="horizontal-list-radio-id"
-                        className="ml-2 w-full py-3 text-sm font-medium text-gray-900 dark:text-gray-300"
-                      >
-                        State ID
+                        셀룰러
                       </label>
                     </div>
                   </li>
@@ -280,7 +250,7 @@ const Price = ({ model }) => {
                       htmlFor="countries"
                       className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
                     >
-                      애플케어플러스 가입 여부
+                      Apple Care +
                     </label>
                     <select
                       id="countries"
@@ -330,4 +300,4 @@ export async function getServerSideProps(context) {
   }
 }
 
-export default Price
+export default MacModel

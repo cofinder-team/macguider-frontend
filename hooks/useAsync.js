@@ -25,17 +25,17 @@ function reducer(state, action) {
   }
 }
 
-function useAsync(callback, deps = []) {
+function useAsync(callback, callbackParams = [], deps = []) {
   const [state, dispatch] = useReducer(reducer, {
     loading: false,
     data: null,
     error: false,
   })
 
-  const fetchData = async () => {
+  const fetchData = async (callbackParams = []) => {
     dispatch({ type: 'LOADING' })
     try {
-      const data = await callback()
+      const data = await callback(...callbackParams)
       dispatch({ type: 'SUCCESS', data })
     } catch (e) {
       dispatch({ type: 'ERROR', error: e })
@@ -43,7 +43,7 @@ function useAsync(callback, deps = []) {
   }
 
   useEffect(() => {
-    fetchData()
+    fetchData(callbackParams)
     // eslint 설정을 다음 줄에서만 비활성화
     // eslint-disable-next-line
   }, deps)

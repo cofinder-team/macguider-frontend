@@ -8,6 +8,10 @@ import optionsMac from '@/data/options/mac'
 import { useEffect, useRef, useState } from 'react'
 import axiosInstance from '@/lib/axios'
 import useAsync from 'hooks/useAsync'
+import { useScreenSize } from 'hooks/useScreenSize'
+
+import Skeleton from 'react-loading-skeleton'
+import 'react-loading-skeleton/dist/skeleton.css'
 
 async function getPrices(itemId = 1, optionId = 1) {
   const response = await axiosInstance.get(`/item/${itemId}/option/${optionId}`)
@@ -35,17 +39,20 @@ const MacModel = ({ model }) => {
   const [currentOption, setCurrentOption] = useState(options[0])
   const { ram, ssd } = currentOption
 
+  // media query
+  const { sm, md } = useScreenSize()
+
   // 가격 조회
   const [state, refetch] = useAsync(getPrices, [])
   const { loading, data: fetchedData, error } = state
 
-  if (loading) return <div>로딩중..</div>
+  // if (loading) return <div>로딩중..</div>
   if (error) return <div>에러가 발생했습니다</div>
-  if (!fetchedData) return null
+  // if (!fetchedData) return null
 
-  const { data: prices } = fetchedData
+  // const { data: prices } = fetchedData
 
-  console.log(fetchedData)
+  // console.log(fetchedData)
 
   const onInputOptionCPU = (optionIndex) => {
     // cpu에 맞는 모델로 변경
@@ -147,9 +154,12 @@ const MacModel = ({ model }) => {
                     <div className="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
                       {
                         // get last index of prices
-
-                        // prices[prices.length - 1].mid
-                        '$1234'
+                        //  prices[prices.length - 1].mid
+                        loading ? (
+                          <Skeleton width={md ? '8rem' : '5rem'} borderRadius="0.5rem" />
+                        ) : (
+                          '$1234'
+                        )
                       }
                     </div>
                   </div>
@@ -167,7 +177,16 @@ const MacModel = ({ model }) => {
                       </p>
                     </div>
                     <div className="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
-                      $2367
+                      {
+                        // get last index of prices
+                        //  prices[prices.length - 1].mid
+
+                        loading ? (
+                          <Skeleton width={md ? '8rem' : '5rem'} borderRadius="0.5rem" />
+                        ) : (
+                          '$1234'
+                        )
+                      }
                     </div>
                   </div>
                 </li>
@@ -184,7 +203,16 @@ const MacModel = ({ model }) => {
                       </p>
                     </div>
                     <div className="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
-                      $2367
+                      {
+                        // get last index of prices
+                        //  prices[prices.length - 1].mid
+
+                        loading ? (
+                          <Skeleton width={md ? '8rem' : '5rem'} borderRadius="0.5rem" />
+                        ) : (
+                          '$1234'
+                        )
+                      }
                     </div>
                   </div>
                 </li>
@@ -282,19 +310,24 @@ const MacModel = ({ model }) => {
 
               <div className="mt-3">
                 <p className="text-md font-bold text-gray-900 dark:text-white">가격 그래프</p>
-                <Line
-                  datasetIdKey="id"
-                  data={{
-                    labels: ['5/7', '5/14', '5/12', '5/19'],
-                    datasets: [
-                      {
-                        id: 1,
-                        label: '가격',
-                        data: [120, 114, 119, 120],
-                      },
-                    ],
-                  }}
-                />
+
+                {loading ? (
+                  <Skeleton className="mt-3" height={md ? '15rem' : '8rem'} />
+                ) : (
+                  <Line
+                    datasetIdKey="id"
+                    data={{
+                      labels: ['5/7', '5/14', '5/12', '5/19'],
+                      datasets: [
+                        {
+                          id: 1,
+                          label: '가격',
+                          data: [120, 114, 119, 120],
+                        },
+                      ],
+                    }}
+                  />
+                )}
               </div>
             </div>
           </div>

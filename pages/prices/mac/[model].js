@@ -32,6 +32,15 @@ const MacModel = ({ model }) => {
     case 'macbook-air-13':
       currentItem = optionsMac.find((m) => m.id === '2')
       break
+    case 'macbook-pro-13':
+      currentItem = optionsMac.find((m) => m.id === '3')
+      break
+    case 'macbook-pro-14':
+      currentItem = optionsMac.find((m) => m.id === '4')
+      break
+    case 'macbook-pro-16':
+      currentItem = optionsMac.find((m) => m.id === '5')
+      break
     default:
       currentItem = optionsMac.find((m) => m.id === '1')
   }

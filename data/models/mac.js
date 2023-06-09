@@ -24,11 +24,11 @@ const macModels = [
     imgSrc: '/static/images/macs/mac-mini.jpeg',
     href: '/prices/mac/mac-mini',
   },
-  {
-    title: 'Mac Studio',
-    imgSrc: '/static/images/macs/mac-studio.jpeg',
-    href: '/prices/mac/mac-studio',
-  },
+  // {
+  //   title: 'Mac Studio',
+  //   imgSrc: '/static/images/macs/mac-studio.jpeg',
+  //   href: '/prices/mac/mac-studio',
+  // },
 ]
 
 export default macModels

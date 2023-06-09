@@ -22,7 +22,7 @@ const ipadModels = [
   {
     title: 'iPad',
     imgSrc: '/static/images/ipads/ipad-2022.jpeg',
-    href: '/prices/ipad/ipad-mini',
+    href: '/prices/ipad/ipad',
   },
 ]
 

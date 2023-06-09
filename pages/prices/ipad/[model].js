@@ -1,31 +1,122 @@
 import { PageSEO } from '@/components/SEO'
-import mackbookAir13Data from '@/data/macs/macbook-air-13'
+import optionsIpad from '@/data/options/ipad'
 import Image from 'next/image'
 
 import Chart from 'chart.js/auto'
 import { Line } from 'react-chartjs-2'
+import { useState } from 'react'
+import axiosInstance from '@/lib/axios'
+import useAsync from 'hooks/useAsync'
+import { useScreenSize } from 'hooks/useScreenSize'
 
-const MacModel = ({ model }) => {
-  // 모델명 대문자로 변경 ex) macbook-air-13 -> Macbook Air 13
-  let modelTitle = model
-    .split('-')
-    .map((w) => w[0].toUpperCase() + w.slice(1))
-    .join(' ')
+import Skeleton from 'react-loading-skeleton'
+import 'react-loading-skeleton/dist/skeleton.css'
+
+async function getPrices(itemId = 1, optionId = 1, unopened = false) {
+  const response = await axiosInstance.get(`/item/${itemId}/option/${optionId}`, {
+    params: {
+      unopened,
+    },
+  })
+  return response.data
+}
+
+const IpadModel = ({ model }) => {
+  let currentItem = null
+
+  switch (model) {
+    case 'ipad-mini':
+      currentItem = optionsIpad.find((m) => m.id === '6')
+      break
+    case 'ipad-air':
+      currentItem = optionsIpad.find((m) => m.id === '7')
+      break
+    case 'ipad':
+      currentItem = optionsIpad.find((m) => m.id === '8')
+      break
+    case 'ipad-pro-11':
+      currentItem = optionsIpad.find((m) => m.id === '9')
+      break
+    case 'ipad-pro-12-9':
+      currentItem = optionsIpad.find((m) => m.id === '10')
+      break
+    default:
+      currentItem = optionsIpad.find((m) => m.id === '6')
+      break
+  }
+
+  const { data: currentItemData, id: currentItemId } = currentItem
+
+  // currentItem > currentModel > currentOption
+  const [currentModel, setCurrentModel] = useState(currentItemData[0])
+
+  const { title: modelTitle, specs, options, imgSrc, href } = currentModel
+  const [currentOption, setCurrentOption] = useState(options[0])
+  const { connectivity, ssd } = currentOption
+  const [unopened, setUnopened] = useState('false')
+
+  // media query
+  const { md } = useScreenSize()
+
+  // 가격 조회
+  const [state, refetch] = useAsync(getPrices, [1, 1, unopened], [])
+  const { loading, data: fetchedData, error } = state
+
+  if (error) return <div>에러가 발생했습니다</div>
+  // if (!fetchedData) return null
+  // const { data: prices } = fetchedData
+  // console.log(fetchedData)
+
+  const fetchPriceData = async (itemId, optionId, unopened) => {
+    try {
+      await refetch([itemId, optionId, unopened])
+    } catch (e) {
+      console.error(e)
+    }
+  }
+
+  const onInputOptionCPU = (optionIndex) => {
+    const selectedModel = currentItemData[optionIndex]
+    const defaultOption = selectedModel.options[0]
+
+    // cpu에 맞는 모델로 변경
+    setCurrentModel(selectedModel)
+
+    // 옵션 초기화
+    setCurrentOption(defaultOption)
+
+    // 가격 조회
+    fetchPriceData(currentItemId, defaultOption.id, unopened)
+  }
+
+  // 미개봉 상태 변경
+  const onInputOptionUnopened = (status) => {
+    setUnopened(status)
+    fetchPriceData(currentItemId, currentOption.id, status)
+  }
+
+  const onChangeOption = async (optionId) => {
+    // connectivity, ssd에 맞는 모델로 변경
+    setCurrentOption(options.find((option) => option.id === optionId))
+
+    // 가격 조회
+    await fetchPriceData(currentItemId, optionId, unopened)
+  }
 
   return (
     <>
       <PageSEO
         title={`맥 시세 | ${modelTitle}`}
-        description={`ChatGPT가 알려주는 사양별 맥 시세 | ${modelTitle}`}
+        description={`ChatGPT가 알려주는 사양별 아이패드 시세 | ${modelTitle}`}
       />
 
       <div className="container md:py-6">
         <div className="flex flex-col md:flex-row">
           <div className="w-full md:w-1/3">
             <Image
-              alt={'hello'}
-              src={'/static/images/time-machine.jpg'}
-              className="object-cover object-center md:h-36 lg:h-48"
+              alt={`${specs.year} ${modelTitle} 이미지`}
+              src={imgSrc}
+              className="object-contain object-center md:h-36 lg:h-48"
               width={544}
               height={306}
             />
@@ -45,7 +136,7 @@ const MacModel = ({ model }) => {
                   ></path>
                 </svg>
                 <span>
-                  마지막 데이터 수집일:{' '}
+                  마지막 업데이트:{' '}
                   <span className="font-semibold text-gray-900 dark:text-white">7일전</span>
                 </span>
               </li>
@@ -63,9 +154,43 @@ const MacModel = ({ model }) => {
                   ></path>
                 </svg>
                 <span>
-                  상태정보:{' '}
+                  데이터 수집:{' '}
+                  <span className="font-semibold text-gray-900 dark:text-white">중고나라</span>
+                </span>
+              </li>
+              <li className="flex items-center space-x-3">
+                <svg
+                  className="h-5 w-5 flex-shrink-0 text-green-500 dark:text-green-400"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                    clipRule="evenodd"
+                  ></path>
+                </svg>
+                <span>
+                  <span className="font-semibold text-gray-900 dark:text-white">업자글 제외</span>
+                </span>
+              </li>
+              <li className="flex items-center space-x-3">
+                <svg
+                  className="h-5 w-5 flex-shrink-0 text-green-500 dark:text-green-400"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                    clipRule="evenodd"
+                  ></path>
+                </svg>
+                <span>
                   <span className="font-semibold text-gray-900 dark:text-white">
-                    S급, 생활기스 1~2개 정도
+                    끌어올린글 제외
                   </span>
                 </span>
               </li>
@@ -74,7 +199,8 @@ const MacModel = ({ model }) => {
 
           <div className="flex-grow md:px-3">
             <h1 className="text-xl font-bold leading-9 tracking-tight text-gray-900 dark:text-gray-100 sm:leading-10 md:text-2xl">
-              Apple {modelTitle} ({'12GB' + ', ' + 'SSD ' + '256GB'})
+              {modelTitle} {`${specs.gen}세대`} &nbsp;(
+              {`${connectivity === 'wifi' ? 'Wi-Fi' : 'Wi-Fi + Cellular'}, SSD ${ssd}`})
             </h1>
 
             <div className="max-w-xl">
@@ -91,7 +217,15 @@ const MacModel = ({ model }) => {
                       </p>
                     </div>
                     <div className="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
-                      $320
+                      {
+                        // get last index of prices
+                        //  prices[prices.length - 1].mid
+                        loading ? (
+                          <Skeleton width={md ? '8rem' : '5rem'} borderRadius="0.5rem" />
+                        ) : (
+                          '$1234'
+                        )
+                      }
                     </div>
                   </div>
                 </li>
@@ -108,7 +242,16 @@ const MacModel = ({ model }) => {
                       </p>
                     </div>
                     <div className="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
-                      $2367
+                      {
+                        // get last index of prices
+                        //  prices[prices.length - 1].mid
+
+                        loading ? (
+                          <Skeleton width={md ? '8rem' : '5rem'} borderRadius="0.5rem" />
+                        ) : (
+                          '$1234'
+                        )
+                      }
                     </div>
                   </div>
                 </li>
@@ -125,142 +268,113 @@ const MacModel = ({ model }) => {
                       </p>
                     </div>
                     <div className="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
-                      $2367
+                      {
+                        // get last index of prices
+                        //  prices[prices.length - 1].mid
+
+                        loading ? (
+                          <Skeleton width={md ? '8rem' : '5rem'} borderRadius="0.5rem" />
+                        ) : (
+                          '$1234'
+                        )
+                      }
                     </div>
                   </div>
                 </li>
               </ul>
 
               <div className="mt-3">
-                {/* <div className="w-full max-w-md">
+                <div className="w-full max-w-md">
                   <label
-                    htmlFor="countries"
+                    htmlFor="cpuOptions"
                     className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
                   >
                     CPU
                   </label>
                   <select
-                    id="countries"
+                    id="cpuOptions"
                     className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                    onInput={(e) => onInputOptionCPU(e.target.value)}
+                    value={currentItemData.indexOf(currentModel)}
                   >
-                    <option selected value="S급">
-                      M2 (2022)
-                    </option>
-                    <option selected value="S급">
-                      M1 (2021)
-                    </option>
+                    {currentItemData.map((model, index) => (
+                      <option key={model.specs.cpu} value={index}>
+                        {model.specs.cpu} ({`${model.specs.gen}세대, ${model.specs.year}`})
+                      </option>
+                    ))}
                   </select>
-                </div> */}
-
-                <div className="grid max-w-md grid-cols-2 gap-2 py-5">
-                  <div className="w-full">
-                    <label
-                      htmlFor="countries"
-                      className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
-                    >
-                      CPU
-                    </label>
-                    <select
-                      id="countries"
-                      className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-                    >
-                      <option selected value="S급">
-                        S급
-                      </option>
-                      <option value="미개봉">미개봉</option>
-                    </select>
-                  </div>
-                  <div className="w-full">
-                    <label
-                      htmlFor="countries"
-                      className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
-                    >
-                      SSD
-                    </label>
-                    <select
-                      id="countries"
-                      className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-                    >
-                      <option selected value="없음">
-                        없음
-                      </option>
-                      <option value="S급">1년 이상 남음</option>
-                      <option value="S급">2년 이상 남음</option>
-                    </select>
-                  </div>
                 </div>
 
                 <ul className="mt-3 flex w-full  max-w-xl flex-wrap items-center rounded-lg border border-gray-200 bg-white text-sm font-medium text-gray-900 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
-                  <li className="w-full border-b border-gray-200 dark:border-gray-600 sm:border-b-0  md:w-1/2">
-                    <div className="flex items-center pl-3">
-                      <input
-                        id="horizontal-list-radio-license"
-                        type="radio"
-                        value=""
-                        name="list-radio"
-                        className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-500 dark:bg-gray-600 dark:ring-offset-gray-700 dark:focus:ring-blue-600 dark:focus:ring-offset-gray-700"
-                      />
-                      <label
-                        htmlFor="horizontal-list-radio-license"
-                        className="ml-2 w-full py-3 text-sm font-medium text-gray-900 dark:text-gray-300"
-                      >
-                        WiFi
-                      </label>
-                    </div>
-                  </li>
-                  <li className="w-full border-b border-gray-200 dark:border-gray-600 sm:border-b-0 md:w-1/2">
-                    <div className="flex items-center pl-3">
-                      <input
-                        id="horizontal-list-radio-id"
-                        type="radio"
-                        value=""
-                        name="list-radio"
-                        className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-500 dark:bg-gray-600 dark:ring-offset-gray-700 dark:focus:ring-blue-600 dark:focus:ring-offset-gray-700"
-                      />
-                      <label
-                        htmlFor="horizontal-list-radio-id"
-                        className="ml-2 w-full py-3 text-sm font-medium text-gray-900 dark:text-gray-300"
-                      >
-                        셀룰러
-                      </label>
-                    </div>
-                  </li>
+                  {options.map((option) => (
+                    <li
+                      key={option.id}
+                      className="w-full border-b border-gray-200 dark:border-gray-600 sm:border-b-0  md:w-1/2"
+                    >
+                      <div className="flex items-center pl-3">
+                        <input
+                          onChange={() => {
+                            onChangeOption(option.id)
+                          }}
+                          id={option.id}
+                          checked={currentOption === option}
+                          type="radio"
+                          value=""
+                          name="list-radio"
+                          className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-500 dark:bg-gray-600 dark:ring-offset-gray-700 dark:focus:ring-blue-600 dark:focus:ring-offset-gray-700"
+                        />
+                        <label
+                          htmlFor={option.id}
+                          className="ml-2 w-full py-3 text-sm font-medium text-gray-900 dark:text-gray-300"
+                        >
+                          {`${option.connectivity === 'wifi' ? 'Wi-Fi' : 'Wi-Fi+Cellular'}, SSD ${
+                            option.ssd
+                          }`}
+                        </label>
+                      </div>
+                    </li>
+                  ))}
                 </ul>
 
                 <div className="grid max-w-md grid-cols-2 gap-2 py-5">
                   <div className="w-full">
                     <label
-                      htmlFor="countries"
+                      htmlFor="optionUnopened"
                       className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
                     >
                       제품 상태
                     </label>
                     <select
-                      id="countries"
+                      id="optionUnopened"
                       className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                      onInput={(e) => onInputOptionUnopened(e.target.value)}
+                      value={unopened}
                     >
-                      <option selected value="S급">
-                        S급
+                      <option value="true">미개봉</option>
+                      <option value="false">S급 (생활기스 수준, 풀구성)</option>
+                      <option disabled value="false">
+                        A급 (준비중)
                       </option>
-                      <option value="미개봉">미개봉</option>
                     </select>
                   </div>
                   <div className="w-full">
                     <label
-                      htmlFor="countries"
+                      htmlFor="optionAppleCare"
                       className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
                     >
                       Apple Care +
                     </label>
                     <select
-                      id="countries"
+                      id="optionAppleCare"
                       className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
                     >
-                      <option selected value="없음">
-                        없음
+                      <option value="없음">없음</option>
+                      <option disabled value="S급">
+                        1년 이상 남음 (준비중)
                       </option>
-                      <option value="S급">1년 이상 남음</option>
-                      <option value="S급">2년 이상 남음</option>
+                      <option disabled value="S급">
+                        2년 이상 남음 (준비중)
+                      </option>
                     </select>
                   </div>
                 </div>
@@ -268,19 +382,24 @@ const MacModel = ({ model }) => {
 
               <div className="mt-3">
                 <p className="text-md font-bold text-gray-900 dark:text-white">가격 그래프</p>
-                <Line
-                  datasetIdKey="id"
-                  data={{
-                    labels: ['5/7', '5/14', '5/12', '5/19'],
-                    datasets: [
-                      {
-                        id: 1,
-                        label: '가격',
-                        data: [120, 114, 119, 120],
-                      },
-                    ],
-                  }}
-                />
+
+                {loading ? (
+                  <Skeleton className="mt-3" height={md ? '15rem' : '8rem'} />
+                ) : (
+                  <Line
+                    datasetIdKey="id"
+                    data={{
+                      labels: ['5/7', '5/14', '5/12', '5/19'],
+                      datasets: [
+                        {
+                          id: 1,
+                          label: '가격',
+                          data: [120, 114, 119, 120],
+                        },
+                      ],
+                    }}
+                  />
+                )}
               </div>
             </div>
           </div>
@@ -291,7 +410,7 @@ const MacModel = ({ model }) => {
 }
 
 export async function getServerSideProps(context) {
-  const { model, year, ram, ssd } = context.query
+  const { model } = context.query
 
   return {
     props: {
@@ -300,4 +419,4 @@ export async function getServerSideProps(context) {
   }
 }
 
-export default MacModel
+export default IpadModel

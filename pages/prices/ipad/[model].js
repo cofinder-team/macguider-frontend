@@ -59,13 +59,13 @@ const IpadModel = ({ model }) => {
   const { md } = useScreenSize()
 
   // 가격 조회
-  const [state, refetch] = useAsync(getPrices, [1, 1, unopened], [])
+  const [state, refetch] = useAsync(getPrices, [currentItemId, 1, unopened], [])
   const { loading, data: fetchedData, error } = state
 
-  if (error) return <div>에러가 발생했습니다</div>
-  // if (!fetchedData) return null
-  // const { data: prices } = fetchedData
-  // console.log(fetchedData)
+  // 가격 데이터 fetch 실패시 alert창 띄우기
+  if (error) {
+    alert('데이터를 불러오는데 실패했습니다. 잠시 후 다시 시도해주세요.')
+  }
 
   const fetchPriceData = async (itemId, optionId, unopened) => {
     try {
@@ -217,15 +217,14 @@ const IpadModel = ({ model }) => {
                       </p>
                     </div>
                     <div className="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
-                      {
-                        // get last index of prices
-                        //  prices[prices.length - 1].mid
-                        loading ? (
-                          <Skeleton width={md ? '8rem' : '5rem'} borderRadius="0.5rem" />
-                        ) : (
-                          '$1234'
-                        )
-                      }
+                      {loading || !fetchedData ? (
+                        <Skeleton width={md ? '8rem' : '5rem'} borderRadius="0.5rem" />
+                      ) : (
+                        <>
+                          <span>{fetchedData.data.slice(-1)[0]?.mid.toLocaleString()}</span>
+                          <span className="ml-1 block font-normal">원</span>
+                        </>
+                      )}
                     </div>
                   </div>
                 </li>
@@ -242,16 +241,14 @@ const IpadModel = ({ model }) => {
                       </p>
                     </div>
                     <div className="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
-                      {
-                        // get last index of prices
-                        //  prices[prices.length - 1].mid
-
-                        loading ? (
-                          <Skeleton width={md ? '8rem' : '5rem'} borderRadius="0.5rem" />
-                        ) : (
-                          '$1234'
-                        )
-                      }
+                      {loading || !fetchedData ? (
+                        <Skeleton width={md ? '8rem' : '5rem'} borderRadius="0.5rem" />
+                      ) : (
+                        <>
+                          <span>{fetchedData.data.slice(-1)[0]?.low.toLocaleString()}</span>
+                          <span className="ml-1 block font-normal">원</span>
+                        </>
+                      )}
                     </div>
                   </div>
                 </li>
@@ -268,16 +265,14 @@ const IpadModel = ({ model }) => {
                       </p>
                     </div>
                     <div className="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
-                      {
-                        // get last index of prices
-                        //  prices[prices.length - 1].mid
-
-                        loading ? (
-                          <Skeleton width={md ? '8rem' : '5rem'} borderRadius="0.5rem" />
-                        ) : (
-                          '$1234'
-                        )
-                      }
+                      {loading || !fetchedData ? (
+                        <Skeleton width={md ? '8rem' : '5rem'} borderRadius="0.5rem" />
+                      ) : (
+                        <>
+                          <span>{fetchedData.data.slice(-1)[0]?.high.toLocaleString()}</span>
+                          <span className="ml-1 block font-normal">원</span>
+                        </>
+                      )}
                     </div>
                   </div>
                 </li>
@@ -299,7 +294,7 @@ const IpadModel = ({ model }) => {
                   >
                     {currentItemData.map((model, index) => (
                       <option key={model.specs.cpu} value={index}>
-                        {model.specs.cpu} ({`${model.specs.gen}세대, ${model.specs.year}`})
+                        {model.specs.cpu} ({`${model.specs.year}`})
                       </option>
                     ))}
                   </select>

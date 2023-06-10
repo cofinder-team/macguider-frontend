@@ -1,4 +1,5 @@
 import { PageSEO } from '@/components/SEO'
+import React, { useEffect } from 'react'
 
 import Image from 'next/image'
 
@@ -13,6 +14,8 @@ import { useScreenSize } from 'hooks/useScreenSize'
 import Skeleton from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
 
+import amplitude from 'amplitude-js'
+
 async function getPrices(itemId = 1, optionId = 1, unopened = false) {
   const response = await axiosInstance.get(`/item/${itemId}/option/${optionId}`, {
     params: {
@@ -23,6 +26,10 @@ async function getPrices(itemId = 1, optionId = 1, unopened = false) {
 }
 
 const MacModel = ({ model }) => {
+  useEffect(() => {
+    amplitude.getInstance().logEvent('item_view', { item_class: 'ipad', item_detail: model })
+  }, [model])
+
   let currentItem = null
 
   switch (model) {
@@ -87,20 +94,42 @@ const MacModel = ({ model }) => {
 
     // 가격 조회
     fetchPriceData(currentItemId, defaultOption.id, unopened)
+
+    amplitude.getInstance().logEvent('select_option', {
+      item_class: 'mac',
+      item_detail: model,
+      option_type: 'cpu',
+      option_value: selectedModel.specs,
+    })
   }
 
   // 미개봉 상태 변경
   const onInputOptionUnopened = (status) => {
     setUnopened(status)
     fetchPriceData(currentItemId, currentOption.id, status)
+
+    amplitude.getInstance().logEvent('select_option', {
+      item_class: 'mac',
+      item_detail: model,
+      option_type: 'unopened',
+      option_value: status,
+    })
   }
 
   const onChangeOption = async (optionId) => {
     // ram, ssd에 맞는 모델로 변경
-    setCurrentOption(options.find((option) => option.id === optionId))
+    const option = options.find((option) => option.id === optionId)
+    setCurrentOption(option)
 
     // 가격 조회
     await fetchPriceData(currentItemId, optionId, unopened)
+
+    amplitude.getInstance().logEvent('select_option', {
+      item_class: 'mac',
+      item_detail: model,
+      option_type: 'detail',
+      option_value: option,
+    })
   }
 
   return (

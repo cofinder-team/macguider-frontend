@@ -1,4 +1,6 @@
 import { PageSEO } from '@/components/SEO'
+import React, { useEffect } from 'react'
+
 import siteMetadata from '@/data/siteMetadata'
 import { getAllFilesFrontMatter } from '@/lib/mdx'
 
@@ -6,6 +8,8 @@ import NewsletterForm from '@/components/NewsletterForm'
 import macModels from '@/data/models/mac'
 import ipadModels from '@/data/models/ipad'
 import ModelCard from '@/components/ModelCard'
+
+import amplitude from 'amplitude-js'
 
 const MAX_DISPLAY = 5
 
@@ -16,6 +20,10 @@ export async function getStaticProps() {
 }
 
 export default function Home() {
+  useEffect(() => {
+    amplitude.getInstance().logEvent('page_view', { page_type: 'main', page_detail: 'main' })
+  }, [])
+
   const posts = [
     {
       title: '맥 구매 가이드',

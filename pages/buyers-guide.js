@@ -1,5 +1,5 @@
 import { PageSEO } from '@/components/SEO'
-import React from 'react'
+import React, { useEffect } from 'react'
 
 import NewsletterForm from '@/components/NewsletterForm'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -10,11 +10,16 @@ import { useState } from 'react'
 import Image from 'next/image'
 import { useScreenSize } from 'hooks/useScreenSize'
 import categories from '@/data/guide/categories'
+import amplitude from 'amplitude-js'
 
 export default function BuyersGuide() {
   const [currentCategory, setCurrentCategory] = useState(categories[1])
   const [expandedRows, setExpandedRows] = useState([])
   const { md, sm } = useScreenSize()
+
+  useEffect(() => {
+    amplitude.getInstance().logEvent('test')
+  }, [])
 
   const onClickCategory = (category) => {
     setExpandedRows([])

@@ -66,7 +66,7 @@ const categories = [
         averageReleaseCycle: '15일',
         itemId: '6',
         price: '적정',
-        imgSrc: '/static/images/ipads/ipad-mini-2020.jpeg',
+        imgSrc: '/static/images/ipads/ipad-mini-2019.jpeg',
         chartData: {
           labels: ['5/7', '5/14', '5/12', '5/19'],
           datasets: [

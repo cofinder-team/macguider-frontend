@@ -16,7 +16,7 @@ const ipadModels = [
   },
   {
     title: 'iPad Mini',
-    imgSrc: '/static/images/ipads/ipad-mini-2020.jpeg',
+    imgSrc: '/static/images/ipads/ipad-mini-2019.jpeg',
     href: '/prices/ipad/ipad-mini',
   },
   {

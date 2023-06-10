@@ -18,12 +18,17 @@ export default function BuyersGuide() {
   const { md, sm } = useScreenSize()
 
   useEffect(() => {
-    amplitude.getInstance().logEvent('test')
+    amplitude
+      .getInstance()
+      .logEvent('page_view', { page_type: 'guide', page_detail: categories[1].categoryName })
   }, [])
 
   const onClickCategory = (category) => {
     setExpandedRows([])
     setCurrentCategory(category)
+    amplitude
+      .getInstance()
+      .logEvent('page_view', { page_type: 'guide', page_detail: category.categoryName })
   }
 
   const toggleRow = (itemId) => {
@@ -33,6 +38,9 @@ export default function BuyersGuide() {
     } else {
       setExpandedRows([...expandedRows, itemId])
     }
+    amplitude
+      .getInstance()
+      .logEvent('do_action', { action_type: 'guide_toggle', action_detail: itemId })
   }
 
   return (

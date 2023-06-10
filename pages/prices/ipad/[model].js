@@ -67,6 +67,11 @@ const IpadModel = ({ model }) => {
     alert('데이터를 불러오는데 실패했습니다. 잠시 후 다시 시도해주세요.')
   }
 
+  const getPriceByLevel = (level) => {
+    const price = fetchedData.data.slice(-1)[0][level]
+    return price
+  }
+
   const fetchPriceData = async (itemId, optionId, unopened) => {
     try {
       await refetch([itemId, optionId, unopened])
@@ -219,11 +224,13 @@ const IpadModel = ({ model }) => {
                     <div className="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
                       {loading || !fetchedData ? (
                         <Skeleton width={md ? '8rem' : '5rem'} borderRadius="0.5rem" />
-                      ) : (
+                      ) : getPriceByLevel('mid') ? (
                         <>
-                          <span>{fetchedData.data.slice(-1)[0]?.mid.toLocaleString()}</span>
+                          <span>{getPriceByLevel('mid').toLocaleString()}</span>
                           <span className="ml-1 block font-normal">원</span>
                         </>
+                      ) : (
+                        <span>N/A</span>
                       )}
                     </div>
                   </div>
@@ -243,11 +250,13 @@ const IpadModel = ({ model }) => {
                     <div className="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
                       {loading || !fetchedData ? (
                         <Skeleton width={md ? '8rem' : '5rem'} borderRadius="0.5rem" />
-                      ) : (
+                      ) : getPriceByLevel('low') ? (
                         <>
-                          <span>{fetchedData.data.slice(-1)[0]?.low.toLocaleString()}</span>
+                          <span>{getPriceByLevel('low').toLocaleString()}</span>
                           <span className="ml-1 block font-normal">원</span>
                         </>
+                      ) : (
+                        <span>N/A</span>
                       )}
                     </div>
                   </div>
@@ -267,11 +276,13 @@ const IpadModel = ({ model }) => {
                     <div className="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
                       {loading || !fetchedData ? (
                         <Skeleton width={md ? '8rem' : '5rem'} borderRadius="0.5rem" />
-                      ) : (
+                      ) : getPriceByLevel('high') ? (
                         <>
-                          <span>{fetchedData.data.slice(-1)[0]?.high.toLocaleString()}</span>
+                          <span>{getPriceByLevel('high').toLocaleString()}</span>
                           <span className="ml-1 block font-normal">원</span>
                         </>
+                      ) : (
+                        <span>N/A</span>
                       )}
                     </div>
                   </div>
@@ -378,18 +389,26 @@ const IpadModel = ({ model }) => {
               <div className="mt-3">
                 <p className="text-md font-bold text-gray-900 dark:text-white">가격 그래프</p>
 
-                {loading ? (
+                {loading || !fetchedData ? (
                   <Skeleton className="mt-3" height={md ? '15rem' : '8rem'} />
                 ) : (
                   <Line
                     datasetIdKey="id"
                     data={{
-                      labels: ['5/7', '5/14', '5/12', '5/19'],
+                      labels: fetchedData.data.map((price) =>
+                        // format to MMDD in en-US locale
+                        new Date(price.date).toLocaleDateString('en-US', {
+                          month: '2-digit',
+                          day: '2-digit',
+                        })
+                      ),
                       datasets: [
                         {
                           id: 1,
-                          label: '가격',
-                          data: [120, 114, 119, 120],
+                          label: '평균시세',
+                          data: fetchedData.data.map((price, _index) =>
+                            price.mid ? price.mid : null
+                          ),
                         },
                       ],
                     }}

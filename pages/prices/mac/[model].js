@@ -67,6 +67,11 @@ const MacModel = ({ model }) => {
     alert('데이터를 불러오는데 실패했습니다. 잠시 후 다시 시도해주세요.')
   }
 
+  const getPriceByLevel = (level) => {
+    const price = fetchedData.data.slice(-1)[0][level]
+    return price
+  }
+
   const fetchPriceData = async (itemId, optionId, unopened) => {
     try {
       await refetch([itemId, optionId, unopened])
@@ -218,11 +223,13 @@ const MacModel = ({ model }) => {
                     <div className="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
                       {loading || !fetchedData ? (
                         <Skeleton width={md ? '8rem' : '5rem'} borderRadius="0.5rem" />
-                      ) : (
+                      ) : getPriceByLevel('mid') ? (
                         <>
-                          <span>{fetchedData.data.slice(-1)[0]?.mid.toLocaleString()}</span>
+                          <span>{getPriceByLevel('mid').toLocaleString()}</span>
                           <span className="ml-1 block font-normal">원</span>
                         </>
+                      ) : (
+                        <span>N/A</span>
                       )}
                     </div>
                   </div>
@@ -242,11 +249,13 @@ const MacModel = ({ model }) => {
                     <div className="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
                       {loading || !fetchedData ? (
                         <Skeleton width={md ? '8rem' : '5rem'} borderRadius="0.5rem" />
-                      ) : (
+                      ) : getPriceByLevel('low') ? (
                         <>
-                          <span>{fetchedData.data.slice(-1)[0]?.low.toLocaleString()}</span>
+                          <span>{getPriceByLevel('low').toLocaleString()}</span>
                           <span className="ml-1 block font-normal">원</span>
                         </>
+                      ) : (
+                        <span>N/A</span>
                       )}
                     </div>
                   </div>
@@ -266,11 +275,13 @@ const MacModel = ({ model }) => {
                     <div className="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
                       {loading || !fetchedData ? (
                         <Skeleton width={md ? '8rem' : '5rem'} borderRadius="0.5rem" />
-                      ) : (
+                      ) : getPriceByLevel('high') ? (
                         <>
-                          <span>{fetchedData.data.slice(-1)[0]?.high.toLocaleString()}</span>
+                          <span>{getPriceByLevel('high').toLocaleString()}</span>
                           <span className="ml-1 block font-normal">원</span>
                         </>
+                      ) : (
+                        <span>N/A</span>
                       )}
                     </div>
                   </div>

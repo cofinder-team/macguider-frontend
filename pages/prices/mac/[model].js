@@ -392,7 +392,9 @@ const MacModel = ({ model }) => {
                         {
                           id: 1,
                           label: '평균시세',
-                          data: fetchedData.data.map((price, index) => price.mid),
+                          data: fetchedData.data.map((price, _index) =>
+                            price.mid ? price.mid : null
+                          ),
                         },
                       ],
                     }}

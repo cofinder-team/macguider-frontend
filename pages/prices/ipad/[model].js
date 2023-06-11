@@ -155,6 +155,7 @@ const IpadModel = ({ model }) => {
               className="object-contain object-center md:h-36 lg:h-48"
               width={544}
               height={306}
+              priority={true}
             />
 
             <ul className="mt-2 mb-8 space-y-1 text-left text-gray-500 dark:text-gray-400">

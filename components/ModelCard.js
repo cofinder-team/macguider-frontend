@@ -17,6 +17,7 @@ const ModelCard = ({ title, imgSrc, href }) => (
               className="object-contain object-center md:h-36 lg:h-48"
               width={544}
               height={306}
+              priority={true}
             />
           </Link>
         ) : (
@@ -26,6 +27,7 @@ const ModelCard = ({ title, imgSrc, href }) => (
             className="object-cover object-center md:h-36 lg:h-48"
             width={544}
             height={306}
+            priority={true}
           />
         ))}
       <div className="p-3">

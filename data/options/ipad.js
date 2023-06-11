@@ -150,7 +150,7 @@ const optionsIpad = [
       {
         title: 'iPad',
         alias: 'iPad',
-        imgSrc: '/static/images/ipads/ipad-2020.jpeg',
+        imgSrc: '/static/images/ipads/ipad-2021.jpeg',
         href: 'https://www.google.com',
         specs: {
           year: '2021',
@@ -222,7 +222,7 @@ const optionsIpad = [
       {
         title: 'iPad Pro 11',
         alias: 'iPad Pro 11',
-        imgSrc: '/static/images/ipads/ipad-pro-11-2022.png',
+        imgSrc: '/static/images/ipads/ipad-pro-11-2020.jpeg',
         href: 'https://www.google.com',
         specs: {
           year: '2020',
@@ -275,7 +275,7 @@ const optionsIpad = [
       {
         title: 'iPad Pro 11',
         alias: 'iPad Pro 11',
-        imgSrc: '/static/images/ipads/ipad-pro-11-2022.png',
+        imgSrc: '/static/images/ipads/ipad-pro-11-2021.jpeg',
         href: 'https://www.google.com',
         specs: {
           year: '2021',
@@ -440,7 +440,7 @@ const optionsIpad = [
       {
         title: 'iPad Pro 12.9',
         alias: 'iPad Pro 12.9',
-        imgSrc: '/static/images/ipads/ipad-pro-12-9-2022.jpg',
+        imgSrc: '/static/images/ipads/ipad-pro-12-9-2021.jpeg',
         href: 'https://www.google.com',
         specs: {
           year: '2021',

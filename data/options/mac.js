@@ -334,7 +334,7 @@ const optionsMac = [
       {
         title: 'Macbook Pro 13',
         alias: 'Macbook Pro 13',
-        imgSrc: '/static/images/macs/macbook-pro-13-2022.jpeg',
+        imgSrc: '/static/images/macs/macbook-pro-13-2020.jpeg',
         href: 'https://www.google.com',
         specs: {
           year: '2020',
@@ -424,7 +424,7 @@ const optionsMac = [
       {
         title: 'Macbook Pro 14',
         alias: 'Macbook Pro 14',
-        imgSrc: '/static/images/macs/macbook-pro-14-2023.jpeg',
+        imgSrc: '/static/images/macs/macbook-pro-14-2021.jpeg',
         href: 'https://www.google.com',
         specs: {
           year: '2021',
@@ -456,7 +456,7 @@ const optionsMac = [
       {
         title: 'Macbook Pro 14',
         alias: 'Macbook Pro 14',
-        imgSrc: '/static/images/macs/macbook-pro-14-2023.jpeg',
+        imgSrc: '/static/images/macs/macbook-pro-14-2021.jpeg',
         href: 'https://www.google.com',
         specs: {
           year: '2021',
@@ -488,7 +488,7 @@ const optionsMac = [
       {
         title: 'Macbook Pro 14',
         alias: 'Macbook Pro 14',
-        imgSrc: '/static/images/macs/macbook-pro-14-2023.jpeg',
+        imgSrc: '/static/images/macs/macbook-pro-14-2021.jpeg',
         href: 'https://www.google.com',
         specs: {
           year: '2021',
@@ -520,7 +520,7 @@ const optionsMac = [
       {
         title: 'Macbook Pro 14',
         alias: 'Macbook Pro 14',
-        imgSrc: '/static/images/macs/macbook-pro-14-2023.jpeg',
+        imgSrc: '/static/images/macs/macbook-pro-14-2021.jpeg',
         href: 'https://www.google.com',
         specs: {
           year: '2021',
@@ -552,7 +552,7 @@ const optionsMac = [
       {
         title: 'Macbook Pro 14',
         alias: 'Macbook Pro 14',
-        imgSrc: '/static/images/macs/macbook-pro-14-2023.jpeg',
+        imgSrc: '/static/images/macs/macbook-pro-14-2021.jpeg',
         href: 'https://www.google.com',
         specs: {
           year: '2021',
@@ -718,7 +718,7 @@ const optionsMac = [
       {
         title: 'Macbook Pro 16',
         alias: 'Macbook Pro 16',
-        imgSrc: '/static/images/macs/macbook-pro-16-2023.jpeg',
+        imgSrc: '/static/images/macs/macbook-pro-16-2021.jpeg',
         href: 'https://www.google.com',
         specs: {
           year: '2021',
@@ -750,7 +750,7 @@ const optionsMac = [
       {
         title: 'Macbook Pro 16',
         alias: 'Macbook Pro 16',
-        imgSrc: '/static/images/macs/macbook-pro-16-2023.jpeg',
+        imgSrc: '/static/images/macs/macbook-pro-16-2021.jpeg',
         href: 'https://www.google.com',
         specs: {
           year: '2021',
@@ -782,7 +782,7 @@ const optionsMac = [
       {
         title: 'Macbook Pro 16',
         alias: 'Macbook Pro 16',
-        imgSrc: '/static/images/macs/macbook-pro-16-2023.jpeg',
+        imgSrc: '/static/images/macs/macbook-pro-16-2021.jpeg',
         href: 'https://www.google.com',
         specs: {
           year: '2021',

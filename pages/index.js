@@ -163,7 +163,7 @@ export default function Home() {
         </ul>
       </section>
 
-      <div className="mt-md-6 mt-3 flex items-center justify-center pt-4">
+      <div className="mt-12 flex items-center justify-center">
         <NewsletterForm />
       </div>
     </>

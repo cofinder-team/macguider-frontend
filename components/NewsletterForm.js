@@ -1,8 +1,9 @@
 import { useRef, useState } from 'react'
 
-import siteMetadata from '@/data/siteMetadata'
+import axiosInstance from '@/lib/axios'
+import amplitude from 'amplitude-js'
 
-const NewsletterForm = ({ title = 'Subscribe to the newsletter' }) => {
+const NewsletterForm = ({ title = 'MacGuider 최신 업데이트 소식 받기' }) => {
   const inputEl = useRef(null)
   const [error, setError] = useState(false)
   const [message, setMessage] = useState('')
@@ -11,27 +12,22 @@ const NewsletterForm = ({ title = 'Subscribe to the newsletter' }) => {
   const subscribe = async (e) => {
     e.preventDefault()
 
-    const res = await fetch(`/api/${siteMetadata.newsletter.provider}`, {
-      body: JSON.stringify({
-        email: inputEl.current.value,
-      }),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      method: 'POST',
-    })
+    amplitude
+      .getInstance()
+      .logEvent('do_action', { action_type: 'button', action_detail: 'newsletter_subscribe' })
 
-    const { error } = await res.json()
-    if (error) {
+    try {
+      await axiosInstance.post(`/email/${inputEl.current.value}`)
+    } catch {
       setError(true)
-      setMessage('Your e-mail address is invalid or you are already subscribed!')
+      setMessage('이메일 형식이 올바르지 않습니다!')
       return
     }
 
     inputEl.current.value = ''
     setError(false)
     setSubscribed(true)
-    setMessage('Successfully! 🎉 You are now subscribed.')
+    setMessage('감사합니다! 🎉  구독이 완료되었습니다.')
   }
 
   return (
@@ -40,14 +36,14 @@ const NewsletterForm = ({ title = 'Subscribe to the newsletter' }) => {
       <form className="flex flex-col sm:flex-row" onSubmit={subscribe}>
         <div>
           <label className="sr-only" htmlFor="email-input">
-            Email address
+            이메일 주소
           </label>
           <input
             autoComplete="email"
             className="w-72 rounded-md px-4 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-primary-600 dark:bg-black"
             id="email-input"
             name="email"
-            placeholder={subscribed ? "You're subscribed !  🎉" : 'Enter your email'}
+            placeholder={subscribed ? '구독 감사합니다!  🎉' : '이메일을 입력해주세요'}
             ref={inputEl}
             required
             type="email"
@@ -56,13 +52,15 @@ const NewsletterForm = ({ title = 'Subscribe to the newsletter' }) => {
         </div>
         <div className="mt-2 flex w-full rounded-md shadow-sm sm:mt-0 sm:ml-3">
           <button
-            className={`w-full rounded-md bg-primary-500 py-2 px-4 font-medium text-white sm:py-0 ${
-              subscribed ? 'cursor-default' : 'hover:bg-primary-700 dark:hover:bg-primary-400'
+            className={`w-full rounded-md bg-blue-800 py-2 px-4 font-medium text-white sm:py-0 ${
+              subscribed
+                ? 'cursor-default'
+                : 'border hover:border-blue-700 hover:bg-white hover:text-blue-800  dark:hover:bg-primary-400'
             } focus:outline-none focus:ring-2 focus:ring-primary-600 focus:ring-offset-2 dark:ring-offset-black`}
             type="submit"
             disabled={subscribed}
           >
-            {subscribed ? 'Thank you!' : 'Sign up'}
+            {subscribed ? '감사합니다!' : '구독하기'}
           </button>
         </div>
       </form>

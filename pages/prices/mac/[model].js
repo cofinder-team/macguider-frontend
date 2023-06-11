@@ -15,6 +15,7 @@ import Skeleton from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
 
 import amplitude from 'amplitude-js'
+import NewsletterForm from '@/components/NewsletterForm'
 
 async function getPrices(itemId = 1, optionId = 1, unopened = false) {
   const response = await axiosInstance.get(`/item/${itemId}/option/${optionId}`, {
@@ -444,6 +445,10 @@ const MacModel = ({ model }) => {
             </div>
           </div>
         </div>
+      </div>
+
+      <div className="mt-12 flex items-center justify-center">
+        <NewsletterForm />
       </div>
     </>
   )

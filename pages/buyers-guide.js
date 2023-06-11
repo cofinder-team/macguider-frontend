@@ -161,7 +161,7 @@ export default function BuyersGuide() {
         </div>
       </section>
 
-      <div className="mt-3 flex items-center justify-center pt-4 md:mt-20">
+      <div className="mt-12 flex items-center justify-center">
         <NewsletterForm />
       </div>
     </>

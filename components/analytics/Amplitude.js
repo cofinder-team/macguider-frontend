@@ -1,22 +1,19 @@
-// import Script from 'next/script'
+import { useEffect } from 'react'
+import amplitude from 'amplitude-js'
 
-// import siteMetadata from '@/data/siteMetadata'
-// import { Analytics } from 'analytics'
-// import amplitudePlugin from '@analytics/amplitude'
+const Amplitude = () => {
+  useEffect(() => {
+    // Amplitude 초기화
+    amplitude.getInstance().init(process.env.NEXT_PUBLIC_AMPLITUDE_ID, null, {
+      includeFbclid: true,
+      includeGclid: true,
+      includeUtm: true,
+      includeReferrer: true,
+      saveEvents: true,
+    })
+  }, [])
 
-// const Amplitude = Analytics({
-//   app: 'macguider',
-//   plugins: [
-//     // amplitudePlugin
-//     amplitudePlugin({
-//       apiKey: '6f840da4543c36607e9d84527bf079c3',
-//       // eventPrefix: 'myapp',
-//       // userId: '123',
-//       // config: {
-//       //     // optional configuration for analytics amplitude SDK
-//       // }
-//     }),
-//   ],
-// })
+  return null
+}
 
-// export default Amplitude
+export default Amplitude

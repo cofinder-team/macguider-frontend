@@ -66,7 +66,7 @@ export default function Home() {
               아이패드 시세
             </h1>
             <div className="mx-2 rounded bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800 dark:bg-blue-900 dark:text-blue-300">
-              Beta
+              New
             </div>
           </div>
 
@@ -83,7 +83,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="mt-md-6 mt-3">
+      {/* <section className="mt-md-6 mt-3">
         <div className="space-y-2 pt-6 pb-2">
           <h1 className="text-3xl font-extrabold leading-9 tracking-tight text-gray-900 dark:text-gray-100  sm:leading-10">
             맥 가이드
@@ -161,7 +161,7 @@ export default function Home() {
             )
           })}
         </ul>
-      </section>
+      </section> */}
 
       <div className="mt-12 flex items-center justify-center">
         <NewsletterForm />

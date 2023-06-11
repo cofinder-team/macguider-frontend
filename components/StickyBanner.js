@@ -10,7 +10,7 @@ const StickyBanner = () => {
       <div
         id="sticky-banner"
         tabIndex="-1"
-        className="sticky top-0 z-50 flex w-full justify-between border-b border-gray-200 bg-gray-50 p-4 dark:border-gray-600 dark:bg-gray-700"
+        className="sticky top-0 z-40 flex w-full justify-between border-b border-gray-200 bg-gray-50 p-4 dark:border-gray-600 dark:bg-gray-700"
       >
         <div className="mx-auto flex items-center">
           <p className="flex items-center text-sm font-normal text-gray-900 dark:text-gray-400">

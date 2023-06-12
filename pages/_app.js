@@ -12,6 +12,7 @@ import { ClientReload } from '@/components/ClientReload'
 import { config } from '@fortawesome/fontawesome-svg-core'
 import '@fortawesome/fontawesome-svg-core/styles.css'
 import Amplitude from '@/components/analytics/Amplitude'
+import Analytics from '@/components/analytics'
 
 config.autoAddCss = false
 
@@ -20,12 +21,12 @@ const isSocket = process.env.SOCKET
 
 export default function App({ Component, pageProps }) {
   return (
-    <ThemeProvider attribute="class" defaultTheme={siteMetadata.theme}>
+    <ThemeProvider attribute="class" defaultTheme={siteMetadata.theme} forcedTheme="light">
       <Head>
         <meta content="width=device-width, initial-scale=1" name="viewport" />
       </Head>
       {isDevelopment && isSocket && <ClientReload />}
-      <Amplitude />
+      <Analytics />
       <LayoutWrapper>
         <Component {...pageProps} />
       </LayoutWrapper>

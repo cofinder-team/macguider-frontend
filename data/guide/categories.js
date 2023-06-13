@@ -120,7 +120,7 @@ const categories = [
         },
       },
       {
-        name: 'Macbook Pro 13',
+        name: 'MacbooB Pro 13',
         lastReleaseDate: '2020년 11월',
         averageReleaseCycle: '15일',
         itemId: '3',

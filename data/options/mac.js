@@ -155,11 +155,11 @@ const optionsMac = [
   },
   {
     id: '2',
-    model: 'Macbook Air 13',
+    model: 'MacBook Air 13',
     data: [
       {
-        title: 'Macbook Air 13',
-        alias: 'Macbook Air 13',
+        title: 'MacBook Air 13',
+        alias: 'MacBook Air 13',
         imgSrc: '/static/images/macs/macbook-air-13-2020.jpeg',
         href: 'https://www.google.com',
         specs: {
@@ -200,8 +200,8 @@ const optionsMac = [
         ],
       },
       {
-        title: 'Macbook Air 13',
-        alias: 'Macbook Air 13',
+        title: 'MacBook Air 13',
+        alias: 'MacBook Air 13',
         imgSrc: '/static/images/macs/macbook-air-13-2020.jpeg',
         href: 'https://www.google.com',
         specs: {
@@ -242,8 +242,8 @@ const optionsMac = [
         ],
       },
       {
-        title: 'Macbook Air 13',
-        alias: 'Macbook Air 13',
+        title: 'MacBook Air 13',
+        alias: 'MacBook Air 13',
         imgSrc: '/static/images/macs/macbook-air-13-2022.jpeg',
         href: 'https://www.google.com',
         specs: {
@@ -284,8 +284,8 @@ const optionsMac = [
         ],
       },
       {
-        title: 'Macbook Air 13',
-        alias: 'Macbook Air 13',
+        title: 'MacBook Air 13',
+        alias: 'MacBook Air 13',
         imgSrc: '/static/images/macs/macbook-air-13-2022.jpeg',
         href: 'https://www.google.com',
         specs: {
@@ -329,11 +329,11 @@ const optionsMac = [
   },
   {
     id: '3',
-    model: 'Macbook Pro 13',
+    model: 'MacBook Pro 13',
     data: [
       {
-        title: 'Macbook Pro 13',
-        alias: 'Macbook Pro 13',
+        title: 'MacBook Pro 13',
+        alias: 'MacBook Pro 13',
         imgSrc: '/static/images/macs/macbook-pro-13-2020.jpeg',
         href: 'https://www.google.com',
         specs: {
@@ -374,8 +374,8 @@ const optionsMac = [
         ],
       },
       {
-        title: 'Macbook Pro 13',
-        alias: 'Macbook Pro 13',
+        title: 'MacBook Pro 13',
+        alias: 'MacBook Pro 13',
         imgSrc: '/static/images/macs/macbook-pro-13-2022.jpeg',
         href: 'https://www.google.com',
         specs: {
@@ -419,11 +419,11 @@ const optionsMac = [
   },
   {
     id: '4',
-    model: 'Macbook Pro 14',
+    model: 'MacBook Pro 14',
     data: [
       {
-        title: 'Macbook Pro 14',
-        alias: 'Macbook Pro 14',
+        title: 'MacBook Pro 14',
+        alias: 'MacBook Pro 14',
         imgSrc: '/static/images/macs/macbook-pro-14-2021.jpeg',
         href: 'https://www.google.com',
         specs: {
@@ -454,8 +454,8 @@ const optionsMac = [
         ],
       },
       {
-        title: 'Macbook Pro 14',
-        alias: 'Macbook Pro 14',
+        title: 'MacBook Pro 14',
+        alias: 'MacBook Pro 14',
         imgSrc: '/static/images/macs/macbook-pro-14-2021.jpeg',
         href: 'https://www.google.com',
         specs: {
@@ -486,8 +486,8 @@ const optionsMac = [
         ],
       },
       {
-        title: 'Macbook Pro 14',
-        alias: 'Macbook Pro 14',
+        title: 'MacBook Pro 14',
+        alias: 'MacBook Pro 14',
         imgSrc: '/static/images/macs/macbook-pro-14-2021.jpeg',
         href: 'https://www.google.com',
         specs: {
@@ -518,8 +518,8 @@ const optionsMac = [
         ],
       },
       {
-        title: 'Macbook Pro 14',
-        alias: 'Macbook Pro 14',
+        title: 'MacBook Pro 14',
+        alias: 'MacBook Pro 14',
         imgSrc: '/static/images/macs/macbook-pro-14-2021.jpeg',
         href: 'https://www.google.com',
         specs: {
@@ -550,8 +550,8 @@ const optionsMac = [
         ],
       },
       {
-        title: 'Macbook Pro 14',
-        alias: 'Macbook Pro 14',
+        title: 'MacBook Pro 14',
+        alias: 'MacBook Pro 14',
         imgSrc: '/static/images/macs/macbook-pro-14-2021.jpeg',
         href: 'https://www.google.com',
         specs: {
@@ -582,8 +582,8 @@ const optionsMac = [
         ],
       },
       {
-        title: 'Macbook Pro 14',
-        alias: 'Macbook Pro 14',
+        title: 'MacBook Pro 14',
+        alias: 'MacBook Pro 14',
         imgSrc: '/static/images/macs/macbook-pro-14-2023.jpeg',
         href: 'https://www.google.com',
         specs: {
@@ -614,8 +614,8 @@ const optionsMac = [
         ],
       },
       {
-        title: 'Macbook Pro 14',
-        alias: 'Macbook Pro 14',
+        title: 'MacBook Pro 14',
+        alias: 'MacBook Pro 14',
         imgSrc: '/static/images/macs/macbook-pro-14-2023.jpeg',
         href: 'https://www.google.com',
         specs: {
@@ -646,8 +646,8 @@ const optionsMac = [
         ],
       },
       {
-        title: 'Macbook Pro 14',
-        alias: 'Macbook Pro 14',
+        title: 'MacBook Pro 14',
+        alias: 'MacBook Pro 14',
         imgSrc: '/static/images/macs/macbook-pro-14-2023.jpeg',
         href: 'https://www.google.com',
         specs: {
@@ -678,8 +678,8 @@ const optionsMac = [
         ],
       },
       {
-        title: 'Macbook Pro 14',
-        alias: 'Macbook Pro 14',
+        title: 'MacBook Pro 14',
+        alias: 'MacBook Pro 14',
         imgSrc: '/static/images/macs/macbook-pro-14-2023.jpeg',
         href: 'https://www.google.com',
         specs: {
@@ -713,11 +713,11 @@ const optionsMac = [
   },
   {
     id: '5',
-    model: 'Macbook Pro 16',
+    model: 'MacBook Pro 16',
     data: [
       {
-        title: 'Macbook Pro 16',
-        alias: 'Macbook Pro 16',
+        title: 'MacBook Pro 16',
+        alias: 'MacBook Pro 16',
         imgSrc: '/static/images/macs/macbook-pro-16-2021.jpeg',
         href: 'https://www.google.com',
         specs: {
@@ -748,8 +748,8 @@ const optionsMac = [
         ],
       },
       {
-        title: 'Macbook Pro 16',
-        alias: 'Macbook Pro 16',
+        title: 'MacBook Pro 16',
+        alias: 'MacBook Pro 16',
         imgSrc: '/static/images/macs/macbook-pro-16-2021.jpeg',
         href: 'https://www.google.com',
         specs: {
@@ -780,8 +780,8 @@ const optionsMac = [
         ],
       },
       {
-        title: 'Macbook Pro 16',
-        alias: 'Macbook Pro 16',
+        title: 'MacBook Pro 16',
+        alias: 'MacBook Pro 16',
         imgSrc: '/static/images/macs/macbook-pro-16-2021.jpeg',
         href: 'https://www.google.com',
         specs: {
@@ -812,8 +812,8 @@ const optionsMac = [
         ],
       },
       {
-        title: 'Macbook Pro 16',
-        alias: 'Macbook Pro 16',
+        title: 'MacBook Pro 16',
+        alias: 'MacBook Pro 16',
         imgSrc: '/static/images/macs/macbook-pro-16-2023.jpeg',
         href: 'https://www.google.com',
         specs: {
@@ -844,8 +844,8 @@ const optionsMac = [
         ],
       },
       {
-        title: 'Macbook Pro 16',
-        alias: 'Macbook Pro 16',
+        title: 'MacBook Pro 16',
+        alias: 'MacBook Pro 16',
         imgSrc: '/static/images/macs/macbook-pro-16-2023.jpeg',
         href: 'https://www.google.com',
         specs: {
@@ -876,8 +876,8 @@ const optionsMac = [
         ],
       },
       {
-        title: 'Macbook Pro 16',
-        alias: 'Macbook Pro 16',
+        title: 'MacBook Pro 16',
+        alias: 'MacBook Pro 16',
         imgSrc: '/static/images/macs/macbook-pro-16-2023.jpeg',
         href: 'https://www.google.com',
         specs: {

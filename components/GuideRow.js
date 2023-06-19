@@ -22,6 +22,7 @@ async function getPrices(itemId = 1, optionId = 1, unopened = false) {
 
 const GuideRow = ({
   itemId,
+  itemDesc,
   imgSrc,
   name,
   latestReleaseDate,
@@ -52,18 +53,15 @@ const GuideRow = ({
               <Image
                 width="452"
                 height="420"
-                className="h-48 w-full rounded-t-lg object-contain md:h-auto md:w-48 md:rounded-none md:rounded-l-lg"
+                className="h-48 w-full rounded-t-lg object-contain md:h-auto md:rounded-none md:rounded-l-lg"
                 src={imgSrc}
                 alt={name}
               />
-              <div className="flex max-w-md  flex-col justify-between pt-2 leading-normal md:p-4">
+              <div className="flex w-4/5  max-w-md flex-col justify-between pt-2 leading-normal md:p-4">
                 <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
                   {name}
                 </h5>
-                <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">
-                  새로운 가격대와 보노보노가 합쳐진 이 제품은 홀리 새로운 가격대와 보노보노가 합쳐진
-                  이 제품은 홀리 새로운 가격대와 보노보노가 합쳐진 이 제품은 홀리
-                </p>
+                <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">{itemDesc}</p>
               </div>
             </div>
 
@@ -76,7 +74,7 @@ const GuideRow = ({
                     </p>
                   </div>
 
-                  <div className="flex-1 text-right">{latestReleaseDate}</div>
+                  <strong className="flex-1 text-right">{latestReleaseDate}</strong>
                 </div>
               </li>
               <li className="py-3 sm:py-4">
@@ -87,7 +85,9 @@ const GuideRow = ({
                     </p>
                   </div>
 
-                  <div className="flex-1 text-right">{averageReleaseCycle}일</div>
+                  <div className="flex-1 text-right">
+                    <strong>{averageReleaseCycle}</strong>일
+                  </div>
                 </div>
               </li>
 
@@ -104,11 +104,11 @@ const GuideRow = ({
                       <span className={` text-sm font-medium dark:text-white`}>출시일로부터</span>
 
                       <div className="text-sm">
-                        <span
+                        <strong
                           className={`text-${purchaseTiming.color} font-semibold dark:text-white`}
                         >
                           {getDaysSinceLastReleaseDate()}
-                        </span>
+                        </strong>
                         <span>일 지남</span>
                       </div>
                     </div>
@@ -129,7 +129,7 @@ const GuideRow = ({
             </ul>
           </div>
 
-          <div className="mt-3 max-w-xl xl:mt-0 xl:w-1/2">
+          <div className="mt-3 max-w-xl md:mx-auto md:w-2/3 xl:mt-0 xl:w-1/2">
             <p className="text-md font-bold text-gray-900 dark:text-white">최근 중고 시세</p>
 
             {loading ? (
@@ -152,7 +152,7 @@ const GuideRow = ({
 
             <Link
               href="#"
-              className="mt-3 inline-flex w-full  items-center justify-center rounded-lg  border  border-blue-700 bg-white px-3 py-2 text-center text-sm font-medium text-blue-700 hover:bg-blue-800 hover:text-white focus:outline-none focus:ring-4 focus:ring-blue-300 dark:border-white dark:bg-transparent dark:text-white dark:hover:border-blue-700 dark:hover:bg-blue-700 dark:focus:ring-blue-800 md:w-auto"
+              className="mt-3 inline-flex w-full  items-center justify-center rounded-lg  border  border-blue-700 bg-white px-3 py-2 text-center text-sm font-medium text-blue-700 hover:bg-blue-800 hover:text-white focus:outline-none focus:ring-4 focus:ring-blue-300 dark:border-white dark:bg-transparent dark:text-white dark:hover:border-blue-700 dark:hover:bg-blue-700 dark:focus:ring-blue-800 md:mt-4  xl:w-auto"
               aria-label={`Link to #`}
             >
               가격 알아보기 <FontAwesomeIcon icon={faArrowRight} className="ml-2" />

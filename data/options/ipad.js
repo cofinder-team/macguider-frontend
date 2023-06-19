@@ -3,6 +3,7 @@ const optionsIpad = [
     id: '6',
     model: 'iPad Mini',
     releasedDateHistory: ['2021-09-13', '2019-03-17', '2015-09-08', '2014-10-15', '2013-10-21'],
+    desc: '이전 세대에 비해 더 커진 8.3인치 디스플레이와 A15 Bionic, 터치 ID, 그리고 2세대 Apple Pencil을 지원합니다. 오랫동안 업데이트가 되지 않은 만큼 곧 새로운 모델이 출시될 것으로 예상됩니다.',
     data: [
       {
         title: 'iPad Mini',
@@ -43,6 +44,7 @@ const optionsIpad = [
     id: '7',
     model: 'iPad Air',
     releasedDateHistory: ['2022-03-08', '2020-09-14', '2019-03-17', '2014-10-15', '2013-10-21'],
+    desc: 'M1을 탑재한 iPad Air 는  10.9인치 Liquid Retina 디스플레이와 터치 ID, 2세대 Apple Pencil을 지원합니다. 출시주기 막바지에 다른만큼 곧 새로운 모델이 출시될 것으로 예상됩니다.',
     data: [
       {
         title: 'iPad Air',
@@ -115,6 +117,7 @@ const optionsIpad = [
   {
     id: '8',
     model: 'iPad',
+    desc: '새롭게 리뉴얼된 iPad는 10.9인치 Liquid Retina 디스플레이, A14 Bionic, 터치 ID를 탑재하였고 1세대 Apple Pencil을 지원합니다.',
     releasedDateHistory: ['2022-10-17', '2021-09-13', '2020-09-14', '2019-09-09', '2018-03-26'],
     data: [
       {
@@ -222,6 +225,7 @@ const optionsIpad = [
     id: '9',
     model: 'iPad Pro 11',
     releasedDateHistory: ['2022-10-17', '2021-04-19', '2020-03-17', '2018-10-29'],
+    desc: 'M2를 탑재한 iPad Pro 11은 ProMotion 기술이 적용된 Liquid Retina 디스플레이, 페이스 ID, 2세대 Apple Pencil을 지원합니다. 현존하는 태블릿 중 끝판왕 태블릿으로 필요하신 분은 당장 구매하세요.',
     data: [
       {
         title: 'iPad Pro 11',
@@ -388,6 +392,7 @@ const optionsIpad = [
     id: '10',
     model: 'iPad Pro 12.9',
     releasedDateHistory: ['2022-10-17', '2021-04-19', '2020-03-17', '2018-10-29', '2017-06-04'],
+    desc: 'M2를 탑재한 iPad Pro 12.9는 ProMotion 기술이 적용된 광활한 Liquid Retina 디스플레이, 페이스 ID, 2세대 Apple Pencil을 지원합니다. 현존하는 태블릿 중 끝판왕 태블릿으로 필요하신 분은 당장 구매하세요.',
     data: [
       {
         title: 'iPad Pro 12.9',

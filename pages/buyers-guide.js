@@ -39,11 +39,17 @@ export default function BuyersGuide() {
   }, [])
 
   const onClickCategory = (category) => {
-    setExpandedRows([])
-    setCurrentCategory(category)
     amplitude
       .getInstance()
       .logEvent('page_view', { page_type: 'guide', page_detail: category.categoryName })
+
+    if (category.categoryData.length === 0) {
+      alert('준비 중입니다! 이메일을 등록해주시면 가장 먼저 업데이트 소식을 알려드릴게요.')
+      return
+    }
+
+    setExpandedRows([])
+    setCurrentCategory(category)
   }
 
   const toggleRow = (itemId) => {
@@ -170,7 +176,7 @@ export default function BuyersGuide() {
             <tbody>
               {categories
                 .find((category) => category.categoryName === currentCategory.categoryName)
-                .categoryData.map(({ id, model, releasedDateHistory, data }, index) => (
+                .categoryData.map(({ id, model, releasedDateHistory, data, desc }, index) => (
                   <React.Fragment key={id}>
                     <tr
                       onClick={() => toggleRow(id)}
@@ -223,6 +229,7 @@ export default function BuyersGuide() {
                       <GuideRow
                         name={model}
                         itemId={id}
+                        itemDesc={desc}
                         imgSrc={data.slice(-1)[0].imgSrc}
                         latestReleaseDate={releasedDateHistory[0]}
                         averageReleaseCycle={getAverageReleaseCycle(releasedDateHistory)}

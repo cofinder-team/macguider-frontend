@@ -2,6 +2,7 @@ const optionsMac = [
   {
     id: '1',
     model: 'Mac Mini',
+    releasedDateHistory: ['2023-01-17', '2020-11-10', '2018-10-30'],
     data: [
       {
         title: 'Mac Mini',
@@ -156,12 +157,23 @@ const optionsMac = [
   {
     id: '2',
     model: 'MacBook Air 13',
+    releasedDateHistory: [
+      '2022-06-06',
+      '2022-11-10',
+      '2020-03-18',
+      '2020-03-18',
+      '2019-07-09',
+      '2018-10-30',
+      '2017-06-05',
+      '2015-03-09',
+    ],
     data: [
       {
         title: 'MacBook Air 13',
         alias: 'MacBook Air 13',
         imgSrc: '/static/images/macs/macbook-air-13-2020.jpeg',
         href: 'https://www.google.com',
+
         specs: {
           year: '2020',
           cpu: 'M1 8코어 CPU 7코어 GPU',
@@ -330,6 +342,7 @@ const optionsMac = [
   {
     id: '3',
     model: 'MacBook Pro 13',
+    releasedDateHistory: ['2022-06-06', '2022-11-10', '2020-05-04', '2019-05-21', '2018-07-12'],
     data: [
       {
         title: 'MacBook Pro 13',
@@ -420,6 +433,7 @@ const optionsMac = [
   {
     id: '4',
     model: 'MacBook Pro 14',
+    releasedDateHistory: ['2023-01-17', '2021-10-18'],
     data: [
       {
         title: 'MacBook Pro 14',
@@ -714,6 +728,7 @@ const optionsMac = [
   {
     id: '5',
     model: 'MacBook Pro 16',
+    releasedDateHistory: ['2023-01-17', '2021-10-18', '2019-11-13'],
     data: [
       {
         title: 'MacBook Pro 16',

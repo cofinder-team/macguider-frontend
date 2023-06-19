@@ -1,5 +1,5 @@
 import { PageSEO } from '@/components/SEO'
-import React, { useEffect } from 'react'
+import React, { useCallback, useEffect } from 'react'
 
 import NewsletterForm from '@/components/NewsletterForm'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -11,6 +11,21 @@ import Image from 'next/image'
 import { useScreenSize } from 'hooks/useScreenSize'
 import categories from '@/data/guide/categories'
 import amplitude from 'amplitude-js'
+
+const purchaseTiming = {
+  good: {
+    color: 'green-500',
+    text: '구매 적합',
+  },
+  normal: {
+    color: 'yellow-500',
+    text: '구매 주의',
+  },
+  bad: {
+    color: 'red-500',
+    text: '구매 보류',
+  },
+}
 
 export default function BuyersGuide() {
   const [currentCategory, setCurrentCategory] = useState(categories[1])
@@ -43,11 +58,55 @@ export default function BuyersGuide() {
       .logEvent('do_action', { action_type: 'guide_toggle', action_detail: itemId })
   }
 
+  const getPurchaseTiming = useCallback((releasedDateHistory) => {
+    const latestReleaseDate = releasedDateHistory[0]
+    const averageReleaseCycle = getAverageReleaseCycle(releasedDateHistory)
+    const today = new Date()
+    const [year, month, day] = latestReleaseDate.split('-')
+    const date = new Date(year, month - 1, day)
+    const diffTime = Math.abs(today - date)
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+
+    if (diffDays > averageReleaseCycle * 0.85) {
+      return purchaseTiming.bad
+    } else if (diffDays > averageReleaseCycle * 0.6) {
+      return purchaseTiming.normal
+    } else {
+      return purchaseTiming.good
+    }
+  }, [])
+
+  const getLatestReleaseDate = useCallback((releasedDateHistory) => {
+    const latestReleaseDate = releasedDateHistory[0]
+
+    // convert YYYY-MM-DD string to locale string
+    const [year, month, day] = latestReleaseDate.split('-')
+    const date = new Date(year, month - 1, day)
+    return date.toLocaleDateString()
+  }, [])
+
+  const getAverageReleaseCycle = useCallback((releasedDateHistory) => {
+    const releaseCycles = []
+    for (let i = 0; i < releasedDateHistory.length - 1; i++) {
+      // convert YYYY-MM-DD string to Date object
+      const date1 = new Date(...releasedDateHistory[i].split('-'))
+      const date2 = new Date(...releasedDateHistory[i + 1].split('-'))
+      const diffTime = Math.abs(date2 - date1)
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+      releaseCycles.push(diffDays)
+    }
+
+    const averageReleaseCycle = Math.round(
+      releaseCycles.reduce((a, b) => a + b, 0) / releaseCycles.length
+    )
+    return averageReleaseCycle
+  }, [])
+
   return (
     <>
       <PageSEO
         title={'애플 제품 구매 가이드'}
-        description={'애플 제품의 적절한 구매시기를 알려드립니다.'}
+        description={'지금 사도 괜찮을까? 애플 제품의 적절한 구매시기를 알려드립니다.'}
       />
 
       <section className="mt-md-6 mt-3">
@@ -85,14 +144,22 @@ export default function BuyersGuide() {
           <table className="w-full text-left text-sm text-gray-500 dark:text-gray-400">
             <thead className="bg-gray-50 text-xs uppercase text-gray-700 dark:bg-gray-700 dark:text-gray-400">
               <tr>
-                <th scope="col" className="hidden px-6 py-3 md:table-cell"></th>
+                <th scope="col" className="px-3 py-3 md:table-cell md:px-6"></th>
                 <th scope="col" className="w-1/3 px-3 py-3 md:px-6">
                   모델명
                 </th>
-                <th scope="col" className="px-3 py-3 md:px-6" style={{ wordBreak: 'keep-all' }}>
+                <th
+                  scope="col"
+                  className="hidden px-3 py-3 sm:table-cell md:px-6"
+                  style={{ wordBreak: 'keep-all' }}
+                >
                   마지막 출시일
                 </th>
-                <th scope="col" className="px-3 py-3 md:px-6" style={{ wordBreak: 'keep-all' }}>
+                <th
+                  scope="col"
+                  className="hidden px-3 py-3 sm:table-cell md:px-6"
+                  style={{ wordBreak: 'keep-all' }}
+                >
                   평균 출시주기
                 </th>
                 <th scope="col" className="px-3 py-3 md:px-6" style={{ wordBreak: 'keep-all' }}>
@@ -103,59 +170,67 @@ export default function BuyersGuide() {
             <tbody>
               {categories
                 .find((category) => category.categoryName === currentCategory.categoryName)
-                .categoryData.map(
-                  (
-                    {
-                      name,
-                      lastReleaseDate,
-                      averageReleaseCycle,
-                      price,
-                      chartData,
-                      imgSrc,
-                      itemId,
-                    },
-                    index
-                  ) => (
-                    <React.Fragment key={itemId}>
-                      <tr
-                        onClick={() => toggleRow(itemId)}
-                        className={`${
-                          expandedRows.includes(itemId) && index ? 'border-t' : ''
-                        } cursor-pointer border-b bg-white hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-600`}
+                .categoryData.map(({ id, model, releasedDateHistory, data }, index) => (
+                  <React.Fragment key={id}>
+                    <tr
+                      onClick={() => toggleRow(id)}
+                      className={`${
+                        expandedRows.includes(id) && index ? 'border-t' : ''
+                      } cursor-pointer border-b bg-white hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-600`}
+                    >
+                      <td className="px-3 py-4 md:table-cell md:px-6">
+                        <FontAwesomeIcon
+                          icon={expandedRows.includes(id) ? faChevronUp : faChevronDown}
+                        />
+                      </td>
+                      <th
+                        scope="row"
+                        className="flex items-center whitespace-nowrap px-3 py-3 text-gray-900 dark:text-white md:px-6 md:py-4"
                       >
-                        <td className="hidden px-6 py-4 md:table-cell">
-                          <FontAwesomeIcon
-                            icon={expandedRows.includes(itemId) ? faChevronUp : faChevronDown}
-                          />
-                        </td>
-                        <th
-                          scope="row"
-                          className="flex items-center whitespace-nowrap px-3 py-3 text-gray-900 dark:text-white md:px-6 md:py-4"
-                        >
-                          <img className="hidden h-10 w-10 md:block" src={imgSrc} alt={name} />
-                          <div className="md:pl-3">
-                            <div className="text-base font-semibold">{name}</div>
-                          </div>
-                        </th>
-                        <td className="px-3 py-3 md:px-6 md:py-4" style={{ wordBreak: 'keep-all' }}>
-                          {lastReleaseDate}
-                        </td>
-                        <td className="px-3 py-3 md:px-6 md:py-4" style={{ wordBreak: 'keep-all' }}>
-                          {averageReleaseCycle}
-                        </td>
-                        <td className="px-3 py-3 md:px-6 md:py-4">
-                          <div className="flex  items-center">
-                            <div className="mr-2 h-2.5 w-2.5 rounded-full bg-green-500"></div>{' '}
-                            {sm && price}
-                          </div>
-                        </td>
-                      </tr>
-                      {expandedRows.includes(itemId) && (
-                        <GuideRow name={name} itemId={itemId} imgSrc={imgSrc} />
-                      )}
-                    </React.Fragment>
-                  )
-                )}
+                        <img
+                          className="hidden h-10 w-10 md:block"
+                          src={data.slice(-1)[0].imgSrc}
+                          alt={model}
+                        />
+                        <div className="md:pl-3">
+                          <div className="text-base font-semibold">{model}</div>
+                        </div>
+                      </th>
+                      <td
+                        className="hidden px-3 py-3 sm:table-cell md:px-6 md:py-4"
+                        style={{ wordBreak: 'keep-all' }}
+                      >
+                        {getLatestReleaseDate(releasedDateHistory)}
+                      </td>
+                      <td
+                        className="hidden px-3  py-3 sm:table-cell md:px-6 md:py-4"
+                        style={{ wordBreak: 'keep-all' }}
+                      >
+                        {getAverageReleaseCycle(releasedDateHistory)}일
+                      </td>
+                      <td className="px-3 py-3 md:px-6 md:py-4">
+                        <div className="flex  items-center">
+                          <div
+                            className={`mr-2 h-2.5 w-2.5 rounded-full bg-${
+                              getPurchaseTiming(releasedDateHistory).color
+                            }`}
+                          ></div>
+                          <span>{getPurchaseTiming(releasedDateHistory).text}</span>
+                        </div>
+                      </td>
+                    </tr>
+                    {expandedRows.includes(id) && (
+                      <GuideRow
+                        name={model}
+                        itemId={id}
+                        imgSrc={data.slice(-1)[0].imgSrc}
+                        latestReleaseDate={releasedDateHistory[0]}
+                        averageReleaseCycle={getAverageReleaseCycle(releasedDateHistory)}
+                        purchaseTiming={getPurchaseTiming(releasedDateHistory)}
+                      />
+                    )}
+                  </React.Fragment>
+                ))}
             </tbody>
           </table>
         </div>

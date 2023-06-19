@@ -9,6 +9,7 @@ import Skeleton from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
 import { Line } from 'react-chartjs-2'
 import Chart from 'chart.js/auto'
+import { useCallback } from 'react'
 
 async function getPrices(itemId = 1, optionId = 1, unopened = false) {
   const response = await axiosInstance.get(`/item/${itemId}/option/${optionId}`, {
@@ -19,10 +20,28 @@ async function getPrices(itemId = 1, optionId = 1, unopened = false) {
   return response.data
 }
 
-const GuideRow = ({ itemId, imgSrc, name }) => {
+const GuideRow = ({
+  itemId,
+  imgSrc,
+  name,
+  latestReleaseDate,
+  averageReleaseCycle,
+  purchaseTiming,
+}) => {
   const { md, sm } = useScreenSize()
   const [state, refetch] = useAsync(getPrices, [1, 1], [])
   const { loading, data: fetchedData, error } = state
+
+  const getDaysSinceLastReleaseDate = useCallback(() => {
+    const today = new Date()
+    const [year, month, date] = latestReleaseDate.split('-')
+
+    const daysSinceLastReleaseDate = Math.floor(
+      (today.getTime() - new Date(year, month - 1, date).getTime()) / (1000 * 60 * 60 * 24)
+    )
+
+    return daysSinceLastReleaseDate
+  }, [latestReleaseDate])
 
   return (
     <tr>
@@ -48,46 +67,60 @@ const GuideRow = ({ itemId, imgSrc, name }) => {
               </div>
             </div>
 
-            <ul className="max-w-md divide-y divide-gray-200 dark:divide-gray-700 md:mt-2">
-              <li className="pb-3 sm:pb-4">
+            <ul className="mx-auto mt-3 max-w-md divide-y divide-gray-200 dark:divide-gray-700 ">
+              <li className="py-3 sm:py-4">
                 <div className="flex items-center space-x-4">
                   <div className="w-1/2 min-w-0">
                     <p className="truncate text-sm font-medium text-gray-900 dark:text-white">
-                      마지막 출시일부터 경과일
+                      마지막 출시일
                     </p>
                   </div>
 
-                  <div className="flex-1">
-                    <div className="mb-1 flex justify-between">
-                      <span className="text-base font-medium text-blue-700 dark:text-white"></span>
-                      <span className="text-sm font-medium text-blue-700 dark:text-white">45%</span>
-                    </div>
-                    <div className="h-2.5 w-full rounded-full bg-gray-200 dark:bg-gray-700">
-                      <div
-                        className="h-2.5 rounded-full bg-blue-600"
-                        style={{ width: '45%' }}
-                      ></div>
-                    </div>
-                  </div>
+                  <div className="flex-1 text-right">{latestReleaseDate}</div>
                 </div>
               </li>
-              <li className="pb-3 sm:pb-4">
+              <li className="py-3 sm:py-4">
                 <div className="flex items-center space-x-4">
                   <div className="w-1/2 min-w-0">
                     <p className="truncate text-sm font-medium text-gray-900 dark:text-white">
-                      마지막 출시일부터 경과일
+                      평균 출시주기
+                    </p>
+                  </div>
+
+                  <div className="flex-1 text-right">{averageReleaseCycle}일</div>
+                </div>
+              </li>
+
+              <li className="py-3 sm:py-4">
+                <div className="flex items-center space-x-4">
+                  <div className="w-1/2 min-w-0">
+                    <p className="truncate text-sm font-medium text-gray-900 dark:text-white">
+                      다음 예정 출시
                     </p>
                   </div>
 
                   <div className="flex-1">
                     <div className="mb-1 flex justify-between">
-                      <span className="text-base font-medium text-blue-700 dark:text-white"></span>
-                      <span className="text-sm font-medium text-blue-700 dark:text-white">45%</span>
+                      <span className={` text-sm font-medium dark:text-white`}>출시일로부터</span>
+
+                      <div className="text-sm">
+                        <span
+                          className={`text-${purchaseTiming.color} font-semibold dark:text-white`}
+                        >
+                          {getDaysSinceLastReleaseDate()}
+                        </span>
+                        <span>일 지남</span>
+                      </div>
                     </div>
-                    <div className="h-2.5 w-full rounded-full bg-gray-200 dark:bg-gray-700">
+                    <div className="h-2s.5 w-full rounded-full bg-gray-200 dark:bg-gray-700">
                       <div
-                        className="h-2.5 rounded-full bg-blue-600"
-                        style={{ width: '45%' }}
+                        className={`h-2.5 rounded-full bg-${purchaseTiming.color}`}
+                        style={{
+                          width: `${Math.min(
+                            Math.round((getDaysSinceLastReleaseDate() / averageReleaseCycle) * 100),
+                            100
+                          )}%`,
+                        }}
                       ></div>
                     </div>
                   </div>
@@ -97,7 +130,7 @@ const GuideRow = ({ itemId, imgSrc, name }) => {
           </div>
 
           <div className="mt-3 max-w-xl xl:mt-0 xl:w-1/2">
-            <p className="text-md font-bold text-gray-900 dark:text-white">가격 그래프</p>
+            <p className="text-md font-bold text-gray-900 dark:text-white">최근 중고 시세</p>
 
             {loading ? (
               <Skeleton borderRadius="0.5rem" height={md ? '12rem' : '5rem'} />

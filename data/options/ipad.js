@@ -2,6 +2,7 @@ const optionsIpad = [
   {
     id: '6',
     model: 'iPad Mini',
+    releasedDateHistory: ['2021-09-13', '2019-03-17', '2015-09-08', '2014-10-15', '2013-10-21'],
     data: [
       {
         title: 'iPad Mini',
@@ -41,6 +42,7 @@ const optionsIpad = [
   {
     id: '7',
     model: 'iPad Air',
+    releasedDateHistory: ['2022-03-08', '2020-09-14', '2019-03-17', '2014-10-15', '2013-10-21'],
     data: [
       {
         title: 'iPad Air',
@@ -113,6 +115,7 @@ const optionsIpad = [
   {
     id: '8',
     model: 'iPad',
+    releasedDateHistory: ['2022-10-17', '2021-09-13', '2020-09-14', '2019-09-09', '2018-03-26'],
     data: [
       {
         title: 'iPad',
@@ -218,6 +221,7 @@ const optionsIpad = [
   {
     id: '9',
     model: 'iPad Pro 11',
+    releasedDateHistory: ['2022-10-17', '2021-04-19', '2020-03-17', '2018-10-29'],
     data: [
       {
         title: 'iPad Pro 11',
@@ -383,6 +387,7 @@ const optionsIpad = [
   {
     id: '10',
     model: 'iPad Pro 12.9',
+    releasedDateHistory: ['2022-10-17', '2021-04-19', '2020-03-17', '2018-10-29', '2017-06-04'],
     data: [
       {
         title: 'iPad Pro 12.9',

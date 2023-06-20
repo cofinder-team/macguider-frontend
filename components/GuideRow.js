@@ -45,7 +45,7 @@ const GuideRow = ({
   }, [latestReleaseDate])
 
   return (
-    <tr>
+    <tr className="border-b">
       <td colSpan={6}>
         <div className="flex flex-col p-3 xl:flex-row xl:space-x-4">
           <div className="xl:w-1/2">
@@ -95,13 +95,15 @@ const GuideRow = ({
                 <div className="flex items-center space-x-4">
                   <div className="w-1/2 min-w-0">
                     <p className="truncate text-sm font-medium text-gray-900 dark:text-white">
-                      다음 예정 출시
+                      출시 현황
                     </p>
                   </div>
 
                   <div className="flex-1">
                     <div className="mb-1 flex justify-between">
-                      <span className={` text-sm font-medium dark:text-white`}>출시일로부터</span>
+                      <span className={` text-sm font-medium dark:text-white`}>
+                        마지막 출시 이후
+                      </span>
 
                       <div className="text-sm">
                         <strong

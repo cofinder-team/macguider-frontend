@@ -44,7 +44,7 @@ export default function BuyersGuide() {
       .logEvent('page_view', { page_type: 'guide', page_detail: category.categoryName })
 
     if (category.categoryData.length === 0) {
-      alert('준비 중입니다! 이메일을 등록해주시면 가장 먼저 업데이트 소식을 알려드릴게요.')
+      alert('아직 준비 중입니다! 이메일을 등록해주시면 가장 먼저 업데이트 소식을 알려드릴게요.')
       return
     }
 
@@ -180,9 +180,7 @@ export default function BuyersGuide() {
                   <React.Fragment key={id}>
                     <tr
                       onClick={() => toggleRow(id)}
-                      className={`${
-                        expandedRows.includes(id) && index ? 'border-t' : ''
-                      } cursor-pointer border-b bg-white hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-600`}
+                      className="cursor-pointer border-b bg-white hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-600"
                     >
                       <td className="px-3 py-4 md:table-cell md:px-6">
                         <FontAwesomeIcon

@@ -24,6 +24,87 @@ export default function Home() {
     amplitude.getInstance().logEvent('page_view', { page_type: 'main', page_detail: 'main' })
   }, [])
 
+  const products = [
+    {
+      id: 1,
+      name: 'Fusion',
+      category: 'UI Kit',
+      href: '#',
+      price: '$49',
+      imageSrc: '/static/images/desk.png',
+      imageAlt:
+        'Payment application dashboard screenshot with transaction table, financial highlights, and main clients on colorful purple background.',
+    },
+    {
+      id: 2,
+      name: 'Fusion',
+      category: 'UI Kit',
+      href: '#',
+      price: '$49',
+      imageSrc:
+        'https://tailwindui.com/img/ecommerce-images/product-page-05-related-product-01.jpg',
+      imageAlt:
+        'Payment application dashboard screenshot with transaction table, financial highlights, and main clients on colorful purple background.',
+    },
+    {
+      id: 3,
+      name: 'Fusion',
+      category: 'UI Kit',
+      href: '#',
+      price: '$49',
+      imageSrc:
+        'https://tailwindui.com/img/ecommerce-images/product-page-05-related-product-01.jpg',
+      imageAlt:
+        'Payment application dashboard screenshot with transaction table, financial highlights, and main clients on colorful purple background.',
+    },
+    {
+      id: 4,
+      name: 'Fusion',
+      category: 'UI Kit',
+      href: '#',
+      price: '$49',
+      imageSrc:
+        'https://tailwindui.com/img/ecommerce-images/product-page-05-related-product-01.jpg',
+      imageAlt:
+        'Payment application dashboard screenshot with transaction table, financial highlights, and main clients on colorful purple background.',
+    },
+    // More products...
+  ]
+
+  const files = [
+    {
+      title: 'IMG_4985.HEIC',
+      size: '3.9 MB',
+      source:
+        'https://images.unsplash.com/photo-1582053433976-25c00369fc93?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=512&q=80',
+    },
+    {
+      title: 'IMG_4985.HEIC',
+      size: '3.9 MB',
+      source:
+        'https://images.unsplash.com/photo-1582053433976-25c00369fc93?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=512&q=80',
+    },
+    {
+      title: 'IMG_4985.HEIC',
+      size: '3.9 MB',
+      source:
+        'https://images.unsplash.com/photo-1582053433976-25c00369fc93?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=512&q=80',
+    },
+    {
+      title: 'IMG_4985.HEIC',
+      size: '3.9 MB',
+      source:
+        'https://images.unsplash.com/photo-1582053433976-25c00369fc93?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=512&q=80',
+    },
+    {
+      title: 'IMG_4985.HEIC',
+      size: '3.9 MB',
+      source:
+        'https://images.unsplash.com/photo-1582053433976-25c00369fc93?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=512&q=80',
+    },
+    // More files...
+  ]
+
   const posts = [
     {
       title: '맥 구매 가이드',
@@ -99,92 +180,65 @@ export default function Home() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
-          <div>
-            <img
-              className="h-auto max-w-full rounded-lg"
-              src="https://flowbite.s3.amazonaws.com/docs/gallery/square/image.jpg"
-              alt=""
-            />
-          </div>
-          <div>
-            <img
-              className="h-auto max-w-full rounded-lg"
-              src="https://flowbite.s3.amazonaws.com/docs/gallery/square/image-1.jpg"
-              alt=""
-            />
-          </div>
-          <div>
-            <img
-              className="h-auto max-w-full rounded-lg"
-              src="https://flowbite.s3.amazonaws.com/docs/gallery/square/image-2.jpg"
-              alt=""
-            />
-          </div>
-          <div>
-            <img
-              className="h-auto max-w-full rounded-lg"
-              src="https://flowbite.s3.amazonaws.com/docs/gallery/square/image-3.jpg"
-              alt=""
-            />
-          </div>
-          <div>
-            <img
-              className="h-auto max-w-full rounded-lg"
-              src="https://flowbite.s3.amazonaws.com/docs/gallery/square/image-4.jpg"
-              alt=""
-            />
-          </div>
-          <div>
-            <img
-              className="h-auto max-w-full rounded-lg"
-              src="https://flowbite.s3.amazonaws.com/docs/gallery/square/image-5.jpg"
-              alt=""
-            />
-          </div>
-          <div>
-            <img
-              className="h-auto max-w-full rounded-lg"
-              src="https://flowbite.s3.amazonaws.com/docs/gallery/square/image-6.jpg"
-              alt=""
-            />
-          </div>
-          <div>
-            <img
-              className="h-auto max-w-full rounded-lg"
-              src="https://flowbite.s3.amazonaws.com/docs/gallery/square/image-7.jpg"
-              alt=""
-            />
-          </div>
-          <div>
-            <img
-              className="h-auto max-w-full rounded-lg"
-              src="https://flowbite.s3.amazonaws.com/docs/gallery/square/image-8.jpg"
-              alt=""
-            />
-          </div>
-          <div>
-            <img
-              className="h-auto max-w-full rounded-lg"
-              src="https://flowbite.s3.amazonaws.com/docs/gallery/square/image-9.jpg"
-              alt=""
-            />
-          </div>
-          <div>
-            <img
-              className="h-auto max-w-full rounded-lg"
-              src="https://flowbite.s3.amazonaws.com/docs/gallery/square/image-10.jpg"
-              alt=""
-            />
-          </div>
-          <div>
-            <img
-              className="h-auto max-w-full rounded-lg"
-              src="https://flowbite.s3.amazonaws.com/docs/gallery/square/image-11.jpg"
-              alt=""
-            />
+        <div className="mt-2">
+          <div className="mt-6 grid grid-cols-1 gap-x-8 gap-y-8 sm:grid-cols-2 sm:gap-y-10 lg:grid-cols-4">
+            {products.map((product) => (
+              <div key={product.id} className="group relative">
+                <div className="aspect-h-3 aspect-w-4 overflow-hidden rounded-lg bg-gray-100">
+                  <img
+                    src={product.imageSrc}
+                    alt={product.imageAlt}
+                    className="object-cover object-center"
+                  />
+                  <div
+                    className="flex items-end p-4 opacity-0 group-hover:opacity-100"
+                    aria-hidden="true"
+                  >
+                    <div className="w-full rounded-md bg-white bg-opacity-75 px-4 py-2 text-center text-sm font-medium text-gray-900 backdrop-blur backdrop-filter">
+                      View Product
+                    </div>
+                  </div>
+                </div>
+                <div className="mt-4 flex items-center justify-between space-x-8 text-base font-medium text-gray-900">
+                  <h3>
+                    <a href="#">
+                      <span aria-hidden="true" className="absolute inset-0" />
+                      {product.name}
+                    </a>
+                  </h3>
+                  <p>{product.price}</p>
+                </div>
+                <p className="mt-1 text-sm text-gray-500">{product.category}</p>
+              </div>
+            ))}
           </div>
         </div>
+
+        {/* <ul
+          role="list"
+          className="mt-2 grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-6 lg:grid-cols-4"
+        >
+          {files.map((file) => (
+            <li key={file.source} className="relative">
+              <div className="group aspect-h-7 aspect-w-10 block w-full overflow-hidden rounded-lg bg-gray-100 focus-within:ring-2 focus-within:ring-indigo-500 focus-within:ring-offset-2 focus-within:ring-offset-gray-100">
+                <img
+                  src={file.source}
+                  alt=""
+                  className="pointer-events-none object-cover group-hover:opacity-75"
+                />
+                <button type="button" className="absolute inset-0 focus:outline-none">
+                  <span className="sr-only">View details for {file.title}</span>
+                </button>
+              </div>
+              <p className="pointer-events-none mt-2 block truncate text-sm font-medium text-gray-900">
+                {file.title}
+              </p>
+              <p className="pointer-events-none block text-sm font-medium text-gray-500">
+                {file.size}
+              </p>
+            </li>
+          ))}
+        </ul> */}
       </section>
 
       {/* <section className="mt-md-6 mt-3">

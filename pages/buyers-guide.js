@@ -227,6 +227,7 @@ export default function BuyersGuide() {
                       <GuideRow
                         name={model}
                         itemId={id}
+                        optionId={data[0].options[0].id}
                         itemDesc={desc}
                         imgSrc={data.slice(-1)[0].imgSrc}
                         latestReleaseDate={releasedDateHistory[0]}

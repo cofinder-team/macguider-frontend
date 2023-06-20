@@ -29,10 +29,20 @@ const GuideRow = ({
   latestReleaseDate,
   averageReleaseCycle,
   purchaseTiming,
+  href,
 }) => {
   const { md, sm } = useScreenSize()
   const [state, refetch] = useAsync(getPrices, [itemId, optionId], [])
   const { loading, data: fetchedData, error } = state
+
+  const getRatio = useCallback(() => {
+    const ratio = Math.min(
+      Math.round((getDaysSinceLastReleaseDate() / averageReleaseCycle) * 100),
+      100
+    )
+
+    return ratio
+  }, [averageReleaseCycle, getDaysSinceLastReleaseDate])
 
   const getDaysSinceLastReleaseDate = useCallback(() => {
     const today = new Date()
@@ -108,7 +118,8 @@ const GuideRow = ({
 
                       <div className="text-sm">
                         <strong
-                          className={`text-${purchaseTiming.color} font-semibold dark:text-white`}
+                          className="font-semibold dark:text-white"
+                          style={{ color: `${purchaseTiming.color}` }}
                         >
                           {getDaysSinceLastReleaseDate()}
                         </strong>
@@ -117,12 +128,10 @@ const GuideRow = ({
                     </div>
                     <div className="h-2s.5 w-full rounded-full bg-gray-200 dark:bg-gray-700">
                       <div
-                        className={`h-2.5 rounded-full bg-${purchaseTiming.color}`}
+                        className="h-2.5 rounded-full"
                         style={{
-                          width: `${Math.min(
-                            Math.round((getDaysSinceLastReleaseDate() / averageReleaseCycle) * 100),
-                            100
-                          )}%`,
+                          width: `${getRatio()}%`,
+                          backgroundColor: `${purchaseTiming.color}`,
                         }}
                       ></div>
                     </div>
@@ -160,7 +169,7 @@ const GuideRow = ({
             )}
 
             <Link
-              href="#"
+              href={href}
               className="mt-3 inline-flex w-full  items-center justify-center rounded-lg  border  border-blue-700 bg-white px-3 py-2 text-center text-sm font-medium text-blue-700 hover:bg-blue-800 hover:text-white focus:outline-none focus:ring-4 focus:ring-blue-300 dark:border-white dark:bg-transparent dark:text-white dark:hover:border-blue-700 dark:hover:bg-blue-700 dark:focus:ring-blue-800 md:mt-4  xl:w-auto"
               aria-label={`Link to #`}
             >

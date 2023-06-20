@@ -8,21 +8,20 @@ import { faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons'
 import GuideRow from '@/components/GuideRow'
 import { useState } from 'react'
 import Image from 'next/image'
-import { useScreenSize } from 'hooks/useScreenSize'
 import categories from '@/data/guide/categories'
 import amplitude from 'amplitude-js'
 
 const purchaseTiming = {
   good: {
-    color: 'green-500',
+    color: '#22C55E',
     text: '구매 적합',
   },
   normal: {
-    color: 'yellow-500',
+    color: '#EAB308',
     text: '구매 주의',
   },
   bad: {
-    color: 'red-500',
+    color: '#EF4444',
     text: '구매 보류',
   },
 }
@@ -30,7 +29,6 @@ const purchaseTiming = {
 export default function BuyersGuide() {
   const [currentCategory, setCurrentCategory] = useState(categories[1])
   const [expandedRows, setExpandedRows] = useState([])
-  const { md, sm } = useScreenSize()
 
   useEffect(() => {
     amplitude
@@ -105,6 +103,7 @@ export default function BuyersGuide() {
     const averageReleaseCycle = Math.round(
       releaseCycles.reduce((a, b) => a + b, 0) / releaseCycles.length
     )
+
     return averageReleaseCycle
   }, [])
 
@@ -176,7 +175,7 @@ export default function BuyersGuide() {
             <tbody>
               {categories
                 .find((category) => category.categoryName === currentCategory.categoryName)
-                .categoryData.map(({ id, model, releasedDateHistory, data, desc }, index) => (
+                .categoryData.map(({ id, model, releasedDateHistory, data, desc, href }, index) => (
                   <React.Fragment key={id}>
                     <tr
                       onClick={() => toggleRow(id)}
@@ -193,7 +192,7 @@ export default function BuyersGuide() {
                       >
                         <img
                           className="hidden h-10 w-10 md:block"
-                          src={data.slice(-1)[0].imgSrc}
+                          src={data[0].imgSrc}
                           alt={model}
                         />
                         <div className="md:pl-3">
@@ -215,9 +214,10 @@ export default function BuyersGuide() {
                       <td className="px-3 py-3 md:px-6 md:py-4">
                         <div className="flex  items-center">
                           <div
-                            className={`mr-2 h-2.5 w-2.5 rounded-full bg-${
-                              getPurchaseTiming(releasedDateHistory).color
-                            }`}
+                            className="mr-2 h-2.5 w-2.5 rounded-full"
+                            style={{
+                              backgroundColor: getPurchaseTiming(releasedDateHistory).color,
+                            }}
                           ></div>
                           <span>{getPurchaseTiming(releasedDateHistory).text}</span>
                         </div>
@@ -229,7 +229,8 @@ export default function BuyersGuide() {
                         itemId={id}
                         optionId={data[0].options[0].id}
                         itemDesc={desc}
-                        imgSrc={data.slice(-1)[0].imgSrc}
+                        href={href}
+                        imgSrc={data[0].imgSrc}
                         latestReleaseDate={releasedDateHistory[0]}
                         averageReleaseCycle={getAverageReleaseCycle(releasedDateHistory)}
                         purchaseTiming={getPurchaseTiming(releasedDateHistory)}

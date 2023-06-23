@@ -36,8 +36,6 @@ const GuideBriefRow = ({
 }) => {
   const { md, sm } = useScreenSize()
   const optionId = data[0].options[0].id
-  // const [state, refetch] = useAsync(getPrices, [itemId, optionId], [])
-  // const { loading, data: fetchedData, error } = state
   const [expandedRows, setExpandedRows] = useState([])
 
   const toggleRow = (itemId) => {
@@ -68,7 +66,7 @@ const GuideBriefRow = ({
     )
 
     return averageReleaseCycle
-  }, [])
+  }, [releasedDateHistory])
 
   const getLatestReleaseDate = useCallback(() => {
     const latestReleaseDate = releasedDateHistory[0]
@@ -77,7 +75,18 @@ const GuideBriefRow = ({
     const [year, month, day] = latestReleaseDate.split('-')
     const date = new Date(year, month - 1, day)
     return date.toLocaleDateString()
-  }, [])
+  }, [releasedDateHistory])
+
+  const getDaysSinceLastReleaseDate = useCallback(() => {
+    const today = new Date()
+    const [year, month, date] = releasedDateHistory[0].split('-')
+
+    const daysSinceLastReleaseDate = Math.floor(
+      (today.getTime() - new Date(year, month - 1, date).getTime()) / (1000 * 60 * 60 * 24)
+    )
+
+    return daysSinceLastReleaseDate
+  }, [releasedDateHistory])
 
   const getPurchaseTiming = useCallback(() => {
     const latestReleaseDate = releasedDateHistory[0]
@@ -95,23 +104,23 @@ const GuideBriefRow = ({
     } else {
       return purchaseTiming.good
     }
-  }, [])
+  }, [releasedDateHistory, getAverageReleaseCycle])
 
   const getUsedPurchaseTiming = useCallback(() => {
-    const latestUsedPrice = fetchedData.data.slice(-1)[0].mid
-    const timing = getPurchaseTiming()
+    const latestUsedPrice = fetchedData.data.filter((data) => data.mid).slice(-1)[0].mid
+    const getPriceFitScore = () => (latestUsedPrice / price) * 100
+    const getReleaseDateFitScore = () =>
+      (1 - getDaysSinceLastReleaseDate() / getAverageReleaseCycle()) * 100
+    const overallFitScore = getPriceFitScore() * 0.6 + getReleaseDateFitScore() * 0.4
 
-    console.log(latestUsedPrice, price)
-    console.log(timing)
-
-    if (latestUsedPrice < price * 0.75) {
+    if (overallFitScore >= 61) {
       return purchaseTiming.good
-    } else if (latestUsedPrice < price * 0.85 && timing !== purchaseTiming.bad) {
+    } else if (overallFitScore >= 40) {
       return purchaseTiming.normal
     } else {
       return purchaseTiming.bad
     }
-  }, [fetchedData, price, getPurchaseTiming])
+  }, [fetchedData, price, getAverageReleaseCycle, getDaysSinceLastReleaseDate])
 
   return (
     <>
@@ -154,7 +163,7 @@ const GuideBriefRow = ({
             <span>{getPurchaseTiming().text}</span>
           </div>
         </td>
-        <td className="px-3 py-3 md:px-6 md:py-4">
+        <td className="px-3 py-3 md:px-6 md:py-4 ">
           {loading || !fetchedData ? (
             <Skeleton width={md ? '5rem' : '3rem'} borderRadius="0.5rem" />
           ) : (

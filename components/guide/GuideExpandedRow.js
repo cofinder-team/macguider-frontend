@@ -1,7 +1,5 @@
 import Image from 'next/image'
 import { useScreenSize } from 'hooks/useScreenSize'
-import useAsync from 'hooks/useAsync'
-import axiosInstance from '@/lib/axios'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowRight, faCaretDown, faCaretUp, faPlay } from '@fortawesome/free-solid-svg-icons'
 import Link from '@/components/Link'
@@ -10,15 +8,6 @@ import 'react-loading-skeleton/dist/skeleton.css'
 import { Line } from 'react-chartjs-2'
 import Chart from 'chart.js/auto'
 import { useCallback } from 'react'
-
-async function getPrices(itemId = 1, optionId = 1, unopened = false) {
-  const response = await axiosInstance.get(`/item/${itemId}/option/${optionId}`, {
-    params: {
-      unopened,
-    },
-  })
-  return response.data
-}
 
 const GuideExpandedRow = ({
   itemId,
@@ -35,8 +24,6 @@ const GuideExpandedRow = ({
   price,
 }) => {
   const { md, sm } = useScreenSize()
-  // const [state, refetch] = useAsync(getPrices, [itemId, optionId], [])
-  // const { loading, data: fetchedData, error } = state
 
   const getRatio = useCallback(() => {
     const ratio = Math.min(
@@ -59,7 +46,9 @@ const GuideExpandedRow = ({
   }, [latestReleaseDate])
 
   const getPriceDiff = useCallback(() => {
-    const priceDiff = fetchedData.data.slice(-1)[0].mid - fetchedData.data.slice(-2)[0].mid
+    const priceDiff =
+      fetchedData.data.filter((data) => data.mid).slice(-1)[0].mid -
+      fetchedData.data.filter((data) => data.mid).slice(-2)[0].mid
     return priceDiff
   }, [fetchedData])
 
@@ -185,10 +174,11 @@ const GuideExpandedRow = ({
                       <p className="truncate text-sm font-medium text-gray-900 dark:text-white">
                         정가
                       </p>
+                      <div>기본형 기준</div>
                     </div>
 
                     <div className="flex-1 text-right">
-                      <strong>{price.toLocaleString()}</strong>원
+                      <strong>{price.toLocaleString()}</strong>&nbsp;원
                     </div>
                   </div>
                 </li>
@@ -198,6 +188,7 @@ const GuideExpandedRow = ({
                       <p className="truncate text-sm font-medium text-gray-900 dark:text-white">
                         최신 중고 시세
                       </p>
+                      <div>기본형 S급 기준</div>
                     </div>
 
                     <div className="flex-1 text-right">
@@ -205,16 +196,26 @@ const GuideExpandedRow = ({
                         <Skeleton width={md ? '5rem' : '3rem'} borderRadius="0.5rem" />
                       ) : (
                         <div>
-                          <strong>{fetchedData.data.slice(-1)[0].mid.toLocaleString()}</strong>원
-                          <span className={getPriceDiff() > 0 ? 'text-red-400' : 'text-green-500'}>
-                            {getPriceDiff() > 0 ? (
-                              <FontAwesomeIcon icon={faCaretUp} className="mr-1" />
-                            ) : (
-                              <FontAwesomeIcon icon={faCaretDown} className="mr-1" />
-                            )}
-                          </span>
-                          <p>{Math.abs(getPriceDiff()).toLocaleString()}</p>
-                          <p>원</p>
+                          <strong>
+                            {fetchedData.data
+                              .filter((data) => data.mid)
+                              .slice(-1)[0]
+                              .mid.toLocaleString()}
+                          </strong>
+                          &nbsp;원
+                          <div>
+                            <span
+                              className={getPriceDiff() > 0 ? 'text-red-400' : 'text-green-500'}
+                            >
+                              {getPriceDiff() > 0 ? (
+                                <FontAwesomeIcon icon={faCaretUp} className="mr-1" />
+                              ) : (
+                                <FontAwesomeIcon icon={faCaretDown} className="mr-1" />
+                              )}
+                              <strong>{Math.abs(getPriceDiff()).toLocaleString()}</strong>
+                            </span>
+                            &nbsp;원
+                          </div>
                         </div>
                       )}
                     </div>

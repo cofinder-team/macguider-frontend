@@ -67,7 +67,7 @@ const MacModel = ({ model }) => {
   const { md } = useScreenSize()
 
   // 가격 조회
-  const [state, refetch] = useAsync(getPrices, [currentItemId, 1, unopened], [])
+  const [state, refetch] = useAsync(getPrices, [currentItemId, options[0].id, unopened], [])
   const { loading, data: fetchedData, error } = state
 
   // 가격 데이터 fetch 실패시 alert창 띄우기

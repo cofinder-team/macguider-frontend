@@ -21,7 +21,6 @@ async function getPrices(itemId = 1, optionId = 1, unopened = false) {
 
 export default function BuyersGuide() {
   const [currentCategory, setCurrentCategory] = useState(categories[1])
-  const [expandedRows, setExpandedRows] = useState([])
 
   // 가격 조회
   const [state, refetch] = useAsyncAll(
@@ -42,10 +41,6 @@ export default function BuyersGuide() {
       .logEvent('page_view', { page_type: 'guide', page_detail: categories[1].categoryName })
   }, [])
 
-  useEffect(() => {
-    console.log(fetchedData)
-  }, [loading])
-
   const onClickCategory = (category) => {
     amplitude
       .getInstance()
@@ -56,7 +51,6 @@ export default function BuyersGuide() {
       return
     }
 
-    setExpandedRows([])
     setCurrentCategory(category)
   }
 

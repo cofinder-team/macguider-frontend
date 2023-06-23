@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import amplitude from 'amplitude-js'
 
 export default function DeskSection({ desk }) {
-  const { images, productInfo } = desk
+  const { images, productInfo, desc } = desk
   // state for selectedImage in each section
   const [selectedImage, setSelectedImage] = useState(images[0])
   const [expandedRows, setExpandedRows] = useState([])
@@ -28,7 +28,9 @@ export default function DeskSection({ desk }) {
       <div className="grid gap-4">
         <div>
           <img
-            className="h-[240px] w-full rounded-lg object-cover md:h-[420px]"
+            className={`h-[280px] w-full rounded-lg md:h-[420px] ${
+              selectedImage.cover ? 'object-cover' : 'object-contain'
+            }`}
             src={selectedImage.src}
             alt={selectedImage.alt}
           />
@@ -44,7 +46,15 @@ export default function DeskSection({ desk }) {
                 selectedImage.id === image.id ? 'border-blue-800' : 'border-transparent'
               }`}
             >
-              <img className="h-full w-full object-cover" src={image.src} alt={image.alt} />
+              <img
+                className={`h-full w-full object-contain ${
+                  image.cover ? 'object-cover' : 'object-contain'
+                }
+                `}
+                src={image.src}
+                alt={image.alt}
+                draggable="false"
+              />
             </div>
           ))}
         </div>
@@ -90,8 +100,8 @@ export default function DeskSection({ desk }) {
             >
               <div className="grid w-full grid-cols-1 items-start gap-x-6 gap-y-8 border-b border-gray-200 py-5 dark:border-gray-700 sm:grid-cols-12 lg:gap-x-8">
                 <div className="sm:col-span-4 lg:col-span-5">
-                  <div className="aspect-h-1 aspect-w-1 overflow-hidden rounded-lg bg-gray-100">
-                    <img src={src} alt={alt} className="object-cover object-center" />
+                  <div className="aspect-h-1 aspect-w-1 overflow-hidden rounded-lg ">
+                    <img src={src} alt={alt} className="object-contain object-center" />
                   </div>
                 </div>
                 <div className="sm:col-span-8 lg:col-span-7">
@@ -127,12 +137,7 @@ export default function DeskSection({ desk }) {
         ))}
       </div>
 
-      <p className="mt-6">
-        Track work acrosss the enterprise through an open, collaborative platform. Link issues
-        across Jira and ingest data from other software development tools, so your IT support and
-        operations teams have richer contextual information to rapidly respond to requests,
-        incidents, and changes.
-      </p>
+      <p className="mt-6">{desc}</p>
       <p className="mt-3">
         Deliver great service experiences fast - without the complexity of traditional ITSM
         solutions.Accelerate critical development work, eliminate toil, and deploy changes with

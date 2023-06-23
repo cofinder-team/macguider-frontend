@@ -45,9 +45,11 @@ export default function Example({ deskId }) {
               </address>
             </div>
 
-            {desk.sections.map((section) => (
-              <DeskSection key={section.id} desk={section} />
-            ))}
+            <div className="space-y-9">
+              {desk.sections.map((section) => (
+                <DeskSection key={section.id} desk={section} />
+              ))}
+            </div>
           </article>
         </div>
       </section>

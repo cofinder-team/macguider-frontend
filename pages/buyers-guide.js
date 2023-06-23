@@ -42,6 +42,10 @@ export default function BuyersGuide() {
       .logEvent('page_view', { page_type: 'guide', page_detail: categories[1].categoryName })
   }, [])
 
+  useEffect(() => {
+    console.log(fetchedData)
+  }, [loading])
+
   const onClickCategory = (category) => {
     amplitude
       .getInstance()

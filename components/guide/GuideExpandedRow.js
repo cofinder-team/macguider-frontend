@@ -3,7 +3,7 @@ import { useScreenSize } from 'hooks/useScreenSize'
 import useAsync from 'hooks/useAsync'
 import axiosInstance from '@/lib/axios'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faArrowRight, faCaretUp, faPlay } from '@fortawesome/free-solid-svg-icons'
+import { faArrowRight, faCaretDown, faCaretUp, faPlay } from '@fortawesome/free-solid-svg-icons'
 import Link from '@/components/Link'
 import Skeleton from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
@@ -201,17 +201,20 @@ const GuideExpandedRow = ({
                     </div>
 
                     <div className="flex-1 text-right">
-                      {/* <strong>{fetchedData.data.slice(-1)[0].mid}</strong>원 */}
                       {loading || !fetchedData ? (
                         <Skeleton width={md ? '5rem' : '3rem'} borderRadius="0.5rem" />
                       ) : (
-                        <div className={getPriceDiff() > 0 ? 'text-red-500' : 'text-green-500'}>
-                          <p>지난주 대비</p>
-                          <FontAwesomeIcon
-                            icon={faPlay}
-                            className={`mr-1 ${getPriceDiff() > 0 ? 'rotate-180' : 'rotate-90'}`}
-                          />
-                          <strong>{Math.abs(getPriceDiff()).toLocaleString()}</strong>원
+                        <div>
+                          <strong>{fetchedData.data.slice(-1)[0].mid.toLocaleString()}</strong>원
+                          <span className={getPriceDiff() > 0 ? 'text-red-400' : 'text-green-500'}>
+                            {getPriceDiff() > 0 ? (
+                              <FontAwesomeIcon icon={faCaretUp} className="mr-1" />
+                            ) : (
+                              <FontAwesomeIcon icon={faCaretDown} className="mr-1" />
+                            )}
+                            <p>{Math.abs(getPriceDiff()).toLocaleString()}</p>
+                          </span>
+                          <p>원</p>
                         </div>
                       )}
                     </div>

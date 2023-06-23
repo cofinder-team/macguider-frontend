@@ -53,7 +53,7 @@ const GuideBriefRow = ({ itemId, releasedDateHistory, model, data, desc, href, p
       .logEvent('do_action', { action_type: 'guide_toggle', action_detail: itemId })
   }
 
-  const getAverageReleaseCycle = useCallback((releasedDateHistory) => {
+  const getAverageReleaseCycle = useCallback(() => {
     const releaseCycles = []
     for (let i = 0; i < releasedDateHistory.length - 1; i++) {
       // convert YYYY-MM-DD string to Date object
@@ -71,7 +71,7 @@ const GuideBriefRow = ({ itemId, releasedDateHistory, model, data, desc, href, p
     return averageReleaseCycle
   }, [])
 
-  const getLatestReleaseDate = useCallback((releasedDateHistory) => {
+  const getLatestReleaseDate = useCallback(() => {
     const latestReleaseDate = releasedDateHistory[0]
 
     // convert YYYY-MM-DD string to locale string
@@ -80,7 +80,7 @@ const GuideBriefRow = ({ itemId, releasedDateHistory, model, data, desc, href, p
     return date.toLocaleDateString()
   }, [])
 
-  const getPurchaseTiming = useCallback((releasedDateHistory) => {
+  const getPurchaseTiming = useCallback(() => {
     const latestReleaseDate = releasedDateHistory[0]
     const averageReleaseCycle = getAverageReleaseCycle(releasedDateHistory)
     const today = new Date()
@@ -100,15 +100,25 @@ const GuideBriefRow = ({ itemId, releasedDateHistory, model, data, desc, href, p
 
   const getUsedPurchaseTiming = useCallback(() => {
     const latestUsedPrice = fetchedData.data.slice(-1)[0].mid
+    const purchaseTiming = getPurchaseTiming()
 
-    if (latestUsedPrice < price * 0.8) {
+    console.log(latestUsedPrice, price)
+    console.log(purchaseTiming)
+
+    if (
+      latestUsedPrice < price * 0.75 &&
+      (purchaseTiming === purchaseTiming.good || purchaseTiming === purchaseTiming.normal)
+    ) {
       return purchaseTiming.good
-    } else if (latestUsedPrice < price * 0.85) {
+    } else if (
+      latestUsedPrice < price * 0.85 &&
+      (purchaseTiming === purchaseTiming.good || purchaseTiming === purchaseTiming.normal)
+    ) {
       return purchaseTiming.normal
     } else {
       return purchaseTiming.bad
     }
-  }, [fetchedData, price])
+  }, [fetchedData, price, getPurchaseTiming])
 
   return (
     <>
@@ -132,23 +142,23 @@ const GuideBriefRow = ({ itemId, releasedDateHistory, model, data, desc, href, p
           className="hidden px-3 py-3 sm:table-cell md:px-6 md:py-4"
           style={{ wordBreak: 'keep-all' }}
         >
-          {getLatestReleaseDate(releasedDateHistory)}
+          {getLatestReleaseDate()}
         </td>
         <td
           className="hidden px-3  py-3 sm:table-cell md:px-6 md:py-4"
           style={{ wordBreak: 'keep-all' }}
         >
-          {getAverageReleaseCycle(releasedDateHistory)}일
+          {getAverageReleaseCycle()}일
         </td>
         <td className="px-3 py-3 md:px-6 md:py-4">
           <div className="flex  items-center">
             <div
               className="mr-2 h-2.5 w-2.5 rounded-full"
               style={{
-                backgroundColor: getPurchaseTiming(releasedDateHistory).color,
+                backgroundColor: getPurchaseTiming().color,
               }}
             ></div>
-            <span>{getPurchaseTiming(releasedDateHistory).text}</span>
+            <span>{getPurchaseTiming().text}</span>
           </div>
         </td>
         <td className="px-3 py-3 md:px-6 md:py-4">
@@ -156,15 +166,15 @@ const GuideBriefRow = ({ itemId, releasedDateHistory, model, data, desc, href, p
             {loading || !fetchedData ? (
               <Skeleton width={md ? '5rem' : '3rem'} borderRadius="0.5rem" />
             ) : (
-              <>
+              <div style={{ width: md ? '5rem' : '3rem' }}>
                 <div
                   className="mr-2 h-2.5 w-2.5 rounded-full"
                   style={{
-                    backgroundColor: getUsedPurchaseTiming(releasedDateHistory).color,
+                    backgroundColor: getUsedPurchaseTiming().color,
                   }}
                 ></div>
                 <span>{getUsedPurchaseTiming().text}</span>
-              </>
+              </div>
             )}
           </div>
         </td>
@@ -178,8 +188,8 @@ const GuideBriefRow = ({ itemId, releasedDateHistory, model, data, desc, href, p
           href={href}
           imgSrc={data[0].imgSrc}
           latestReleaseDate={releasedDateHistory[0]}
-          averageReleaseCycle={getAverageReleaseCycle(releasedDateHistory)}
-          purchaseTiming={getPurchaseTiming(releasedDateHistory)}
+          averageReleaseCycle={getAverageReleaseCycle()}
+          purchaseTiming={getPurchaseTiming()}
           fetchedData={fetchedData}
           loading={loading}
           price={price}

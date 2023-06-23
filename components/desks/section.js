@@ -33,6 +33,7 @@ export default function DeskSection({ desk }) {
             }`}
             src={selectedImage.src}
             alt={selectedImage.alt}
+            draggable="false"
           />
         </div>
         <div className="grid grid-cols-5 gap-4">
@@ -138,11 +139,6 @@ export default function DeskSection({ desk }) {
       </div>
 
       <p className="mt-6">{desc}</p>
-      <p className="mt-3">
-        Deliver great service experiences fast - without the complexity of traditional ITSM
-        solutions.Accelerate critical development work, eliminate toil, and deploy changes with
-        ease, with a complete audit trail for every change.
-      </p>
     </>
   )
 }

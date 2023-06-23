@@ -227,7 +227,7 @@ const GuideExpandedRow = ({
                 href={href}
                 className="mt-3 inline-flex w-full  items-center justify-center rounded-lg  border  border-blue-700 bg-white px-3 py-2 text-center text-sm font-medium text-blue-700 hover:bg-blue-800 hover:text-white focus:outline-none focus:ring-4 focus:ring-blue-300 dark:border-white dark:bg-transparent dark:text-white dark:hover:border-blue-700 dark:hover:bg-blue-700 dark:focus:ring-blue-800 md:mt-4  xl:w-auto"
               >
-                더 알아보기 <FontAwesomeIcon icon={faArrowRight} className="ml-2" />
+                가격 알아보기 <FontAwesomeIcon icon={faArrowRight} className="ml-2" />
               </Link>
             </div>
           </div>

@@ -3,7 +3,7 @@ const desks = [
     id: '1',
     author: 'SimpleMotive',
     name: '고급스러운 인테리어 감성과 어우러진 데스크',
-    href: '/desk/sample',
+    href: '/desk/1',
     imageSrc: '/static/images/desks/desk1.png',
     imageAlt:
       'Payment application dashboard screenshot with transaction table, financial highlights, and main clients on colorful purple background.',
@@ -133,9 +133,9 @@ const desks = [
         images: [
           {
             id: 1,
-            src: 'https://cafeptthumb-phinf.pstatic.net/MjAyMzA1MjVfMjk4/MDAxNjg1MDI1MTM1NjAx.oD9OGwaBmFZEu7N9JTtmc7ENcNuJHo0Lh4p0huHAdeAg.jqNZxyapxnj3zOneqq1BooN9cXI-SNwNQpwR1I4DPTYg.PNG/%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7_2023-05-25_%EC%98%A4%ED%9B%84_10.58.11.png?type=w1600',
+            src: 'https://static.waveon.io/img/apps/18146/스크린샷_2023-05-25_오후_10.58.11.png',
             alt: 'Payment application dashboard screenshot with transaction table, financial highlights, and main clients on colorful purple background.',
-            cover: false,
+            cover: true,
           },
           {
             id: 2,

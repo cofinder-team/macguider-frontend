@@ -12,8 +12,7 @@ import ModelCard from '@/components/ModelCard'
 import amplitude from 'amplitude-js'
 import SectionDesk from '@/components/section/desk'
 import Link from '@/components/Link'
-
-const MAX_DISPLAY = 5
+import Promo from '@/components/Promo'
 
 export async function getStaticProps() {
   const posts = await getAllFilesFrontMatter('blog')
@@ -26,105 +25,11 @@ export default function Home() {
     amplitude.getInstance().logEvent('page_view', { page_type: 'main', page_detail: 'main' })
   }, [])
 
-  const products = [
-    {
-      id: 1,
-      name: 'Fusion',
-      category: 'UI Kit',
-      href: '#',
-      price: '$49',
-      imageSrc: '/static/images/desk.png',
-      imageAlt:
-        'Payment application dashboard screenshot with transaction table, financial highlights, and main clients on colorful purple background.',
-    },
-    {
-      id: 2,
-      name: 'Fusion',
-      category: 'UI Kit',
-      href: '#',
-      price: '$49',
-      imageSrc:
-        'https://tailwindui.com/img/ecommerce-images/product-page-05-related-product-01.jpg',
-      imageAlt:
-        'Payment application dashboard screenshot with transaction table, financial highlights, and main clients on colorful purple background.',
-    },
-    {
-      id: 3,
-      name: 'Fusion',
-      category: 'UI Kit',
-      href: '#',
-      price: '$49',
-      imageSrc:
-        'https://tailwindui.com/img/ecommerce-images/product-page-05-related-product-01.jpg',
-      imageAlt:
-        'Payment application dashboard screenshot with transaction table, financial highlights, and main clients on colorful purple background.',
-    },
-    {
-      id: 4,
-      name: 'Fusion',
-      category: 'UI Kit',
-      href: '#',
-      price: '$49',
-      imageSrc:
-        'https://tailwindui.com/img/ecommerce-images/product-page-05-related-product-01.jpg',
-      imageAlt:
-        'Payment application dashboard screenshot with transaction table, financial highlights, and main clients on colorful purple background.',
-    },
-    // More products...
-  ]
-
-  const files = [
-    {
-      title: 'IMG_4985.HEIC',
-      size: '3.9 MB',
-      source:
-        'https://images.unsplash.com/photo-1582053433976-25c00369fc93?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=512&q=80',
-    },
-    {
-      title: 'IMG_4985.HEIC',
-      size: '3.9 MB',
-      source:
-        'https://images.unsplash.com/photo-1582053433976-25c00369fc93?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=512&q=80',
-    },
-    {
-      title: 'IMG_4985.HEIC',
-      size: '3.9 MB',
-      source:
-        'https://images.unsplash.com/photo-1582053433976-25c00369fc93?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=512&q=80',
-    },
-    {
-      title: 'IMG_4985.HEIC',
-      size: '3.9 MB',
-      source:
-        'https://images.unsplash.com/photo-1582053433976-25c00369fc93?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=512&q=80',
-    },
-    {
-      title: 'IMG_4985.HEIC',
-      size: '3.9 MB',
-      source:
-        'https://images.unsplash.com/photo-1582053433976-25c00369fc93?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=512&q=80',
-    },
-    // More files...
-  ]
-
-  const posts = [
-    {
-      title: '맥 구매 가이드',
-      summary:
-        '맥 구매 가이드 맥 구매 가이드 맥 구매 가이드 맥 구매 가이드 맥 구매 가이드 맥 구매 가이드 맥 구매 가이드 맥 구매 가이드 맥 구매 가이드 맥 구매 가이드 맥 구매 가이드 맥 구매 가이드 맥 구매 가이드 맥 구매 가이드 ',
-      slug: 'mac-buying-guide',
-    },
-    {
-      title: '애플농장',
-      summary:
-        '맥 구매 가이드 맥 구매 가이드 맥 구매 가이드 맥 구매 가이드 맥 구매 가이드 맥 구매 가이드 맥 구매 가이드 맥 구매 가이드 맥 구매 가이드 맥 구매 가이드 맥 구매 가이드 맥 구매 가이드 맥 구매 가이드 맥 구매 가이드 ',
-      slug: 'apple-farm',
-    },
-  ]
   return (
     <>
       <PageSEO title={siteMetadata.title} description={siteMetadata.description} />
-      <div className="overflow-hidden pt-32 sm:pt-14">
+
+      {/* <div className="overflow-hidden pt-32 sm:pt-14">
         <div>
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="relative pb-10 pt-48 sm:pb-24 md:pt-16">
@@ -190,7 +95,7 @@ export default function Home() {
             </div>
           </div>
         </div>
-      </div>
+      </div> */}
 
       <section className="mt-md-6 mt-3">
         <div className="space-y-2 pb-2 md:pt-6">
@@ -235,6 +140,8 @@ export default function Home() {
       </section>
 
       <SectionDesk />
+
+      <Promo />
 
       <div className="mt-12 flex items-center justify-center">
         <NewsletterForm />

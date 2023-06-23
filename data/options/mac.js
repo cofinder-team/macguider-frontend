@@ -5,6 +5,7 @@ const optionsMac = [
     releasedDateHistory: ['2023-01-17', '2020-11-10', '2018-10-30'],
     desc: 'M2와 M2 Pro 칩을 탑재한 Mac Mini는 미니라고 부를 수 없을 정도로 좋은 성능과 착한 가격을 가지고 있습니다. 뛰어난 가성비를 자랑하는 만큼 맥에 입문하기에 최적의 제품입니다.',
     href: '/prices/mac/mac-mini',
+    price: 850000, // 가장 최신 제품의 기본형의 가격
     data: [
       {
         title: 'Mac Mini',
@@ -161,6 +162,7 @@ const optionsMac = [
     model: 'MacBook Air 13',
     desc: '완전히 리뉴얼된 MacBook Air는 가벼움은 유지하면서 더욱 선명한 Liquid Retina 디스플레이를 탑재하였습니다. MagSafe를 지원하여 조금 더 여유로워진 포트 구성을 가지고 있습니다.',
     href: '/prices/mac/macbook-air-13',
+    price: 1590000, // 가장 최신 제품의 기본형의 가격
     releasedDateHistory: [
       '2022-06-06',
       '2022-11-10',
@@ -349,6 +351,7 @@ const optionsMac = [
     releasedDateHistory: ['2022-06-06', '2022-11-10', '2020-05-04', '2019-05-21', '2018-07-12'],
     desc: 'MacBook Pro 엔트리 라인으로 터치바가 남아있는 유일한 제품입니다. M2 칩을 탑재하여 성능은 뛰어나지만 몇 년동안 동일한 디자인을 가지고 있어 약간 아쉬운 제품입니다.',
     href: '/prices/mac/macbook-pro-13',
+    price: 1790000, // 가장 최신 제품의 기본형의 가격
     data: [
       {
         title: 'MacBook Pro 13',
@@ -442,6 +445,7 @@ const optionsMac = [
     releasedDateHistory: ['2023-01-17', '2021-10-18'],
     desc: 'M2 Pro와 M2 Max를 탑재한 14인치 MacBook Pro는 뛰어난 성능, 아름다운 디스플레이, 하루종일 가는 배터리, 넉넉한 포트구성 등 흠잡을 게 없는 제품입니다. 필요하다면 지금 구매하세요.',
     href: '/prices/mac/macbook-pro-14',
+    price: 2790000, // 가장 최신 제품의 기본형의 가격
     data: [
       {
         title: 'MacBook Pro 14',
@@ -739,6 +743,7 @@ const optionsMac = [
     releasedDateHistory: ['2023-01-17', '2021-10-18', '2019-11-13'],
     desc: 'M2 Pro와 M2 Max를 탑재한 16인치 MacBook Pro는 뛰어난 성능, 아름다운 광활한 디스플레이, 하루종일 가는 배터리, 넉넉한 포트구성 등 거의 완벽한 제품입니다. 유일한 단점은 무게입니다. 필요하다면 지금 구매하세요.',
     href: '/prices/mac/macbook-pro-16',
+    price: 3490000, // 가장 최신 제품의 기본형의 가격
     data: [
       {
         title: 'MacBook Pro 16',

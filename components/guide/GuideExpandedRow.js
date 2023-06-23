@@ -3,7 +3,7 @@ import { useScreenSize } from 'hooks/useScreenSize'
 import useAsync from 'hooks/useAsync'
 import axiosInstance from '@/lib/axios'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faArrowRight } from '@fortawesome/free-solid-svg-icons'
+import { faArrowRight, faCaretUp, faPlay } from '@fortawesome/free-solid-svg-icons'
 import Link from '@/components/Link'
 import Skeleton from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
@@ -20,7 +20,7 @@ async function getPrices(itemId = 1, optionId = 1, unopened = false) {
   return response.data
 }
 
-const GuideRow = ({
+const GuideExpandedRow = ({
   itemId,
   optionId,
   itemDesc,
@@ -30,10 +30,13 @@ const GuideRow = ({
   averageReleaseCycle,
   purchaseTiming,
   href,
+  fetchedData,
+  loading,
+  price,
 }) => {
   const { md, sm } = useScreenSize()
-  const [state, refetch] = useAsync(getPrices, [itemId, optionId], [])
-  const { loading, data: fetchedData, error } = state
+  // const [state, refetch] = useAsync(getPrices, [itemId, optionId], [])
+  // const { loading, data: fetchedData, error } = state
 
   const getRatio = useCallback(() => {
     const ratio = Math.min(
@@ -54,6 +57,11 @@ const GuideRow = ({
 
     return daysSinceLastReleaseDate
   }, [latestReleaseDate])
+
+  const getPriceDiff = useCallback(() => {
+    const priceDiff = fetchedData.data.slice(-1)[0].mid - fetchedData.data.slice(-2)[0].mid
+    return priceDiff
+  }, [fetchedData])
 
   return (
     <tr className="border-b">
@@ -142,39 +150,82 @@ const GuideRow = ({
           </div>
 
           <div className="mt-3 max-w-xl md:mx-auto md:w-2/3 xl:mt-0 xl:w-1/2">
-            <p className="text-md font-bold text-gray-900 dark:text-white">최근 중고 시세</p>
+            <div className="mx-auto max-w-md">
+              <p className="text-md mb-2 font-bold text-gray-900 dark:text-white">최근 중고 시세</p>
+              {loading || !fetchedData ? (
+                <Skeleton borderRadius="0.5rem" height={md ? '14rem' : '10rem'} />
+              ) : (
+                <Line
+                  datasetIdKey="id"
+                  data={{
+                    labels: fetchedData.data.map((price) =>
+                      // format to MMDD in en-US locale
+                      new Date(price.date).toLocaleDateString('en-US', {
+                        month: '2-digit',
+                        day: '2-digit',
+                      })
+                    ),
+                    datasets: [
+                      {
+                        id: 1,
+                        label: '평균시세',
+                        data: fetchedData.data.map((price, _index) =>
+                          price.mid ? price.mid : null
+                        ),
+                      },
+                    ],
+                  }}
+                />
+              )}
 
-            {loading || !fetchedData ? (
-              <Skeleton borderRadius="0.5rem" height={md ? '18rem' : '10rem'} />
-            ) : (
-              <Line
-                datasetIdKey="id"
-                data={{
-                  labels: fetchedData.data.map((price) =>
-                    // format to MMDD in en-US locale
-                    new Date(price.date).toLocaleDateString('en-US', {
-                      month: '2-digit',
-                      day: '2-digit',
-                    })
-                  ),
-                  datasets: [
-                    {
-                      id: 1,
-                      label: '평균시세',
-                      data: fetchedData.data.map((price, _index) => (price.mid ? price.mid : null)),
-                    },
-                  ],
-                }}
-              />
-            )}
+              <ul className="mx-auto mt-3 max-w-md divide-y divide-gray-200 dark:divide-gray-700 ">
+                <li className="py-3 sm:py-4">
+                  <div className="flex items-center space-x-4">
+                    <div className="w-1/2 min-w-0">
+                      <p className="truncate text-sm font-medium text-gray-900 dark:text-white">
+                        정가
+                      </p>
+                    </div>
 
-            <Link
-              href={href}
-              className="mt-3 inline-flex w-full  items-center justify-center rounded-lg  border  border-blue-700 bg-white px-3 py-2 text-center text-sm font-medium text-blue-700 hover:bg-blue-800 hover:text-white focus:outline-none focus:ring-4 focus:ring-blue-300 dark:border-white dark:bg-transparent dark:text-white dark:hover:border-blue-700 dark:hover:bg-blue-700 dark:focus:ring-blue-800 md:mt-4  xl:w-auto"
-              aria-label={`Link to #`}
-            >
-              더 알아보기 <FontAwesomeIcon icon={faArrowRight} className="ml-2" />
-            </Link>
+                    <div className="flex-1 text-right">
+                      <strong>{price.toLocaleString()}</strong>원
+                    </div>
+                  </div>
+                </li>
+                <li className="py-3 sm:py-4">
+                  <div className="flex items-center space-x-4">
+                    <div className="w-1/2 min-w-0">
+                      <p className="truncate text-sm font-medium text-gray-900 dark:text-white">
+                        최신 중고 시세
+                      </p>
+                    </div>
+
+                    <div className="flex-1 text-right">
+                      {/* <strong>{fetchedData.data.slice(-1)[0].mid}</strong>원 */}
+                      {loading || !fetchedData ? (
+                        <Skeleton width={md ? '5rem' : '3rem'} borderRadius="0.5rem" />
+                      ) : (
+                        <div className={getPriceDiff() > 0 ? 'text-red-500' : 'text-green-500'}>
+                          <p>지난주 대비</p>
+                          <FontAwesomeIcon
+                            icon={faPlay}
+                            className={`mr-1 ${getPriceDiff() > 0 ? 'rotate-180' : 'rotate-90'}`}
+                          />
+                          <strong>{Math.abs(getPriceDiff()).toLocaleString()}</strong>원
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </li>
+              </ul>
+
+              <Link
+                href={href}
+                className="mt-3 inline-flex w-full  items-center justify-center rounded-lg  border  border-blue-700 bg-white px-3 py-2 text-center text-sm font-medium text-blue-700 hover:bg-blue-800 hover:text-white focus:outline-none focus:ring-4 focus:ring-blue-300 dark:border-white dark:bg-transparent dark:text-white dark:hover:border-blue-700 dark:hover:bg-blue-700 dark:focus:ring-blue-800 md:mt-4  xl:w-auto"
+              >
+                더 알아보기 <FontAwesomeIcon icon={faArrowRight} className="ml-2" />
+              </Link>
+            </div>
           </div>
         </div>
       </td>
@@ -182,4 +233,4 @@ const GuideRow = ({
   )
 }
 
-export default GuideRow
+export default GuideExpandedRow

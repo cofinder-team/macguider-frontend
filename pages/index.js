@@ -127,7 +127,7 @@ export default function Home() {
       <div className="overflow-hidden pt-32 sm:pt-14">
         <div>
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="relative pb-16 pt-48 sm:pb-24">
+            <div className="relative pb-10 pt-48 sm:pb-24 md:pt-16">
               <div>
                 <div className="mb-2 w-max rounded bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800 dark:bg-blue-900 dark:text-blue-300">
                   New

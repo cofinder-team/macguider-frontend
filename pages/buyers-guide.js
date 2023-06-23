@@ -2,29 +2,11 @@ import { PageSEO } from '@/components/SEO'
 import React, { useCallback, useEffect } from 'react'
 
 import NewsletterForm from '@/components/NewsletterForm'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons'
-
-import GuideRow from '@/components/GuideRow'
 import { useState } from 'react'
 import Image from 'next/image'
 import categories from '@/data/guide/categories'
 import amplitude from 'amplitude-js'
-
-const purchaseTiming = {
-  good: {
-    color: '#22C55E',
-    text: '구매 적합',
-  },
-  normal: {
-    color: '#EAB308',
-    text: '구매 주의',
-  },
-  bad: {
-    color: '#EF4444',
-    text: '구매 보류',
-  },
-}
+import GuideBriefRow from '@/components/guide/GuideBriefRow'
 
 export default function BuyersGuide() {
   const [currentCategory, setCurrentCategory] = useState(categories[1])
@@ -50,63 +32,6 @@ export default function BuyersGuide() {
     setCurrentCategory(category)
   }
 
-  const toggleRow = (itemId) => {
-    const isRowExpanded = expandedRows.includes(itemId)
-    if (isRowExpanded) {
-      setExpandedRows(expandedRows.filter((row) => row !== itemId))
-    } else {
-      setExpandedRows([...expandedRows, itemId])
-    }
-    amplitude
-      .getInstance()
-      .logEvent('do_action', { action_type: 'guide_toggle', action_detail: itemId })
-  }
-
-  const getPurchaseTiming = useCallback((releasedDateHistory) => {
-    const latestReleaseDate = releasedDateHistory[0]
-    const averageReleaseCycle = getAverageReleaseCycle(releasedDateHistory)
-    const today = new Date()
-    const [year, month, day] = latestReleaseDate.split('-')
-    const date = new Date(year, month - 1, day)
-    const diffTime = Math.abs(today - date)
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
-
-    if (diffDays > averageReleaseCycle * 0.85) {
-      return purchaseTiming.bad
-    } else if (diffDays > averageReleaseCycle * 0.6) {
-      return purchaseTiming.normal
-    } else {
-      return purchaseTiming.good
-    }
-  }, [])
-
-  const getLatestReleaseDate = useCallback((releasedDateHistory) => {
-    const latestReleaseDate = releasedDateHistory[0]
-
-    // convert YYYY-MM-DD string to locale string
-    const [year, month, day] = latestReleaseDate.split('-')
-    const date = new Date(year, month - 1, day)
-    return date.toLocaleDateString()
-  }, [])
-
-  const getAverageReleaseCycle = useCallback((releasedDateHistory) => {
-    const releaseCycles = []
-    for (let i = 0; i < releasedDateHistory.length - 1; i++) {
-      // convert YYYY-MM-DD string to Date object
-      const date1 = new Date(...releasedDateHistory[i].split('-'))
-      const date2 = new Date(...releasedDateHistory[i + 1].split('-'))
-      const diffTime = Math.abs(date2 - date1)
-      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
-      releaseCycles.push(diffDays)
-    }
-
-    const averageReleaseCycle = Math.round(
-      releaseCycles.reduce((a, b) => a + b, 0) / releaseCycles.length
-    )
-
-    return averageReleaseCycle
-  }, [])
-
   return (
     <>
       <PageSEO
@@ -120,7 +45,7 @@ export default function BuyersGuide() {
             애플 제품 구매 가이드
           </h1>
           <p className="text-lg leading-7 text-gray-500 dark:text-gray-400">
-            출시 주기 및 중고거래 데이터를 기반으로 적정 구매시기를 제공합니다.
+            출시 주기 및 중고거래 데이터를 기반으로 애플 제품의 적절한 구매시기를 알려드립니다.
           </p>
         </div>
 
@@ -168,76 +93,30 @@ export default function BuyersGuide() {
                   평균 출시주기
                 </th>
                 <th scope="col" className="px-3 py-3 md:px-6" style={{ wordBreak: 'keep-all' }}>
-                  구매 적합도
+                  새제품 구매
+                </th>
+                <th scope="col" className="px-3 py-3 md:px-6" style={{ wordBreak: 'keep-all' }}>
+                  중고 구매
                 </th>
               </tr>
             </thead>
             <tbody>
               {categories
                 .find((category) => category.categoryName === currentCategory.categoryName)
-                .categoryData.map(({ id, model, releasedDateHistory, data, desc, href }, index) => (
-                  <React.Fragment key={id}>
-                    <tr
-                      onClick={() => toggleRow(id)}
-                      className="cursor-pointer border-b bg-white hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-600"
-                    >
-                      <td className="px-3 py-4 md:table-cell md:px-6">
-                        <FontAwesomeIcon
-                          icon={expandedRows.includes(id) ? faChevronUp : faChevronDown}
-                        />
-                      </td>
-                      <th
-                        scope="row"
-                        className="flex items-center whitespace-nowrap px-3 py-3 text-gray-900 dark:text-white md:px-6 md:py-4"
-                      >
-                        <img
-                          className="hidden h-10 w-10 md:block"
-                          src={data[0].imgSrc}
-                          alt={model}
-                        />
-                        <div className="md:pl-3">
-                          <div className="text-base font-semibold">{model}</div>
-                        </div>
-                      </th>
-                      <td
-                        className="hidden px-3 py-3 sm:table-cell md:px-6 md:py-4"
-                        style={{ wordBreak: 'keep-all' }}
-                      >
-                        {getLatestReleaseDate(releasedDateHistory)}
-                      </td>
-                      <td
-                        className="hidden px-3  py-3 sm:table-cell md:px-6 md:py-4"
-                        style={{ wordBreak: 'keep-all' }}
-                      >
-                        {getAverageReleaseCycle(releasedDateHistory)}일
-                      </td>
-                      <td className="px-3 py-3 md:px-6 md:py-4">
-                        <div className="flex  items-center">
-                          <div
-                            className="mr-2 h-2.5 w-2.5 rounded-full"
-                            style={{
-                              backgroundColor: getPurchaseTiming(releasedDateHistory).color,
-                            }}
-                          ></div>
-                          <span>{getPurchaseTiming(releasedDateHistory).text}</span>
-                        </div>
-                      </td>
-                    </tr>
-                    {expandedRows.includes(id) && (
-                      <GuideRow
-                        name={model}
-                        itemId={id}
-                        optionId={data[0].options[0].id}
-                        itemDesc={desc}
-                        href={href}
-                        imgSrc={data[0].imgSrc}
-                        latestReleaseDate={releasedDateHistory[0]}
-                        averageReleaseCycle={getAverageReleaseCycle(releasedDateHistory)}
-                        purchaseTiming={getPurchaseTiming(releasedDateHistory)}
-                      />
-                    )}
-                  </React.Fragment>
-                ))}
+                .categoryData.map(
+                  ({ id, model, releasedDateHistory, data, desc, href, price }, index) => (
+                    <GuideBriefRow
+                      key={id}
+                      itemId={id}
+                      data={data}
+                      desc={desc}
+                      href={href}
+                      model={model}
+                      price={price}
+                      releasedDateHistory={releasedDateHistory}
+                    />
+                  )
+                )}
             </tbody>
           </table>
         </div>

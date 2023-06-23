@@ -212,8 +212,8 @@ const GuideExpandedRow = ({
                             ) : (
                               <FontAwesomeIcon icon={faCaretDown} className="mr-1" />
                             )}
-                            <p>{Math.abs(getPriceDiff()).toLocaleString()}</p>
                           </span>
+                          <p>{Math.abs(getPriceDiff()).toLocaleString()}</p>
                           <p>원</p>
                         </div>
                       )}

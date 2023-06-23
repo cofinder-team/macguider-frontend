@@ -142,7 +142,7 @@ export default function BuyersGuide() {
                       model={model}
                       price={price}
                       releasedDateHistory={releasedDateHistory}
-                      fetchedData={fetchedData?.find((item) => item.itemId === id)}
+                      fetchedData={fetchedData?.find((item) => item.itemId == id)}
                       loading={loading}
                     />
                   )

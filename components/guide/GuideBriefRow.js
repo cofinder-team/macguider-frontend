@@ -100,20 +100,14 @@ const GuideBriefRow = ({ itemId, releasedDateHistory, model, data, desc, href, p
 
   const getUsedPurchaseTiming = useCallback(() => {
     const latestUsedPrice = fetchedData.data.slice(-1)[0].mid
-    const purchaseTiming = getPurchaseTiming()
+    const timing = getPurchaseTiming()
 
     console.log(latestUsedPrice, price)
-    console.log(purchaseTiming)
+    console.log(timing)
 
-    if (
-      latestUsedPrice < price * 0.75 &&
-      (purchaseTiming === purchaseTiming.good || purchaseTiming === purchaseTiming.normal)
-    ) {
+    if (latestUsedPrice < price * 0.75) {
       return purchaseTiming.good
-    } else if (
-      latestUsedPrice < price * 0.85 &&
-      (purchaseTiming === purchaseTiming.good || purchaseTiming === purchaseTiming.normal)
-    ) {
+    } else if (latestUsedPrice < price * 0.85 && timing !== purchaseTiming.bad) {
       return purchaseTiming.normal
     } else {
       return purchaseTiming.bad

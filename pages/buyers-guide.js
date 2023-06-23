@@ -7,10 +7,38 @@ import Image from 'next/image'
 import categories from '@/data/guide/categories'
 import amplitude from 'amplitude-js'
 import GuideBriefRow from '@/components/guide/GuideBriefRow'
+import useAsyncAll from 'hooks/useAsyncAll'
+import axiosInstance from '@/lib/axios'
+
+async function getPrices(itemId = 1, optionId = 1, unopened = false) {
+  const response = await axiosInstance.get(`/item/${itemId}/option/${optionId}`, {
+    params: {
+      unopened,
+    },
+  })
+  return response.data
+}
 
 export default function BuyersGuide() {
   const [currentCategory, setCurrentCategory] = useState(categories[1])
   const [expandedRows, setExpandedRows] = useState([])
+
+  // 가격 조회
+  const [state, refetch] = useAsyncAll(
+    getPrices,
+    currentCategory.categoryData.map((item) => [item.id, item.data[0].options[0].id, false]),
+    [currentCategory]
+  )
+  const { loading, data: fetchedData, error } = state
+
+  if (fetchedData) {
+    console.log(fetchedData)
+  }
+
+  // 가격 데이터 fetch 실패시 alert창 띄우기
+  if (error) {
+    alert('데이터를 불러오는데 실패했습니다. 잠시 후 다시 시도해주세요.')
+  }
 
   useEffect(() => {
     amplitude

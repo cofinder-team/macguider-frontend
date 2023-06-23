@@ -156,21 +156,19 @@ const GuideBriefRow = ({ itemId, releasedDateHistory, model, data, desc, href, p
           </div>
         </td>
         <td className="px-3 py-3 md:px-6 md:py-4">
-          <div className="flex  items-center">
-            {loading || !fetchedData ? (
-              <Skeleton width={md ? '5rem' : '3rem'} borderRadius="0.5rem" />
-            ) : (
-              <div style={{ width: md ? '5rem' : '3rem' }}>
-                <div
-                  className="mr-2 h-2.5 w-2.5 rounded-full"
-                  style={{
-                    backgroundColor: getUsedPurchaseTiming().color,
-                  }}
-                ></div>
-                <span>{getUsedPurchaseTiming().text}</span>
-              </div>
-            )}
-          </div>
+          {loading || !fetchedData ? (
+            <Skeleton width={md ? '5rem' : '3rem'} borderRadius="0.5rem" />
+          ) : (
+            <div style={{ width: md ? '5rem' : '3rem' }} className="flex items-center">
+              <div
+                className="mr-2 h-2.5 w-2.5 rounded-full"
+                style={{
+                  backgroundColor: getUsedPurchaseTiming().color,
+                }}
+              ></div>
+              <span>{getUsedPurchaseTiming().text}</span>
+            </div>
+          )}
         </td>
       </tr>
       {expandedRows.includes(itemId) && (

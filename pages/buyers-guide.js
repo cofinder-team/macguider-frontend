@@ -31,10 +31,6 @@ export default function BuyersGuide() {
   )
   const { loading, data: fetchedData, error } = state
 
-  if (fetchedData) {
-    console.log(fetchedData)
-  }
-
   // 가격 데이터 fetch 실패시 alert창 띄우기
   if (error) {
     alert('데이터를 불러오는데 실패했습니다. 잠시 후 다시 시도해주세요.')
@@ -142,6 +138,8 @@ export default function BuyersGuide() {
                       model={model}
                       price={price}
                       releasedDateHistory={releasedDateHistory}
+                      fetchedData={fetchedData?.find((item) => item.itemId === id)}
+                      loading={loading}
                     />
                   )
                 )}

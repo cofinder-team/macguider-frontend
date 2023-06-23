@@ -1,7 +1,5 @@
 import Image from 'next/image'
 import { useScreenSize } from 'hooks/useScreenSize'
-import useAsync from 'hooks/useAsync'
-import axiosInstance from '@/lib/axios'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import 'react-loading-skeleton/dist/skeleton.css'
 import { useCallback, useState } from 'react'
@@ -9,15 +7,6 @@ import amplitude from 'amplitude-js'
 import { faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons'
 import Skeleton from 'react-loading-skeleton'
 import GuideExpandedRow from './GuideExpandedRow'
-
-async function getPrices(itemId = 1, optionId = 1, unopened = false) {
-  const response = await axiosInstance.get(`/item/${itemId}/option/${optionId}`, {
-    params: {
-      unopened,
-    },
-  })
-  return response.data
-}
 
 const purchaseTiming = {
   good: {
@@ -34,11 +23,21 @@ const purchaseTiming = {
   },
 }
 
-const GuideBriefRow = ({ itemId, releasedDateHistory, model, data, desc, href, price }) => {
+const GuideBriefRow = ({
+  itemId,
+  releasedDateHistory,
+  model,
+  data,
+  desc,
+  href,
+  price,
+  fetchedData,
+  loading,
+}) => {
   const { md, sm } = useScreenSize()
   const optionId = data[0].options[0].id
-  const [state, refetch] = useAsync(getPrices, [itemId, optionId], [])
-  const { loading, data: fetchedData, error } = state
+  // const [state, refetch] = useAsync(getPrices, [itemId, optionId], [])
+  // const { loading, data: fetchedData, error } = state
   const [expandedRows, setExpandedRows] = useState([])
 
   const toggleRow = (itemId) => {

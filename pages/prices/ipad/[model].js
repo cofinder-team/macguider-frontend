@@ -16,6 +16,7 @@ import 'react-loading-skeleton/dist/skeleton.css'
 
 import amplitude from 'amplitude-js'
 import NewsletterForm from '@/components/NewsletterForm'
+import { pastTime } from '@/lib/utils/pastTime'
 
 async function getPrices(itemId = 1, optionId = 1, unopened = false) {
   const response = await axiosInstance.get(`/item/${itemId}/option/${optionId}`, {
@@ -174,7 +175,7 @@ const IpadModel = ({ model }) => {
                 </svg>
                 <span>
                   마지막 업데이트:{' '}
-                  <span className="font-semibold text-gray-900 dark:text-white">7일전</span>
+                  <span className="font-semibold text-gray-900 dark:text-white">{pastTime()}</span>
                 </span>
               </li>
               <li className="flex items-center space-x-3">

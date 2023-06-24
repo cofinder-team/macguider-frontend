@@ -36,15 +36,11 @@ export default function BuyersGuide() {
   }
 
   useEffect(() => {
-    amplitude
-      .getInstance()
-      .logEvent('page_view', { page_type: 'guide', page_detail: categories[1].categoryName })
+    amplitude.getInstance().logEvent('guide_view', { category: categories[1].categoryName })
   }, [])
 
   const onClickCategory = (category) => {
-    amplitude
-      .getInstance()
-      .logEvent('page_view', { page_type: 'guide', page_detail: category.categoryName })
+    amplitude.getInstance().logEvent('guide_view', { category: category.categoryName })
 
     if (category.categoryData.length === 0) {
       alert('아직 준비 중입니다! 이메일을 등록해주시면 가장 먼저 업데이트 소식을 알려드릴게요.')

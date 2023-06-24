@@ -1,4 +1,3 @@
-import Image from 'next/image'
 import { useScreenSize } from 'hooks/useScreenSize'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import 'react-loading-skeleton/dist/skeleton.css'
@@ -43,11 +42,9 @@ const GuideBriefRow = ({
     if (isRowExpanded) {
       setExpandedRows(expandedRows.filter((row) => row !== itemId))
     } else {
+      amplitude.getInstance().logEvent('guide_toggle', { item: itemId })
       setExpandedRows([...expandedRows, itemId])
     }
-    amplitude
-      .getInstance()
-      .logEvent('do_action', { action_type: 'guide_toggle', action_detail: itemId })
   }
 
   const getAverageReleaseCycle = useCallback(() => {

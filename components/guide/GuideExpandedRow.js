@@ -6,8 +6,8 @@ import Link from '@/components/Link'
 import Skeleton from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
 import { Line } from 'react-chartjs-2'
-import Chart from 'chart.js/auto'
 import { useCallback } from 'react'
+import amplitude from 'amplitude-js'
 
 const GuideExpandedRow = ({
   itemId,
@@ -226,6 +226,9 @@ const GuideExpandedRow = ({
               <Link
                 href={href}
                 className="mt-3 inline-flex w-full  items-center justify-center rounded-lg  border  border-blue-700 bg-white px-3 py-2 text-center text-sm font-medium text-blue-700 hover:bg-blue-800 hover:text-white focus:outline-none focus:ring-4 focus:ring-blue-300 dark:border-white dark:bg-transparent dark:text-white dark:hover:border-blue-700 dark:hover:bg-blue-700 dark:focus:ring-blue-800 md:mt-4  xl:w-auto"
+                onClick={() => {
+                  amplitude.getInstance().logEvent('guide_price', { item: itemId })
+                }}
               >
                 가격 알아보기 <FontAwesomeIcon icon={faArrowRight} className="ml-2" />
               </Link>

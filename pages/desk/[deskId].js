@@ -1,12 +1,17 @@
-import { Fragment, useState } from 'react'
+import { Fragment, useEffect, useState } from 'react'
 import { PageSEO } from '@/components/SEO'
 import desks from '@/data/desks'
 import DeskSection from '@/components/desks/section'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCircleInfo } from '@fortawesome/free-solid-svg-icons'
 import { useRouter } from 'next/router'
+import amplitude from 'amplitude-js'
 
 export default function Example({ deskId }) {
+  useEffect(() => {
+    amplitude.getInstance().logEvent('desk_view', { desk: deskId })
+  }, [deskId])
+
   const desk = desks.find((desk) => desk.id === deskId)
   const router = useRouter()
 
@@ -77,7 +82,7 @@ export default function Example({ deskId }) {
 
             <div className="space-y-9">
               {desk.sections.map((section) => (
-                <DeskSection key={section.id} desk={section} />
+                <DeskSection key={section.id} deskId={deskId} section={section} />
               ))}
             </div>
           </article>

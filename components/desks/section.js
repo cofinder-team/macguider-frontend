@@ -1,13 +1,16 @@
 import React, { useState } from 'react'
 import amplitude from 'amplitude-js'
 
-export default function DeskSection({ desk }) {
-  const { images, productInfo, desc } = desk
+export default function DeskSection({ deskId, section }) {
+  const { id: sectionId, images, productInfo, desc } = section
   // state for selectedImage in each section
   const [selectedImage, setSelectedImage] = useState(images[0])
   const [expandedRows, setExpandedRows] = useState([])
 
   const onClickImage = (image) => {
+    amplitude
+      .getInstance()
+      .logEvent('desk_image', { desk: deskId, section: sectionId, image: image.id })
     setSelectedImage(image)
   }
 
@@ -16,11 +19,11 @@ export default function DeskSection({ desk }) {
     if (isRowExpanded) {
       setExpandedRows(expandedRows.filter((row) => row !== itemId))
     } else {
+      amplitude
+        .getInstance()
+        .logEvent('desk_product', { desk: deskId, section: sectionId, product: itemId })
       setExpandedRows([...expandedRows, itemId])
     }
-    amplitude
-      .getInstance()
-      .logEvent('do_action', { action_type: 'product_toggle', action_detail: itemId })
   }
 
   return (
@@ -124,6 +127,13 @@ export default function DeskSection({ desk }) {
                       <div className="mt-6">
                         <button
                           type="submit"
+                          onClick={() => {
+                            amplitude.getInstance().logEvent('desk_buy', {
+                              desk: deskId,
+                              section: sectionId,
+                              product: id,
+                            })
+                          }}
                           className="flex w-full items-center justify-center rounded-md border border-transparent bg-indigo-600 px-8 py-3 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-50"
                         >
                           구매하러 가기

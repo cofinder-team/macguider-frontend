@@ -10,8 +10,9 @@ import ipadModels from '@/data/models/ipad'
 import ModelCard from '@/components/ModelCard'
 
 import amplitude from 'amplitude-js'
-
-const MAX_DISPLAY = 5
+import SectionDesk from '@/components/section/desk'
+import Link from '@/components/Link'
+import Promo from '@/components/Promo'
 
 export async function getStaticProps() {
   const posts = await getAllFilesFrontMatter('blog')
@@ -24,25 +25,12 @@ export default function Home() {
     amplitude.getInstance().logEvent('page_view', { page_type: 'main', page_detail: 'main' })
   }, [])
 
-  const posts = [
-    {
-      title: '맥 구매 가이드',
-      summary:
-        '맥 구매 가이드 맥 구매 가이드 맥 구매 가이드 맥 구매 가이드 맥 구매 가이드 맥 구매 가이드 맥 구매 가이드 맥 구매 가이드 맥 구매 가이드 맥 구매 가이드 맥 구매 가이드 맥 구매 가이드 맥 구매 가이드 맥 구매 가이드 ',
-      slug: 'mac-buying-guide',
-    },
-    {
-      title: '애플농장',
-      summary:
-        '맥 구매 가이드 맥 구매 가이드 맥 구매 가이드 맥 구매 가이드 맥 구매 가이드 맥 구매 가이드 맥 구매 가이드 맥 구매 가이드 맥 구매 가이드 맥 구매 가이드 맥 구매 가이드 맥 구매 가이드 맥 구매 가이드 맥 구매 가이드 ',
-      slug: 'apple-farm',
-    },
-  ]
   return (
     <>
       <PageSEO title={siteMetadata.title} description={siteMetadata.description} />
+
       <section className="mt-md-6 mt-3">
-        <div className="space-y-2 pt-6 pb-2">
+        <div className="space-y-2 pb-2 md:pt-6">
           <h1 className="text-3xl font-extrabold leading-9 tracking-tight text-gray-900 dark:text-gray-100  sm:leading-10">
             맥 시세
           </h1>
@@ -83,85 +71,9 @@ export default function Home() {
         </div>
       </section>
 
-      {/* <section className="mt-md-6 mt-3">
-        <div className="space-y-2 pt-6 pb-2">
-          <h1 className="text-3xl font-extrabold leading-9 tracking-tight text-gray-900 dark:text-gray-100  sm:leading-10">
-            맥 가이드
-          </h1>
-          <p className="text-lg leading-7 text-gray-500 dark:text-gray-400">
-            스마트한 맥 라이프를 위한 가이드를 제공합니다
-          </p>
-        </div>
-        <ul className="grid grid-cols-1 gap-3 md:grid-cols-2">
-          {!posts.length && 'No posts found.'}
-          {posts.slice(0, MAX_DISPLAY).map((frontMatter) => {
-            const { slug, date, title, summary, tags } = frontMatter
-            return (
-              <div
-                key={title}
-                className="w-full rounded-lg border border-gray-200 bg-white p-6 shadow dark:border-gray-700 dark:bg-gray-800"
-              >
-                <a href="#">
-                  <h5 className="mb-2 text-2xl font-semibold tracking-tight text-gray-900 dark:text-white">
-                    {title}
-                  </h5>
-                </a>
-                <p className="mb-3 font-normal text-gray-500 dark:text-gray-400">{summary}</p>
-                <a href="#" className="inline-flex items-center text-blue-600 hover:underline">
-                  보러가기
-                  <svg
-                    className="ml-2 h-5 w-5"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z"></path>
-                    <path d="M5 5a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-3a1 1 0 10-2 0v3H5V7h3a1 1 0 000-2H5z"></path>
-                  </svg>
-                </a>
-              </div>
+      <SectionDesk />
 
-              // <li key={slug} className="py-6">
-              //   <article>
-              //     <div className="space-y-2 xl:grid xl:grid-cols-4 xl:items-baseline xl:space-y-0">
-              //       <div className="space-y-5 xl:col-span-3">
-              //         <div className="space-y-6">
-              //           <div>
-              //             <h2 className="text-2xl font-bold leading-8 tracking-tight">
-              //               <Link
-              //                 href={`/blog/${slug}`}
-              //                 className="text-gray-900 dark:text-gray-100"
-              //               >
-              //                 {title}
-              //               </Link>
-              //             </h2>
-              //             <div className="flex flex-wrap">
-              //               {tags.map((tag) => (
-              //                 <Tag key={tag} text={tag} />
-              //               ))}
-              //             </div>
-              //           </div>
-              //           <div className="prose max-w-none text-gray-500 dark:text-gray-400">
-              //             {summary}
-              //           </div>
-              //         </div>
-              //         <div className="text-base font-medium leading-6">
-              //           <Link
-              //             href={`/blog/${slug}`}
-              //             className="text-primary-500 hover:text-primary-600 dark:hover:text-primary-400"
-              //             aria-label={`Read "${title}"`}
-              //           >
-              //             Read more &rarr;
-              //           </Link>
-              //         </div>
-              //       </div>
-              //     </div>
-              //   </article>
-              // </li>
-            )
-          })}
-        </ul>
-      </section> */}
+      <Promo />
 
       <div className="mt-12 flex items-center justify-center">
         <NewsletterForm />

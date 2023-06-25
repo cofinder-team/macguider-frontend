@@ -1,8 +1,10 @@
 import { useState } from 'react'
 import Link from './Link'
 import headerNavLinks from '@/data/headerNavLinks'
+import { useRouter } from 'next/router'
 
 const MobileNav = () => {
+  const router = useRouter()
   const [navShow, setNavShow] = useState(false)
 
   const onToggleNav = () => {
@@ -69,7 +71,9 @@ const MobileNav = () => {
             <div key={link.title} className="px-12 py-4">
               <Link
                 href={link.href}
-                className="text-2xl font-bold tracking-widest text-gray-900 dark:text-gray-100"
+                className={`text-2xl font-bold tracking-widest ${
+                  router.pathname === link.href ? 'text-blue-800' : 'text-gray-900'
+                }`}
                 onClick={onToggleNav}
               >
                 {link.title}

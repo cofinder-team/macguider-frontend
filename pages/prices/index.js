@@ -3,11 +3,13 @@ import macModels from '@/data/models/mac'
 import ModelCard from '@/components/ModelCard'
 import { PageSEO } from '@/components/SEO'
 import ipadModels from '@/data/models/ipad'
+import NewsletterForm from '@/components/NewsletterForm'
+import Promo from '@/components/Promo'
 
 export default function Projects() {
   return (
     <>
-      <PageSEO title={`Projects - ${siteMetadata.author}`} description={siteMetadata.description} />
+      <PageSEO title={'시세 정보'} description={'사양별 맥북과 아이패드의 시세를 알려드립니다'} />
 
       <section className="mt-md-6 mt-3">
         <div className="space-y-2 pt-6 pb-2">
@@ -50,6 +52,10 @@ export default function Projects() {
           </div>
         </div>
       </section>
+      <Promo />
+      <div className="mt-8 flex items-center justify-center">
+        <NewsletterForm />
+      </div>
     </>
   )
 }

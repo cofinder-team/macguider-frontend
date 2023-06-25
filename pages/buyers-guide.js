@@ -1,62 +1,70 @@
 import { PageSEO } from '@/components/SEO'
-import React, { useEffect } from 'react'
+import React, { useCallback, useEffect } from 'react'
 
 import NewsletterForm from '@/components/NewsletterForm'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons'
-
-import GuideRow from '@/components/GuideRow'
 import { useState } from 'react'
 import Image from 'next/image'
-import { useScreenSize } from 'hooks/useScreenSize'
 import categories from '@/data/guide/categories'
 import amplitude from 'amplitude-js'
+import GuideBriefRow from '@/components/guide/GuideBriefRow'
+import useAsyncAll from 'hooks/useAsyncAll'
+import axiosInstance from '@/lib/axios'
+import Promo from '@/components/Promo'
+
+async function getPrices(itemId = 1, optionId = 1, unopened = false) {
+  const response = await axiosInstance.get(`/item/${itemId}/option/${optionId}`, {
+    params: {
+      unopened,
+    },
+  })
+  return response.data
+}
 
 export default function BuyersGuide() {
   const [currentCategory, setCurrentCategory] = useState(categories[1])
-  const [expandedRows, setExpandedRows] = useState([])
-  const { md, sm } = useScreenSize()
+
+  // 가격 조회
+  const [state, refetch] = useAsyncAll(
+    getPrices,
+    currentCategory.categoryData.map((item) => [item.id, item.data[0].options[0].id, false]),
+    [currentCategory]
+  )
+  const { loading, data: fetchedData, error } = state
+
+  // 가격 데이터 fetch 실패시 alert창 띄우기
+  if (error) {
+    alert('데이터를 불러오는데 실패했습니다. 잠시 후 다시 시도해주세요.')
+  }
 
   useEffect(() => {
-    amplitude
-      .getInstance()
-      .logEvent('page_view', { page_type: 'guide', page_detail: categories[1].categoryName })
+    amplitude.getInstance().logEvent('guide_view', { category: categories[1].categoryName })
   }, [])
 
   const onClickCategory = (category) => {
-    setExpandedRows([])
-    setCurrentCategory(category)
-    amplitude
-      .getInstance()
-      .logEvent('page_view', { page_type: 'guide', page_detail: category.categoryName })
-  }
+    amplitude.getInstance().logEvent('guide_view', { category: category.categoryName })
 
-  const toggleRow = (itemId) => {
-    const isRowExpanded = expandedRows.includes(itemId)
-    if (isRowExpanded) {
-      setExpandedRows(expandedRows.filter((row) => row !== itemId))
-    } else {
-      setExpandedRows([...expandedRows, itemId])
+    if (category.categoryData.length === 0) {
+      alert('아직 준비 중입니다! 이메일을 등록해주시면 가장 먼저 업데이트 소식을 알려드릴게요.')
+      return
     }
-    amplitude
-      .getInstance()
-      .logEvent('do_action', { action_type: 'guide_toggle', action_detail: itemId })
+
+    setCurrentCategory(category)
   }
 
   return (
     <>
       <PageSEO
         title={'애플 제품 구매 가이드'}
-        description={'애플 제품의 적절한 구매시기를 알려드립니다.'}
+        description={'지금 사도 괜찮을까? 애플 제품의 적절한 구매시기를 알려드립니다.'}
       />
 
-      <section className="mt-md-6 mt-3">
+      <section className="mt-md-6 mt-3 pb-6">
         <div className="space-y-2 pt-6 pb-2">
           <h1 className="text-3xl font-extrabold leading-9 tracking-tight text-gray-900 dark:text-gray-100  sm:leading-10">
             애플 제품 구매 가이드
           </h1>
           <p className="text-lg leading-7 text-gray-500 dark:text-gray-400">
-            출시 주기 및 중고거래 데이터를 기반으로 적정 구매시기를 제공합니다.
+            출시 주기 및 중고거래 데이터를 기반으로 애플 제품의 적절한 구매시기를 알려드립니다.
           </p>
         </div>
 
@@ -85,18 +93,29 @@ export default function BuyersGuide() {
           <table className="w-full text-left text-sm text-gray-500 dark:text-gray-400">
             <thead className="bg-gray-50 text-xs uppercase text-gray-700 dark:bg-gray-700 dark:text-gray-400">
               <tr>
-                <th scope="col" className="hidden px-6 py-3 md:table-cell"></th>
+                <th scope="col" className="px-3 py-3 md:table-cell md:px-6"></th>
                 <th scope="col" className="w-1/3 px-3 py-3 md:px-6">
                   모델명
                 </th>
-                <th scope="col" className="px-3 py-3 md:px-6" style={{ wordBreak: 'keep-all' }}>
+                <th
+                  scope="col"
+                  className="hidden px-3 py-3 sm:table-cell md:px-6"
+                  style={{ wordBreak: 'keep-all' }}
+                >
                   마지막 출시일
                 </th>
-                <th scope="col" className="px-3 py-3 md:px-6" style={{ wordBreak: 'keep-all' }}>
+                <th
+                  scope="col"
+                  className="hidden px-3 py-3 sm:table-cell md:px-6"
+                  style={{ wordBreak: 'keep-all' }}
+                >
                   평균 출시주기
                 </th>
                 <th scope="col" className="px-3 py-3 md:px-6" style={{ wordBreak: 'keep-all' }}>
-                  구매 적합도
+                  새제품 구매
+                </th>
+                <th scope="col" className="px-3 py-3 md:px-6" style={{ wordBreak: 'keep-all' }}>
+                  중고 구매
                 </th>
               </tr>
             </thead>
@@ -104,62 +123,33 @@ export default function BuyersGuide() {
               {categories
                 .find((category) => category.categoryName === currentCategory.categoryName)
                 .categoryData.map(
-                  (
-                    {
-                      name,
-                      lastReleaseDate,
-                      averageReleaseCycle,
-                      price,
-                      chartData,
-                      imgSrc,
-                      itemId,
-                    },
-                    index
-                  ) => (
-                    <React.Fragment key={itemId}>
-                      <tr
-                        onClick={() => toggleRow(itemId)}
-                        className={`${
-                          expandedRows.includes(itemId) && index ? 'border-t' : ''
-                        } cursor-pointer border-b bg-white hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-600`}
-                      >
-                        <td className="hidden px-6 py-4 md:table-cell">
-                          <FontAwesomeIcon
-                            icon={expandedRows.includes(itemId) ? faChevronUp : faChevronDown}
-                          />
-                        </td>
-                        <th
-                          scope="row"
-                          className="flex items-center whitespace-nowrap px-3 py-3 text-gray-900 dark:text-white md:px-6 md:py-4"
-                        >
-                          <img className="hidden h-10 w-10 md:block" src={imgSrc} alt={name} />
-                          <div className="md:pl-3">
-                            <div className="text-base font-semibold">{name}</div>
-                          </div>
-                        </th>
-                        <td className="px-3 py-3 md:px-6 md:py-4" style={{ wordBreak: 'keep-all' }}>
-                          {lastReleaseDate}
-                        </td>
-                        <td className="px-3 py-3 md:px-6 md:py-4" style={{ wordBreak: 'keep-all' }}>
-                          {averageReleaseCycle}
-                        </td>
-                        <td className="px-3 py-3 md:px-6 md:py-4">
-                          <div className="flex  items-center">
-                            <div className="mr-2 h-2.5 w-2.5 rounded-full bg-green-500"></div>{' '}
-                            {sm && price}
-                          </div>
-                        </td>
-                      </tr>
-                      {expandedRows.includes(itemId) && (
-                        <GuideRow name={name} itemId={itemId} imgSrc={imgSrc} />
-                      )}
-                    </React.Fragment>
+                  ({ id, model, releasedDateHistory, data, desc, href, price }, index) => (
+                    <GuideBriefRow
+                      key={id}
+                      itemId={id}
+                      data={data}
+                      desc={desc}
+                      href={href}
+                      model={model}
+                      price={price}
+                      releasedDateHistory={releasedDateHistory}
+                      fetchedData={fetchedData?.find((item) => item.itemId == id)}
+                      loading={loading}
+                    />
                   )
                 )}
             </tbody>
           </table>
         </div>
       </section>
+
+      <Promo
+        title="오늘의 데스크"
+        desc="애플 제품과 가장 잘 어울리는 조합"
+        href="/desk"
+        imgSrc="https://static.waveon.io/img/apps/18146/christopher-gower-v4rLEeIaoBo-unsplash (1).jpg"
+        cta="구경하기"
+      />
 
       <div className="mt-12 flex items-center justify-center">
         <NewsletterForm />

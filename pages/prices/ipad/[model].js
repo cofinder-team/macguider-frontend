@@ -16,6 +16,8 @@ import 'react-loading-skeleton/dist/skeleton.css'
 
 import amplitude from 'amplitude-js'
 import NewsletterForm from '@/components/NewsletterForm'
+import { pastTime } from '@/lib/utils/pastTime'
+import Promo from '@/components/Promo'
 
 async function getPrices(itemId = 1, optionId = 1, unopened = false) {
   const response = await axiosInstance.get(`/item/${itemId}/option/${optionId}`, {
@@ -68,7 +70,7 @@ const IpadModel = ({ model }) => {
   const { md } = useScreenSize()
 
   // 가격 조회
-  const [state, refetch] = useAsync(getPrices, [currentItemId, 1, unopened], [])
+  const [state, refetch] = useAsync(getPrices, [currentItemId, options[0].id, unopened], [])
   const { loading, data: fetchedData, error } = state
 
   // 가격 데이터 fetch 실패시 alert창 띄우기
@@ -142,7 +144,7 @@ const IpadModel = ({ model }) => {
   return (
     <>
       <PageSEO
-        title={`맥 시세 | ${modelTitle}`}
+        title={`아이패드 시세 | ${modelTitle}`}
         description={`ChatGPT가 알려주는 사양별 아이패드 시세 | ${modelTitle}`}
       />
 
@@ -174,7 +176,7 @@ const IpadModel = ({ model }) => {
                 </svg>
                 <span>
                   마지막 업데이트:{' '}
-                  <span className="font-semibold text-gray-900 dark:text-white">7일전</span>
+                  <span className="font-semibold text-gray-900 dark:text-white">{pastTime()}</span>
                 </span>
               </li>
               <li className="flex items-center space-x-3">
@@ -451,6 +453,8 @@ const IpadModel = ({ model }) => {
           </div>
         </div>
       </div>
+
+      <Promo />
 
       <div className="mt-12 flex items-center justify-center">
         <NewsletterForm />

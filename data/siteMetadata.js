@@ -1,5 +1,5 @@
 const siteMetadata = {
-  title: 'MacGuider',
+  title: '맥가이더 MacGuider',
   author: 'COFINDER',
   headerTitle: 'MacGuider',
   description: '중고 맥 가격 비교는 MacGuider',

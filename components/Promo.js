@@ -1,4 +1,5 @@
 import Link from '@/components/Link'
+import amplitude from 'amplitude-js'
 
 export default function Promo({
   imgSrc = 'https://images.unsplash.com/photo-1491933382434-500287f9b54b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=928&q=80',
@@ -7,6 +8,10 @@ export default function Promo({
   href = '/buyers-guide',
   cta = '더 알아보기',
 }) {
+  const onClickCta = () => {
+    amplitude.getInstance().logEvent('promo_cta', { promoTitle: title })
+  }
+
   return (
     <div className="py-12 md:py-16">
       <div className="relative overflow-hidden rounded-lg">
@@ -26,6 +31,7 @@ export default function Promo({
             <Link
               href={href}
               className="mt-8 block w-full rounded-md border border-transparent bg-white px-8 py-3 text-base font-medium text-gray-900 hover:bg-gray-100 sm:w-auto"
+              onClick={onClickCta}
             >
               {cta}
             </Link>

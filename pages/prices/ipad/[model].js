@@ -144,7 +144,7 @@ const IpadModel = ({ model }) => {
   return (
     <>
       <PageSEO
-        title={`맥 시세 | ${modelTitle}`}
+        title={`아이패드 시세 | ${modelTitle}`}
         description={`ChatGPT가 알려주는 사양별 아이패드 시세 | ${modelTitle}`}
       />
 

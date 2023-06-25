@@ -93,36 +93,41 @@ export default function Example({ deskId }) {
         <div className="mx-auto max-w-screen-xl md:px-4">
           <h2 className="mb-8 text-2xl font-bold text-gray-900 dark:text-white">다른 데스크</h2>
           <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-4">
-            {desks
-              .filter((desk) => desk.id !== deskId)
-              .map(({ id, name, imageSrc, author, href, imageAlt }) => (
-                <div
-                  key={id}
-                  className="group relative cursor-pointer"
-                  onClick={() => {
-                    router.push(href)
-                  }}
-                >
-                  <div className="aspect-h-3 aspect-w-4 overflow-hidden rounded-lg bg-gray-100">
-                    <img src={imageSrc} alt={imageAlt} className="object-cover object-center" />
-                    <div
-                      className="flex items-end p-4 opacity-0 group-hover:opacity-100"
-                      aria-hidden="true"
-                    >
-                      <div className="w-full rounded-md bg-white bg-opacity-75 px-4 py-2 text-center text-sm font-medium text-gray-900 backdrop-blur backdrop-filter">
-                        구경하러 가기
+            {
+              // select  maximum 4 random desks
+              desks
+                .filter((desk) => desk.id !== deskId)
+                .sort(() => Math.random() - Math.random())
+                .map(({ id, name, imageSrc, author, href, imageAlt }) => (
+                  <div
+                    key={id}
+                    className="group relative cursor-pointer"
+                    onClick={() => {
+                      router.push(href)
+                    }}
+                  >
+                    <div className="aspect-h-3 aspect-w-4 overflow-hidden rounded-lg bg-gray-100">
+                      <img src={imageSrc} alt={imageAlt} className="object-cover object-center" />
+                      <div
+                        className="flex items-end p-4 opacity-0 group-hover:opacity-100"
+                        aria-hidden="true"
+                      >
+                        <div className="w-full rounded-md bg-white bg-opacity-75 px-4 py-2 text-center text-sm font-medium text-gray-900 backdrop-blur backdrop-filter">
+                          구경하러 가기
+                        </div>
                       </div>
                     </div>
+                    <div className="mt-4 text-base font-medium text-gray-900">
+                      <h3>
+                        <span aria-hidden="true" className="absolute inset-0" />
+                        {name}
+                      </h3>
+                    </div>
+                    <p className="mt-1 text-sm text-gray-500">{author}</p>
                   </div>
-                  <div className="mt-4 text-base font-medium text-gray-900">
-                    <h3>
-                      <span aria-hidden="true" className="absolute inset-0" />
-                      {name}
-                    </h3>
-                  </div>
-                  <p className="mt-1 text-sm text-gray-500">{author}</p>
-                </div>
-              ))}
+                ))
+                .slice(0, 4)
+            }
           </div>
         </div>
       </aside>

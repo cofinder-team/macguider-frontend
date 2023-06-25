@@ -26,6 +26,16 @@ export default function DeskSection({ deskId, section }) {
     }
   }
 
+  const onClickPurchase = (id, link) => {
+    amplitude.getInstance().logEvent('desk_buy', {
+      desk: deskId,
+      section: sectionId,
+      product: id,
+    })
+
+    window.open(link, '_blank')
+  }
+
   return (
     <>
       <div className="grid gap-4">
@@ -46,7 +56,7 @@ export default function DeskSection({ deskId, section }) {
               onClick={() => {
                 onClickImage(image)
               }}
-              className={`cursor-pointer overflow-hidden rounded-lg border-2 ${
+              className={`aspect-w-1 aspect-h-1 cursor-pointer overflow-hidden rounded-lg border-2 ${
                 selectedImage.id === image.id ? 'border-blue-800' : 'border-transparent'
               }`}
             >
@@ -71,7 +81,7 @@ export default function DeskSection({ deskId, section }) {
         data-active-classes="bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
         data-inactive-classes="text-gray-500 dark:text-gray-400"
       >
-        {productInfo.map(({ id, category, src, alt, title, desc }) => (
+        {productInfo.map(({ id, category, src, alt, title, desc, link }) => (
           <React.Fragment key={id}>
             <div id="accordion-flush-heading-1" onClick={() => toggleRow(id)}>
               <button
@@ -102,7 +112,7 @@ export default function DeskSection({ deskId, section }) {
               aria-labelledby="accordion-flush-heading-1"
               className={`${expandedRows.includes(id) ? 'block' : 'hidden'} `}
             >
-              <div className="grid w-full grid-cols-1 items-start gap-x-6 gap-y-8 border-b border-gray-200 py-5 dark:border-gray-700 sm:grid-cols-12 lg:gap-x-8">
+              <div className="grid w-full grid-cols-1 items-center gap-x-6 gap-y-8 border-b border-gray-200 py-5 dark:border-gray-700 sm:grid-cols-12 lg:gap-x-8">
                 <div className="sm:col-span-4 lg:col-span-5">
                   <div className="aspect-h-1 aspect-w-1 overflow-hidden rounded-lg ">
                     <img src={src} alt={alt} className="object-contain object-center" />
@@ -117,29 +127,19 @@ export default function DeskSection({ deskId, section }) {
 
                     <div className="mt-6">
                       <h4 className="sr-only">Description</h4>
-
-                      <p className="text-sm text-gray-700">{desc}</p>
                     </div>
                   </section>
 
                   <section aria-labelledby="options-heading" className="mt-6">
-                    <form>
-                      <div className="mt-6">
-                        <button
-                          type="submit"
-                          onClick={() => {
-                            amplitude.getInstance().logEvent('desk_buy', {
-                              desk: deskId,
-                              section: sectionId,
-                              product: id,
-                            })
-                          }}
-                          className="flex w-full items-center justify-center rounded-md border border-transparent bg-indigo-600 px-8 py-3 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-50"
-                        >
-                          구매하러 가기
-                        </button>
-                      </div>
-                    </form>
+                    <div className="mt-6">
+                      <button
+                        type="submit"
+                        onClick={() => onClickPurchase(id, link)}
+                        className="flex w-full items-center justify-center rounded-md border border-transparent bg-indigo-600 px-8 py-3 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-50"
+                      >
+                        구매하러 가기
+                      </button>
+                    </div>
                   </section>
                 </div>
               </div>

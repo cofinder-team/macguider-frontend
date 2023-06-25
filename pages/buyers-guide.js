@@ -9,6 +9,7 @@ import amplitude from 'amplitude-js'
 import GuideBriefRow from '@/components/guide/GuideBriefRow'
 import useAsyncAll from 'hooks/useAsyncAll'
 import axiosInstance from '@/lib/axios'
+import Promo from '@/components/Promo'
 
 async function getPrices(itemId = 1, optionId = 1, unopened = false) {
   const response = await axiosInstance.get(`/item/${itemId}/option/${optionId}`, {
@@ -57,7 +58,7 @@ export default function BuyersGuide() {
         description={'지금 사도 괜찮을까? 애플 제품의 적절한 구매시기를 알려드립니다.'}
       />
 
-      <section className="mt-md-6 mt-3">
+      <section className="mt-md-6 mt-3 pb-6">
         <div className="space-y-2 pt-6 pb-2">
           <h1 className="text-3xl font-extrabold leading-9 tracking-tight text-gray-900 dark:text-gray-100  sm:leading-10">
             애플 제품 구매 가이드
@@ -141,6 +142,14 @@ export default function BuyersGuide() {
           </table>
         </div>
       </section>
+
+      <Promo
+        title="오늘의 데스크"
+        desc="애플 제품과 가장 잘 어울리는 조합"
+        href="/desk"
+        imgSrc="https://static.waveon.io/img/apps/18146/christopher-gower-v4rLEeIaoBo-unsplash (1).jpg"
+        cta="구경하기"
+      />
 
       <div className="mt-12 flex items-center justify-center">
         <NewsletterForm />

@@ -6,6 +6,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCircleInfo } from '@fortawesome/free-solid-svg-icons'
 import { useRouter } from 'next/router'
 import amplitude from 'amplitude-js'
+import Promo from '@/components/Promo'
+import NewsletterForm from '@/components/NewsletterForm'
 
 export default function Example({ deskId }) {
   useEffect(() => {
@@ -22,7 +24,7 @@ export default function Example({ deskId }) {
         description={'맥과 가장 잘 어울리는 데스크 셋업을 소개합니다.'}
       />
 
-      <section className="bg-white pt-8 pb-16 dark:bg-gray-900 lg:pt-16 lg:pb-24">
+      <section className="bg-white pt-8 pb-16 dark:bg-gray-900 lg:pt-16 ">
         <div className="mx-auto flex max-w-screen-xl justify-between ">
           <article className="format format-sm sm:format-base lg:format-lg format-blue dark:format-invert mx-auto w-full max-w-2xl">
             <div className=" mb-4 lg:mb-6">
@@ -89,7 +91,7 @@ export default function Example({ deskId }) {
         </div>
       </section>
 
-      <aside aria-label="Related articles" className=" lg:py-24">
+      <aside aria-label="Related articles" className="lg:py-10">
         <div className="mx-auto max-w-screen-xl md:px-4">
           <h2 className="mb-8 text-2xl font-bold text-gray-900 dark:text-white">다른 데스크</h2>
           <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-4">
@@ -131,6 +133,12 @@ export default function Example({ deskId }) {
           </div>
         </div>
       </aside>
+
+      <Promo />
+
+      <div className="mt-8 flex items-center justify-center">
+        <NewsletterForm />
+      </div>
     </>
   )
 }

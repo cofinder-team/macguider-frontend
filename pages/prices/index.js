@@ -3,6 +3,8 @@ import macModels from '@/data/models/mac'
 import ModelCard from '@/components/ModelCard'
 import { PageSEO } from '@/components/SEO'
 import ipadModels from '@/data/models/ipad'
+import NewsletterForm from '@/components/NewsletterForm'
+import Promo from '@/components/Promo'
 
 export default function Projects() {
   return (
@@ -50,6 +52,10 @@ export default function Projects() {
           </div>
         </div>
       </section>
+      <Promo />
+      <div className="mt-8 flex items-center justify-center">
+        <NewsletterForm />
+      </div>
     </>
   )
 }

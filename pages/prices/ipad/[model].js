@@ -17,6 +17,7 @@ import 'react-loading-skeleton/dist/skeleton.css'
 import amplitude from 'amplitude-js'
 import NewsletterForm from '@/components/NewsletterForm'
 import { pastTime } from '@/lib/utils/pastTime'
+import Promo from '@/components/Promo'
 
 async function getPrices(itemId = 1, optionId = 1, unopened = false) {
   const response = await axiosInstance.get(`/item/${itemId}/option/${optionId}`, {
@@ -452,6 +453,8 @@ const IpadModel = ({ model }) => {
           </div>
         </div>
       </div>
+
+      <Promo />
 
       <div className="mt-12 flex items-center justify-center">
         <NewsletterForm />

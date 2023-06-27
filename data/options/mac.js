@@ -1,15 +1,15 @@
 const optionsMac = [
   {
     id: '1',
-    model: 'Mac Mini',
+    model: 'Mac mini',
     releasedDateHistory: ['2023-01-17', '2020-11-10', '2018-10-30'],
-    desc: 'M2와 M2 Pro 칩을 탑재한 Mac Mini는 미니라고 부를 수 없을 정도로 좋은 성능과 착한 가격을 가지고 있습니다. 뛰어난 가성비를 자랑하는 만큼 맥에 입문하기에 최적의 제품입니다.',
+    desc: 'M2와 M2 Pro 칩을 탑재한 Mac mini는 미니라고 부를 수 없을 정도로 좋은 성능과 착한 가격을 가지고 있습니다. 뛰어난 가성비를 자랑하는 만큼 맥에 입문하기에 최적의 제품입니다.',
     href: '/prices/mac/mac-mini',
     price: 850000, // 가장 최신 제품의 기본형의 가격
     data: [
       {
-        title: 'Mac Mini',
-        alias: 'Mac Mini',
+        title: 'Mac mini',
+        alias: 'Mac mini',
         imgSrc: '/static/images/macs/mac-mini.jpeg',
         href: '/prices/mac/mac-mini',
         specs: {
@@ -50,8 +50,8 @@ const optionsMac = [
         ],
       },
       {
-        title: 'Mac Mini',
-        alias: 'Mac Mini',
+        title: 'Mac mini',
+        alias: 'Mac mini',
         imgSrc: '/static/images/macs/mac-mini.jpeg',
         href: 'https://www.google.com',
         specs: {
@@ -82,8 +82,8 @@ const optionsMac = [
         ],
       },
       {
-        title: 'Mac Mini',
-        alias: 'Mac Mini',
+        title: 'Mac mini',
+        alias: 'Mac mini',
         imgSrc: '/static/images/macs/mac-mini.jpeg',
         href: 'https://www.google.com',
         specs: {
@@ -114,8 +114,8 @@ const optionsMac = [
         ],
       },
       {
-        title: 'Mac Mini',
-        alias: 'Mac Mini',
+        title: 'Mac mini',
+        alias: 'Mac mini',
         imgSrc: '/static/images/macs/mac-mini.jpeg',
         href: 'https://www.google.com',
         specs: {

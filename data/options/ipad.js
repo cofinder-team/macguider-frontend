@@ -1,15 +1,15 @@
 const optionsIpad = [
   {
     id: '6',
-    model: 'iPad Mini',
+    model: 'iPad mini',
     releasedDateHistory: ['2021-09-13', '2019-03-17', '2015-09-08', '2014-10-15', '2013-10-21'],
     desc: '이전 세대에 비해 더 커진 8.3인치 디스플레이와 A15 Bionic, 터치 ID, 그리고 2세대 Apple Pencil을 지원합니다. 오랫동안 업데이트가 되지 않은 만큼 곧 새로운 모델이 출시될 것으로 예상됩니다.',
     href: '/prices/ipad/ipad-mini',
     price: 769000, // 가장 최신 제품의 기본형의 가격
     data: [
       {
-        title: 'iPad Mini',
-        alias: 'iPad Mini',
+        title: 'iPad mini',
+        alias: 'iPad mini',
         imgSrc: '/static/images/ipads/ipad-mini-2019.jpeg',
         href: 'https://www.google.com',
         specs: {

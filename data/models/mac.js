@@ -20,7 +20,7 @@ const macModels = [
     href: '/prices/mac/macbook-air-13',
   },
   {
-    title: 'Mac Mini',
+    title: 'Mac mini',
     imgSrc: '/static/images/macs/mac-mini.jpeg',
     href: '/prices/mac/mac-mini',
   },

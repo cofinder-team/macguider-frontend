@@ -15,7 +15,7 @@ const ipadModels = [
     href: '/prices/ipad/ipad-air',
   },
   {
-    title: 'iPad Mini',
+    title: 'iPad mini',
     imgSrc: '/static/images/ipads/ipad-mini-2019.jpeg',
     href: '/prices/ipad/ipad-mini',
   },

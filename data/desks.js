@@ -188,7 +188,7 @@ const desks = [
     id: '2',
     author: 'Sager79',
     name: '처음 올려보는 데스크 셋업',
-    href: '/desk/4',
+    href: '/desk/2',
     imageSrc: 'https://static.waveon.io/img/apps/18146/desk6.png',
     imageAlt: '데스크',
     sections: [
@@ -303,7 +303,7 @@ const desks = [
     id: '3',
     author: 'BradLeejh',
     name: '그동안 데스크셋업 변화과정 - 1편',
-    href: '/desk/5',
+    href: '/desk/3',
     imageSrc: 'https://static.waveon.io/img/apps/18146/7.jpeg',
     imageAlt: '데스크',
     sections: [
@@ -388,7 +388,7 @@ const desks = [
     id: '4',
     author: 'cnscjs13',
     name: '스튜디오 디스플레이 너무 만족스럽네요 ㅎ',
-    href: '/desk/6',
+    href: '/desk/4',
     imageSrc: 'https://static.waveon.io/img/apps/18146/IMG_0226 (1).jpeg',
     imageAlt: '데스크',
     sections: [

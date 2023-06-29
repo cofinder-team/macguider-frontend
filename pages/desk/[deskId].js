@@ -8,6 +8,7 @@ import { useRouter } from 'next/router'
 import amplitude from 'amplitude-js'
 import Promo from '@/components/Promo'
 import NewsletterForm from '@/components/NewsletterForm'
+import Head from 'next/head'
 
 export default function Example({ deskId }) {
   useEffect(() => {
@@ -23,6 +24,31 @@ export default function Example({ deskId }) {
         title={`오늘의 데스크`}
         description={'맥과 가장 잘 어울리는 데스크 셋업을 소개합니다.'}
       />
+
+      <Head>
+        <script async src="https://tally.so/widgets/embed.js"></script>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+            window.TallyConfig = {
+              "formId": "w7bOA6",
+              "popup": {
+                "emoji": {
+                  "text": "💌",
+                  "animation": "wave"
+                },
+                "autoClose": 1000,
+                "open": {
+                  "trigger": "scroll",
+                  "scrollPercent": 35
+                },
+                "doNotShowAfterSubmit": true
+              }
+            };
+          `,
+          }}
+        ></script>
+      </Head>
 
       <section className="bg-white pt-8 pb-16 dark:bg-gray-900 lg:pt-16 ">
         <div className="mx-auto flex max-w-screen-xl justify-between ">

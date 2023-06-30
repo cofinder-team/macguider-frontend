@@ -5,8 +5,15 @@ import { PageSEO } from '@/components/SEO'
 import ipadModels from '@/data/models/ipad'
 import NewsletterForm from '@/components/NewsletterForm'
 import Promo from '@/components/Promo'
+import amplitude from 'amplitude-js'
+import { useEffect } from 'react'
 
-export default function Projects() {
+export default function Prices() {
+  useEffect(() => {
+    amplitude
+      .getInstance()
+      .logEvent('page_view', { page_type: 'prices', page_detail: 'prices_main' })
+  }, [])
   return (
     <>
       <PageSEO title={'시세 정보'} description={'사양별 맥북과 아이패드의 시세를 알려드립니다'} />

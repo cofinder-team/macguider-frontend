@@ -154,6 +154,7 @@ const desks = [
           {
             id: '5',
             optionId: 1,
+            category: category.mac,
           },
         ],
         desc: '여기는 제 아내가 사용하는 사이드 테이블입니다. 아내 셋업은 너무 초라한게 아닌가 생각하실수도 있지만,,,ㅎㅎ 여기는 어디까지나 저의 방(저만의 아지트)이며 아내가 함께 빌려 쓰고 있기 때문에 아내의 장비들은 왠만하면 놓지 못하게 하고 있습니다. 대신 제가 사무실에 있을때는 아내는 썬더볼트 독으로 맥북을 연결해 제 메인 셋업을 이용합니다. 그럴때마다 제 키보드와 데스크매트 위치 바뀌어 있는거보면 잔소리를 하게 되죠 하...',
@@ -169,7 +170,7 @@ const desks = [
     imageAlt: '데스크',
     sections: [
       {
-        id: 5,
+        id: 3,
         name: '처음 올려보는 데스크 셋업',
         images: [
           {
@@ -254,7 +255,7 @@ const desks = [
     imageAlt: '데스크',
     sections: [
       {
-        id: 6,
+        id: 4,
         name: '처음 올려보는 데스크 셋업',
         images: [
           {
@@ -321,7 +322,7 @@ const desks = [
     imageAlt: '데스크',
     sections: [
       {
-        id: 7,
+        id: 5,
         name: '처음 올려보는 데스크 셋업',
         images: [
           {
@@ -420,7 +421,7 @@ const desks = [
     imageAlt: '데스크',
     sections: [
       {
-        id: 8,
+        id: 6,
         name: '처음 올려보는 데스크 셋업',
         images: [
           {
@@ -498,6 +499,15 @@ const desks = [
             alt: '어고트론 LX Desk Mount LCD Arm',
             link: 'https://prod.danawa.com/info/?pcode=1409465',
           },
+          {
+            id: 8,
+            title: 'IKEA LILLÅSEN 릴로센 책상',
+            desc: '',
+            category: category.desk,
+            src: 'https://www.ikea.com/kr/ko/images/products/lillasen-desk-bamboo__0736017_pe740344_s5.jpg?f=xl',
+            alt: 'IKEA LILLÅSEN 릴로센 책상',
+            link: 'https://www.ikea.com/kr/ko/p/lillasen-desk-bamboo-60278288/',
+          },
         ],
         appleProducts: [
           {
@@ -519,7 +529,7 @@ const desks = [
     imageAlt: '데스크',
     sections: [
       {
-        id: 6,
+        id: 7,
         name: '처음 올려보는 데스크 셋업',
         images: [
           {
@@ -597,6 +607,174 @@ const desks = [
           },
         ],
         desc: '이것저것 많이 해봤는데 결국에는 원초적으로 미니멀하게 돌아오게 되는거 같네요..위부터 변화과정입니다. 맥북은 사무실에서 사용하고 맥미니는 홈오피스용으로 사용중입니다',
+      },
+    ],
+  },
+  {
+    id: '7',
+    author: 'SimpleMotive',
+    name: '홈오피스 데스크셋업',
+    href: '/desk/7',
+    imageSrc:
+      'https://static.waveon.io/img/apps/18146/스크린샷_2023-05-11_오후_4.21.04.png',
+    imageAlt: '데스크',
+    sections: [
+      {
+        id: 8,
+        name: '처음 올려보는 데스크 셋업',
+        images: [
+          {
+            id: 1,
+            src: 'https://static.waveon.io/img/apps/18146/스크린샷_2023-05-11_오후_4.21.04.png',
+            alt: '데스크 1',
+          },
+          {
+            id: 2,
+            src: 'https://static.waveon.io/img/apps/18146/스크린샷_2023-05-11_오후_4.21.27.png',
+            alt: '데스크 2',
+          },
+        ],
+        productInfo: [
+          {
+            id: 1,
+            title: 'AZIO Cascade Slim',
+            desc: '',
+            category: category.keyboard,
+            src: 'https://m.media-amazon.com/images/I/81PqtjKHVlL.jpg',
+            alt: 'AZIO Cascade Slim',
+            link: 'https://search.shopping.naver.com/search/all?query=AZIO+Cascade+Slim&bt=-1&frm=NVSCPRO',
+          },
+          {
+            id: 2,
+            title: '로지텍 MX Keys',
+            desc: '',
+            category: category.keyboard,
+            src: 'https://resource.logitech.com/content/dam/logitech/en/products/keyboards/mx-keys-mac/gallery/us-mx-keys-for-mac-gallery-front.png',
+            alt: '로지텍 MX Keys',
+            link: 'https://search.shopping.naver.com/search/all?where=all&frm=NVSCTAB&query=%EB%A1%9C%EC%A7%80%ED%85%8D+Mx+keys',
+          },
+          {
+            id: 3,
+            title: '로지텍 MX MASTER 3S',
+            desc: '',
+            category: category.mouse,
+            src: 'https://resource.logitech.com/w_692,c_limit,q_auto,f_auto,dpr_1.0/d_transparent.gif/content/dam/logitech/en/products/mice/mx-master-3s/gallery/mx-master-3s-mouse-top-view-graphite.png?v=1',
+            alt: '로지텍 MX MASTER 3S',
+            link: 'https://search.shopping.naver.com/search/all?query=%EB%A1%9C%EC%A7%80%ED%85%8D%20MX%20MASTER%203S&prevQuery=AZIO%20Cascade%20Slim',
+          },
+          {
+            id: 4,
+            title: 'Belkin iPhone용 3-in-1 MagSafe 무선 충전기',
+            desc: '',
+            category: category.charger,
+            src: 'https://www.belkin.com/dw/image/v2/BGBH_PRD/on/demandware.static/-/Sites-master-product-catalog-blk/default/dw4c43314c/images/hi-res/a/139612314_WIZ017-BLK_3in1WirelessChargingDock_Hero_WEB.png?sw=700&sh=700&sm=fit',
+            alt: 'Payment application dashboard screenshot with transaction table, financial highlights, and main clients on colorful purple background.',
+            link: 'https://search.shopping.naver.com/search/all?query=%EB%B2%A8%ED%82%A8%203%20In%201&cat_id=&frm=NVSHATC',
+          },
+          {
+            id: 5,
+            title: 'MAYWOOD 풀사이즈 데스크선반',
+            desc: '',
+            category: category.shelf,
+            src: 'https://caldigitkr.cafe24.com/web/product/medium/202306/0e3deb5023001d955674275d4b37062e.jpg',
+            alt: 'Payment application dashboard screenshot with transaction table, financial highlights, and main clients on colorful purple background.',
+            link: 'https://caldigitkr.cafe24.com/shop3/product/detail.html?product_no=35&cate_no=48&display_group=1',
+          },
+          {
+            id: 6,
+            title: 'CalDigit | TS4',
+            desc: '썬더볼트 4독 중에 단연 최고',
+            category: category.dock,
+            src: 'https://m.caldigit.co.kr/web/product/big/202204/328f0a870b89aaa891d3eb1e2f8ba09c.jpg',
+            alt: 'Payment application dashboard screenshot with transaction table, financial highlights, and main clients on colorful purple background.',
+            link: 'https://caldigit.co.kr/product/ts4/9/',
+          },
+          {
+            id: 7,
+            title: 'Minimalistic Desk Mat',
+            desc: '',
+            category: category.deskMat,
+            src: 'https://cdn.shopify.com/s/files/1/0281/7930/0487/products/DeltahubDeskpadSmall_1024x1024_crop_center.jpg?v=1681816344',
+            alt: 'Payment application dashboard screenshot with transaction table, financial highlights, and main clients on colorful purple background.',
+            link: 'https://us.deltahub.io/products/minimalistic-desk-pad',
+          },
+        ],
+        appleProducts: [
+          {
+            id: '5',
+            optionId: 1,
+            category: category.mac,
+          },
+          {
+            id: '3',
+            optionId: 1,
+            category: category.mac,
+          },
+        ],
+        desc: "안녕하세요 저녁에 퇴근하고 집에서도 일하는 일이 많아져서 많은 고심 끝에 홈오피스를 꾸미게되었습니다. 아내도 재택을 하다보니 같이 함께 일할 수 있는 공간으로 만들려고 했어요. 그래도 '제 방'이기 때문에 아내의 의견 일절 없이 남성적인 다크 톤과 따뜻한 분위기를 연출해줄 우드 제품들을 많이 사용하고 있습니다.",
+      },
+    ],
+  },
+  {
+    id: '8',
+    author: 'SimpleMotive',
+    name: '사무실 데스크셋업',
+    href: '/desk/8',
+    imageSrc: 'https://static.waveon.io/img/apps/18146/DSC03913.jpg',
+    imageAlt: '데스크',
+    sections: [
+      {
+        id: 9,
+        name: '사무실 데스크셋업',
+        images: [
+          {
+            id: 1,
+            src: 'https://static.waveon.io/img/apps/18146/DSC03913.jpg',
+            alt: '데스크 1',
+          },
+          {
+            id: 2,
+            src: 'https://static.waveon.io/img/apps/18146/DSC03915.jpg',
+            alt: '데스크 2',
+          },
+        ],
+        productInfo: [
+          {
+            id: 1,
+            title: 'AZIO FOQO 무선 키보드',
+            desc: '',
+            category: category.keyboard,
+            src: 'https://static.waveon.io/img/apps/18146/FOQOswitches_blue.webp',
+            alt: 'AZIO FOQO 무선 키보드',
+            link: 'https://cdn.shopify.com/s/files/1/2975/1466/products/FOQOswitches_blue.png?v=1677187945',
+          },
+          {
+            id: 2,
+            title: '로지텍 MX MASTER 3S',
+            desc: '',
+            category: category.mouse,
+            src: 'https://resource.logitech.com/w_692,c_limit,q_auto,f_auto,dpr_1.0/d_transparent.gif/content/dam/logitech/en/products/mice/mx-master-3s/gallery/mx-master-3s-mouse-top-view-graphite.png?v=1',
+            alt: '로지텍 MX MASTER 3S',
+            link: 'https://search.shopping.naver.com/search/all?query=%EB%A1%9C%EC%A7%80%ED%85%8D%20MX%20MASTER%203S&prevQuery=AZIO%20Cascade%20Slim',
+          },
+          {
+            id: 3,
+            title: 'CalDigit | TS4',
+            desc: '썬더볼트 4독 중에 단연 최고',
+            category: category.dock,
+            src: 'https://m.caldigit.co.kr/web/product/big/202204/328f0a870b89aaa891d3eb1e2f8ba09c.jpg',
+            alt: 'Payment application dashboard screenshot with transaction table, financial highlights, and main clients on colorful purple background.',
+            link: 'https://caldigit.co.kr/product/ts4/9/',
+          },
+        ],
+        appleProducts: [
+          {
+            id: '3',
+            optionId: 1,
+            category: category.mac,
+          },
+        ],
+        desc: '안녕하세요. 이번에 사무실에 있는 책상을 블랙&월넛 컨셉으로 꾸며봤습니다. 첫 데스크셋업 사진인데 즐겁게 봐주세요~!',
       },
     ],
   },

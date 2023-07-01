@@ -47,9 +47,7 @@ export default function DeskSection({ deskId, section }) {
   )
 
   const onClickAppleProduct = useCallback(
-    (id, optionId) => {
-      const appleProduct = getAppleProductInfo(id, optionId)
-
+    (id, optionId, href) => {
       amplitude.getInstance().logEvent('click_view_apple_product_price', {
         desk: deskId,
         section: sectionId,
@@ -57,7 +55,7 @@ export default function DeskSection({ deskId, section }) {
         option: optionId,
       })
 
-      window.open(appleProduct.href, '_blank')
+      window.open(href, '_blank')
     },
     [deskId, sectionId]
   )
@@ -143,7 +141,7 @@ export default function DeskSection({ deskId, section }) {
                 ) : (
                   <button
                     onClick={() => {
-                      onClickAppleProduct(id, optionId)
+                      onClickAppleProduct(id, optionId, href)
                     }}
                     className="flex h-fit items-center rounded-lg  border border-blue-700 bg-blue-800  px-3 py-2 text-center text-sm font-medium text-white hover:bg-white hover:text-blue-800 focus:outline-none focus:ring-4  "
                   >

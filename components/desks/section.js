@@ -1,16 +1,16 @@
 import React, { useCallback, useState } from 'react'
 import amplitude from 'amplitude-js'
-import { category } from '@/data/desks'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons'
-import macModels from '@/data/models/mac'
 import optionsMac from '@/data/options/mac'
+import { getPrices } from 'pages/buyers-guide'
+import useAsyncAll from 'hooks/useAsyncAll'
+import Skeleton from 'react-loading-skeleton'
 
 export default function DeskSection({ deskId, section }) {
   const { id: sectionId, images, productInfo, desc, appleProducts } = section
   // state for selectedImage in each section
   const [selectedImage, setSelectedImage] = useState(images[0])
-  const [expandedRows, setExpandedRows] = useState([])
 
   const {
     id: selectedImageId,
@@ -70,6 +70,14 @@ export default function DeskSection({ deskId, section }) {
     return mac
   }, [])
 
+  // 가격 조회
+  const [state, refetch] = useAsyncAll(
+    getPrices,
+    appleProducts.map((product) => [product.id, product.optionId, false]),
+    []
+  )
+  const { loading, data: fetchedData, error } = state
+
   return (
     <div>
       <div className="grid gap-4">
@@ -109,7 +117,7 @@ export default function DeskSection({ deskId, section }) {
         <h3 className="text-xl font-bold">사진 속 제품들</h3>
 
         <ul role="list" className="divide-y divide-gray-100">
-          {appleProducts.map(({ id, optionId }) => {
+          {appleProducts.map(({ id, optionId }, index) => {
             const { title, imgSrc, specs, href } = getAppleProductInfo(id, optionId)
 
             return (
@@ -128,19 +136,33 @@ export default function DeskSection({ deskId, section }) {
                   </div>
                 </div>
 
-                {/* <div className="flex  items-center justify-center ">
-                  <FontAwesomeIcon icon={faChevronRight} />
-                </div> */}
+                {loading || !fetchedData ? (
+                  <Skeleton width={'5rem'} height="2rem" borderRadius="0.5rem" />
+                ) : (
+                  <button
+                    onClick={() => {
+                      onClickAppleProduct(id, optionId)
+                    }}
+                    className="flex h-fit items-center rounded-lg  border border-blue-700 bg-blue-800  px-3 py-2 text-center text-sm font-medium text-white hover:bg-white hover:text-blue-800 focus:outline-none focus:ring-4  "
+                  >
+                    <strong>{Math.floor(fetchedData[index].data.slice(-1)[0]?.mid / 10000)}</strong>
+                    <span className="ml-0.5 inline-block"> 만원부터</span>
 
-                <button
+                    <FontAwesomeIcon icon={faChevronRight} className="ml-2" />
+                  </button>
+                )}
+
+                {/* <button
                   onClick={() => {
                     onClickAppleProduct(id, optionId)
                   }}
                   className="flex h-fit items-center rounded-lg  border border-blue-700 bg-white px-3 py-2 text-center text-sm font-medium text-blue-700 hover:bg-blue-800 hover:text-white focus:outline-none focus:ring-4 focus:ring-blue-300 dark:border-white dark:bg-transparent dark:text-white "
                 >
-                  적정 중고가격
+                  <strong>{160}</strong>
+                  <span className="ml-0.5 inline-block"> 만원부터</span>
+
                   <FontAwesomeIcon icon={faChevronRight} className="ml-2" />
-                </button>
+                </button> */}
               </li>
             )
           })}

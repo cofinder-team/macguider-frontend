@@ -11,7 +11,7 @@ import useAsyncAll from 'hooks/useAsyncAll'
 import axiosInstance from '@/lib/axios'
 import Promo from '@/components/Promo'
 
-async function getPrices(itemId = 1, optionId = 1, unopened = false) {
+export async function getPrices(itemId = 1, optionId = 1, unopened = false) {
   const response = await axiosInstance.get(`/item/${itemId}/option/${optionId}`, {
     params: {
       unopened,

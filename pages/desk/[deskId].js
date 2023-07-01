@@ -40,7 +40,7 @@ export default function Example({ deskId }) {
                 "autoClose": 1000,
                 "open": {
                   "trigger": "scroll",
-                  "scrollPercent": 35
+                  "scrollPercent": 50
                 },
                 "doNotShowAfterSubmit": true
               }

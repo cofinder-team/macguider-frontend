@@ -6,6 +6,7 @@ import optionsMac from '@/data/options/mac'
 import { getPrices } from 'pages/buyers-guide'
 import useAsyncAll from 'hooks/useAsyncAll'
 import Skeleton from 'react-loading-skeleton'
+import optionsIpad from '@/data/options/ipad'
 
 export default function DeskSection({ deskId, section }) {
   const { id: sectionId, images, productInfo, desc, appleProducts } = section
@@ -61,13 +62,14 @@ export default function DeskSection({ deskId, section }) {
     [deskId, sectionId]
   )
 
-  const getAppleProductInfo = useCallback((id, optionId) => {
-    const macs = optionsMac
-    const mac = macs
-      .find((mac) => mac.id === id)
-      .data.find((spec) => spec.options.map((option) => option.id).includes(optionId))
+  const getAppleProductInfo = useCallback((id, optionId, category) => {
+    const target = category === 'mac' ? optionsMac : optionsIpad
 
-    return mac
+    const product = target
+      .find((e) => e.id === id)
+      ?.data.find((spec) => spec.options.map((option) => option.id).includes(optionId))
+
+    return product
   }, [])
 
   // 가격 조회
@@ -117,8 +119,8 @@ export default function DeskSection({ deskId, section }) {
         <h3 className="text-xl font-bold">사진 속 제품들</h3>
 
         <ul role="list" className="divide-y divide-gray-100">
-          {appleProducts.map(({ id, optionId }, index) => {
-            const { title, imgSrc, specs, href } = getAppleProductInfo(id, optionId)
+          {appleProducts.map(({ id, optionId, category }, index) => {
+            const { title, imgSrc, specs, href } = getAppleProductInfo(id, optionId, category)
 
             return (
               <li key={`${id}-${optionId}`} className="relative flex w-full justify-between py-5">

@@ -1,16 +1,25 @@
 import { useEffect } from 'react'
-import amplitude from 'amplitude-js'
+import { init } from '@amplitude/analytics-browser'
 
 const Amplitude = () => {
   useEffect(() => {
-    // Amplitude 초기화
-    amplitude.getInstance().init(process.env.NEXT_PUBLIC_AMPLITUDE_ID, null, {
-      includeFbclid: true,
-      includeGclid: true,
-      includeUtm: true,
-      includeReferrer: true,
-      saveEvents: true,
-    })
+    const isProduction = () => process.env.NODE_ENV === 'production'
+    const isBrowser = () => typeof window !== 'undefined'
+
+    if (isBrowser()) {
+      if (isProduction()) {
+        init(process.env.NEXT_PUBLIC_AMPLITUDE_ID, null, {
+          defaultTracking: { pageViews: false },
+          includeFbclid: true,
+          includeGclid: true,
+          includeUtm: true,
+          includeReferrer: true,
+          saveEvents: true,
+        })
+      } else {
+        console.log('Amplitude initialized')
+      }
+    }
   }, [])
 
   return null

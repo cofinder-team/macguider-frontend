@@ -3,21 +3,21 @@ import { PageSEO } from '@/components/SEO'
 import desks from '@/data/desks'
 import DeskSection from '@/components/desks/section'
 import { useRouter } from 'next/router'
-import amplitude from 'amplitude-js'
 import Promo from '@/components/Promo'
 import NewsletterForm from '@/components/NewsletterForm'
 import Head from 'next/head'
+import amplitudeTrack from '@/lib/amplitude/track'
 
 export default function Example({ deskId }) {
   useEffect(() => {
-    amplitude.getInstance().logEvent('desk_view', { deskId })
+    amplitudeTrack('enter_desk_detail', { deskId })
   }, [deskId])
 
   const desk = desks.find((desk) => desk.id === deskId)
   const router = useRouter()
 
   const onClickOtherDesk = useCallback((deskId) => {
-    amplitude.getInstance().logEvent('click_view_other_desk', { deskId })
+    amplitudeTrack('click_view_other_desk', { deskId })
   }, [])
 
   return (
@@ -52,7 +52,7 @@ export default function Example({ deskId }) {
         ></script>
       </Head>
 
-      <section className="bg-white pt-8 pb-16 dark:bg-gray-900 lg:pt-16 ">
+      <section className="bg-white pb-16 pt-8 dark:bg-gray-900 lg:pt-16 ">
         <div className="mx-auto flex max-w-screen-xl justify-between ">
           <article className="format format-sm sm:format-base lg:format-lg format-blue dark:format-invert mx-auto w-full max-w-2xl">
             <div className=" mb-4 lg:mb-6">

@@ -11,16 +11,16 @@ import useAsync from 'hooks/useAsync'
 import { useScreenSize } from 'hooks/useScreenSize'
 import Skeleton from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
-import amplitude from 'amplitude-js'
 import NewsletterForm from '@/components/NewsletterForm'
 import { pastTime } from '@/lib/utils/pastTime'
 import Promo from '@/components/Promo'
 import { getPrices } from 'utils/price'
 import { getAppleProductInfo } from 'utils/model'
+import amplitudeTrack from '@/lib/amplitude/track'
 
 const MacModel = ({ model, optionId }) => {
   useEffect(() => {
-    amplitude.getInstance().logEvent('item_view', { item_class: 'ipad', item_detail: model })
+    amplitudeTrack('enter_price_detail', { item_class: 'mac', item_detail: model })
   }, [model])
 
   let currentItem = null
@@ -100,7 +100,7 @@ const MacModel = ({ model, optionId }) => {
     // 가격 조회
     fetchPriceData(currentItemId, defaultOption.id, unopened)
 
-    amplitude.getInstance().logEvent('click_select_option', {
+    amplitudeTrack('click_select_option', {
       item_class: 'mac',
       item_detail: model,
       option_type: 'cpu',
@@ -113,7 +113,7 @@ const MacModel = ({ model, optionId }) => {
     setUnopened(status)
     fetchPriceData(currentItemId, currentOption.id, status)
 
-    amplitude.getInstance().logEvent('click_select_option', {
+    amplitudeTrack('click_select_option', {
       item_class: 'mac',
       item_detail: model,
       option_type: 'unopened',
@@ -129,7 +129,7 @@ const MacModel = ({ model, optionId }) => {
     // 가격 조회
     await fetchPriceData(currentItemId, optionId, unopened)
 
-    amplitude.getInstance().logEvent('click_select_option', {
+    amplitudeTrack('click_select_option', {
       item_class: 'mac',
       item_detail: model,
       option_type: 'detail',
@@ -156,7 +156,7 @@ const MacModel = ({ model, optionId }) => {
               priority={true}
             />
 
-            <ul className="mt-2 mb-8 space-y-1 text-left text-gray-500 dark:text-gray-400">
+            <ul className="mb-8 mt-2 space-y-1 text-left text-gray-500 dark:text-gray-400">
               <li className="flex items-center space-x-3">
                 <svg
                   className="h-5 w-5 flex-shrink-0 text-green-500 dark:text-green-400"

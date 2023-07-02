@@ -12,7 +12,7 @@
     "prepare": "husky install"
   },
   "dependencies": {
-    "@amplitude/analytics-node": "^1.2.0",
+    "@amplitude/analytics-browser": "^2.1.1",
     "@fontsource/inter": "4.5.2",
     "@fortawesome/fontawesome-svg-core": "^6.4.0",
     "@fortawesome/free-solid-svg-icons": "^6.4.0",
@@ -22,7 +22,6 @@
     "@react-hook/media-query": "^1.1.1",
     "@tailwindcss/forms": "^0.4.0",
     "@tailwindcss/typography": "^0.5.0",
-    "amplitude-js": "^8.21.9",
     "autoprefixer": "^10.4.0",
     "axios": "^1.4.0",
     "chart.js": "^4.3.0",

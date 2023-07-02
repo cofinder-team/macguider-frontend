@@ -1,5 +1,4 @@
 import React, { useCallback, useState } from 'react'
-import amplitude from 'amplitude-js'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons'
 import optionsMac from '@/data/options/mac'
@@ -7,6 +6,7 @@ import useAsyncAll from 'hooks/useAsyncAll'
 import Skeleton from 'react-loading-skeleton'
 import optionsIpad from '@/data/options/ipad'
 import { getPrices } from 'utils/price'
+import amplitudeTrack from '@/lib/amplitude/track'
 
 export default function DeskSection({ deskId, section }) {
   const { id: sectionId, images, productInfo, desc, appleProducts } = section
@@ -17,7 +17,7 @@ export default function DeskSection({ deskId, section }) {
 
   const onClickImage = useCallback(
     (image) => {
-      amplitude.getInstance().logEvent('click_view_desk_image', { deskId, sectionId, imgSrc: src })
+      amplitudeTrack('click_view_desk_image', { deskId, sectionId, imgSrc: src })
       setSelectedImage(image)
     },
     [sectionId, deskId, src]
@@ -25,7 +25,7 @@ export default function DeskSection({ deskId, section }) {
 
   const onClickPurchaseAccessory = useCallback(
     (accessoryId, link) => {
-      amplitude.getInstance().logEvent('click_buy_accessory', {
+      amplitudeTrack('click_buy_accessory', {
         deskId,
         sectionId,
         accessoryId,
@@ -38,7 +38,7 @@ export default function DeskSection({ deskId, section }) {
 
   const onClickAppleProduct = useCallback(
     (itemId, optionId, href) => {
-      amplitude.getInstance().logEvent('click_show_more_price_info_desk', {
+      amplitudeTrack('click_show_more_price_info_desk', {
         deskId,
         sectionId,
         itemId,
@@ -77,7 +77,7 @@ export default function DeskSection({ deskId, section }) {
                 onClick={() => {
                   onClickImage(image)
                 }}
-                className={`aspect-w-1 aspect-h-1 cursor-pointer overflow-hidden rounded-lg border-2 ${
+                className={`aspect-h-1 aspect-w-1 cursor-pointer overflow-hidden rounded-lg border-2 ${
                   selectedImageId === image.id ? 'border-blue-800' : 'border-transparent'
                 }`}
               >

@@ -11,7 +11,7 @@ const optionsMac = [
         title: 'Mac mini',
         alias: 'Mac mini',
         imgSrc: '/static/images/macs/mac-mini.jpeg',
-        href: '/prices/mac/mac-mini',
+        href: '/prices/mac/mac-mini?optionId=7',
         specs: {
           year: '2022',
           cpu: 'M2 8코어 CPU 10코어 GPU',
@@ -53,7 +53,7 @@ const optionsMac = [
         title: 'Mac mini',
         alias: 'Mac mini',
         imgSrc: '/static/images/macs/mac-mini.jpeg',
-        href: '/prices/mac/mac-mini',
+        href: '/prices/mac/mac-mini?optionId=13',
         specs: {
           year: '2022',
           cpu: 'M2 Pro 10코어 CPU 16코어 GPU',
@@ -85,7 +85,7 @@ const optionsMac = [
         title: 'Mac mini',
         alias: 'Mac mini',
         imgSrc: '/static/images/macs/mac-mini.jpeg',
-        href: 'https://www.google.com',
+        href: '/prices/mac/mac-mini?optionId=17',
         specs: {
           year: '2022',
           cpu: 'M2 Pro 12코어 CPU 19코어 GPU',
@@ -117,7 +117,7 @@ const optionsMac = [
         title: 'Mac mini',
         alias: 'Mac mini',
         imgSrc: '/static/images/macs/mac-mini.jpeg',
-        href: '/prices/mac/mac-mini',
+        href: '/prices/mac/mac-mini?optionId=1',
         specs: {
           year: '2020',
           cpu: 'M1 8코어 CPU 8코어 GPU',

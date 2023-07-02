@@ -13,32 +13,22 @@ export default function DeskSection({ deskId, section }) {
   // state for selectedImage in each section
   const [selectedImage, setSelectedImage] = useState(images[0])
 
-  const {
-    id: selectedImageId,
-    info,
-    src,
-    alt,
-    title,
-    cover,
-    category: selectedCategory,
-  } = selectedImage
+  const { id: selectedImageId, src, alt } = selectedImage
 
   const onClickImage = useCallback(
     (image) => {
-      amplitude
-        .getInstance()
-        .logEvent('click_view_desk_image', { desk: deskId, section: sectionId, image: image.id })
+      amplitude.getInstance().logEvent('click_view_desk_image', { deskId, sectionId, imgSrc: src })
       setSelectedImage(image)
     },
-    [sectionId, deskId]
+    [sectionId, deskId, src]
   )
 
-  const onClickPurchase = useCallback(
-    (id, link) => {
-      amplitude.getInstance().logEvent('desk_buy', {
-        desk: deskId,
-        section: sectionId,
-        product: id,
+  const onClickPurchaseAccessory = useCallback(
+    (accessoryId, link) => {
+      amplitude.getInstance().logEvent('click_buy_accessory', {
+        deskId,
+        sectionId,
+        accessoryId,
       })
 
       window.open(link, '_blank')
@@ -47,12 +37,12 @@ export default function DeskSection({ deskId, section }) {
   )
 
   const onClickAppleProduct = useCallback(
-    (id, optionId, href) => {
-      amplitude.getInstance().logEvent('click_view_apple_product_price', {
-        desk: deskId,
-        section: sectionId,
-        product: id,
-        option: optionId,
+    (itemId, optionId, href) => {
+      amplitude.getInstance().logEvent('click_show_more_price_info_desk', {
+        deskId,
+        sectionId,
+        itemId,
+        optionId,
       })
 
       window.open(href, '_blank')
@@ -182,7 +172,7 @@ export default function DeskSection({ deskId, section }) {
 
               <button
                 onClick={() => {
-                  onClickPurchase(productId, link)
+                  onClickPurchaseAccessory(productId, link)
                 }}
                 className="flex h-fit items-center rounded-lg  border border-blue-700 bg-white px-3 py-2 text-center text-sm font-medium text-blue-700 hover:bg-blue-800 hover:text-white focus:outline-none focus:ring-4 focus:ring-blue-300 dark:border-white dark:bg-transparent dark:text-white "
               >

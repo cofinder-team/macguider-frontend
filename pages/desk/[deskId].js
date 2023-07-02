@@ -1,9 +1,7 @@
-import { Fragment, useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { PageSEO } from '@/components/SEO'
 import desks from '@/data/desks'
 import DeskSection from '@/components/desks/section'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCircleInfo } from '@fortawesome/free-solid-svg-icons'
 import { useRouter } from 'next/router'
 import amplitude from 'amplitude-js'
 import Promo from '@/components/Promo'
@@ -12,7 +10,7 @@ import Head from 'next/head'
 
 export default function Example({ deskId }) {
   useEffect(() => {
-    amplitude.getInstance().logEvent('desk_view', { desk: deskId })
+    amplitude.getInstance().logEvent('desk_view', { deskId })
   }, [deskId])
 
   const desk = desks.find((desk) => desk.id === deskId)

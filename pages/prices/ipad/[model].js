@@ -104,7 +104,7 @@ const IpadModel = ({ model }) => {
     // 가격 조회
     fetchPriceData(currentItemId, defaultOption.id, unopened)
 
-    amplitude.getInstance().logEvent('select_option', {
+    amplitude.getInstance().logEvent('click_select_option', {
       item_class: 'ipad',
       item_detail: model,
       option_type: 'cpu',
@@ -117,7 +117,7 @@ const IpadModel = ({ model }) => {
     setUnopened(status)
     fetchPriceData(currentItemId, currentOption.id, status)
 
-    amplitude.getInstance().logEvent('select_option', {
+    amplitude.getInstance().logEvent('click_select_option', {
       item_class: 'ipad',
       item_detail: model,
       option_type: 'unopened',
@@ -133,7 +133,7 @@ const IpadModel = ({ model }) => {
     // 가격 조회
     await fetchPriceData(currentItemId, optionId, unopened)
 
-    amplitude.getInstance().logEvent('select_option', {
+    amplitude.getInstance().logEvent('click_select_option', {
       item_class: 'ipad',
       item_detail: model,
       option_type: 'detail',

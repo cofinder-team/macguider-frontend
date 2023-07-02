@@ -53,6 +53,10 @@ const GuideExpandedRow = ({
     return priceDiff
   }, [fetchedData])
 
+  const onClickShowMorePrice = useCallback(() => {
+    amplitude.getInstance().logEvent('click_show_more_price_info_guide', { itemId, optionId })
+  }, [itemId, optionId])
+
   return (
     <tr className="border-b">
       <td colSpan={6}>
@@ -227,9 +231,7 @@ const GuideExpandedRow = ({
               <Link
                 href={href}
                 className="mt-3 inline-flex w-full  items-center justify-center rounded-lg  border  border-blue-700 bg-white px-3 py-2 text-center text-sm font-medium text-blue-700 hover:bg-blue-800 hover:text-white focus:outline-none focus:ring-4 focus:ring-blue-300 dark:border-white dark:bg-transparent dark:text-white dark:hover:border-blue-700 dark:hover:bg-blue-700 dark:focus:ring-blue-800 md:mt-4  xl:w-auto"
-                onClick={() => {
-                  amplitude.getInstance().logEvent('guide_price', { item: itemId })
-                }}
+                onClick={onClickShowMorePrice}
               >
                 가격 알아보기 <FontAwesomeIcon icon={faArrowRight} className="ml-2" />
               </Link>

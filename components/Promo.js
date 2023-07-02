@@ -9,7 +9,7 @@ export default function Promo({
   cta = '더 알아보기',
 }) {
   const onClickCta = () => {
-    amplitude.getInstance().logEvent('promo_cta', { promoTitle: title })
+    amplitude.getInstance().logEvent(`click_promo_cta_btn`, { promoTitle: title, promoHref: href })
   }
 
   return (

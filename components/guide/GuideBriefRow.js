@@ -42,7 +42,7 @@ const GuideBriefRow = ({
     if (isRowExpanded) {
       setExpandedRows(expandedRows.filter((row) => row !== itemId))
     } else {
-      amplitude.getInstance().logEvent('guide_toggle', { item: itemId })
+      amplitude.getInstance().logEvent('toggle_guide_item', { itemId })
       setExpandedRows([...expandedRows, itemId])
     }
   }

@@ -20,7 +20,7 @@ import amplitudeTrack from '@/lib/amplitude/track'
 
 const IpadModel = ({ model, optionId }) => {
   useEffect(() => {
-    amplitudeTrack('item_view', { item_class: 'ipad', item_detail: model })
+    amplitudeTrack('enter_price_detail', { item_class: 'ipad', item_detail: model })
   }, [model])
 
   let currentItem = null

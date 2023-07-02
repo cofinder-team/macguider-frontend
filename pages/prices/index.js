@@ -10,7 +10,7 @@ import amplitudeTrack from '@/lib/amplitude/track'
 
 export default function Prices() {
   useEffect(() => {
-    amplitudeTrack('page_view', { page_type: 'prices', page_detail: 'prices_main' })
+    amplitudeTrack('enter_price_main')
   }, [])
   return (
     <>

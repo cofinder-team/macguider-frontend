@@ -22,7 +22,7 @@ export async function getStaticProps() {
 
 export default function Home() {
   useEffect(() => {
-    amplitudeTrack('page_view', { page_type: 'main', page_detail: 'main' })
+    amplitudeTrack('enter_home')
   }, [])
 
   return (

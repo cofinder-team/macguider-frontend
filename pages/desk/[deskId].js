@@ -10,7 +10,7 @@ import amplitudeTrack from '@/lib/amplitude/track'
 
 export default function Example({ deskId }) {
   useEffect(() => {
-    amplitudeTrack('enter-desk-detail', { deskId })
+    amplitudeTrack('enter_desk_detail', { deskId })
   }, [deskId])
 
   const desk = desks.find((desk) => desk.id === deskId)

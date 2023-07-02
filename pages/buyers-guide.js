@@ -28,11 +28,11 @@ export default function BuyersGuide() {
   }
 
   useEffect(() => {
-    amplitudeTrack('guide_view', { category: categories[1].categoryName })
+    amplitudeTrack('enter_guide')
   }, [])
 
   const onClickCategory = (category) => {
-    amplitudeTrack('guide_view', { category: category.categoryName })
+    amplitudeTrack('click_select_category', { category: category.categoryName })
 
     if (category.categoryData.length === 0) {
       alert('아직 준비 중입니다! 이메일을 등록해주시면 가장 먼저 업데이트 소식을 알려드릴게요.')

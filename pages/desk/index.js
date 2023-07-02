@@ -7,7 +7,7 @@ import amplitudeTrack from '@/lib/amplitude/track'
 
 export default function Desk() {
   useEffect(() => {
-    amplitudeTrack('page_view', { page_type: 'desk', page_detail: 'desk_main' })
+    amplitudeTrack('enter_desk_main')
   }, [])
   return (
     <>

@@ -7,8 +7,8 @@ import Skeleton from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
 import { Line } from 'react-chartjs-2'
 import { useCallback } from 'react'
-import amplitude from 'amplitude-js'
 import Chart from 'chart.js/auto' // 직접 사용하지는 않더라도 import 해주지 않으면 오류남
+import amplitudeTrack from '@/lib/amplitude/track'
 
 const GuideExpandedRow = ({
   itemId,
@@ -54,7 +54,7 @@ const GuideExpandedRow = ({
   }, [fetchedData])
 
   const onClickShowMorePrice = useCallback(() => {
-    amplitude.getInstance().logEvent('click_show_more_price_info_guide', { itemId, optionId })
+    amplitudeTrack('click_show_more_price_info_guide', { itemId, optionId })
   }, [itemId, optionId])
 
   return (

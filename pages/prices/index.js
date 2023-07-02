@@ -5,21 +5,19 @@ import { PageSEO } from '@/components/SEO'
 import ipadModels from '@/data/models/ipad'
 import NewsletterForm from '@/components/NewsletterForm'
 import Promo from '@/components/Promo'
-import amplitude from 'amplitude-js'
 import { useEffect } from 'react'
+import amplitudeTrack from '@/lib/amplitude/track'
 
 export default function Prices() {
   useEffect(() => {
-    amplitude
-      .getInstance()
-      .logEvent('page_view', { page_type: 'prices', page_detail: 'prices_main' })
+    amplitudeTrack('page_view', { page_type: 'prices', page_detail: 'prices_main' })
   }, [])
   return (
     <>
       <PageSEO title={'시세 정보'} description={'사양별 맥북과 아이패드의 시세를 알려드립니다'} />
 
       <section className="mt-md-6 mt-3">
-        <div className="space-y-2 pt-6 pb-2">
+        <div className="space-y-2 pb-2 pt-6">
           <h1 className="text-3xl font-extrabold leading-9 tracking-tight text-gray-900 dark:text-gray-100  sm:leading-10">
             맥 시세
           </h1>
@@ -37,7 +35,7 @@ export default function Prices() {
       </section>
 
       <section className="mt-md-6 mt-3">
-        <div className="space-y-2 pt-6 pb-2">
+        <div className="space-y-2 pb-2 pt-6">
           <div className="flex items-center">
             <h1 className="text-3xl font-extrabold leading-9 tracking-tight text-gray-900 dark:text-gray-100  sm:leading-10">
               아이패드 시세

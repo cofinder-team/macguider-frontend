@@ -1,12 +1,12 @@
 import { faPaperPlane, faXmark } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useCallback, useState } from 'react'
-import amplitude from 'amplitude-js'
+import amplitudeTrack from '@/lib/amplitude/track'
 
 const StickyBanner = () => {
   const [bannerOpened, setBannerOpened] = useState(true)
   const onClickSendFeedback = useCallback(() => {
-    amplitude.getInstance().logEvent('click_send_feedback')
+    amplitudeTrack('click_send_feedback')
   }, [])
 
   return (

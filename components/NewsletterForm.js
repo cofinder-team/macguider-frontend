@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react'
 
 import axiosInstance from '@/lib/axios'
-import amplitude from 'amplitude-js'
+import amplitudeTrack from '@/lib/amplitude/track'
 
 const NewsletterForm = ({ title = 'MacGuider 최신 업데이트 소식 받기' }) => {
   const inputEl = useRef(null)
@@ -12,7 +12,7 @@ const NewsletterForm = ({ title = 'MacGuider 최신 업데이트 소식 받기' 
   const subscribe = async (e) => {
     e.preventDefault()
 
-    amplitude.getInstance().logEvent('click_subscribe_newsletter')
+    amplitudeTrack('click_subscribe_newsletter')
 
     try {
       await axiosInstance.post(`/email/${inputEl.current.value}`)
@@ -48,9 +48,9 @@ const NewsletterForm = ({ title = 'MacGuider 최신 업데이트 소식 받기' 
             disabled={subscribed}
           />
         </div>
-        <div className="mt-2 flex w-full rounded-md shadow-sm sm:mt-0 sm:ml-3">
+        <div className="mt-2 flex w-full rounded-md shadow-sm sm:ml-3 sm:mt-0">
           <button
-            className={`w-full rounded-md bg-blue-800 py-2 px-4 font-medium text-white sm:py-0 ${
+            className={`w-full rounded-md bg-blue-800 px-4 py-2 font-medium text-white sm:py-0 ${
               subscribed
                 ? 'cursor-default'
                 : 'border hover:border-blue-700 hover:bg-white hover:text-blue-800  dark:hover:bg-primary-400'

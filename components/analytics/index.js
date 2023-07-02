@@ -5,7 +5,7 @@ import Amplitude from './Amplitude'
 const isProduction = process.env.NODE_ENV === 'production'
 
 const Analytics = () => {
-  return <>{isProduction && <Amplitude />}</>
+  return <Amplitude />
 }
 
 export default Analytics

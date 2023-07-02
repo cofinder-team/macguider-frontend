@@ -5,11 +5,11 @@ import NewsletterForm from '@/components/NewsletterForm'
 import { useState } from 'react'
 import Image from 'next/image'
 import categories from '@/data/guide/categories'
-import amplitude from 'amplitude-js'
 import GuideBriefRow from '@/components/guide/GuideBriefRow'
 import useAsyncAll from 'hooks/useAsyncAll'
 import Promo from '@/components/Promo'
 import { getPrices } from 'utils/price'
+import amplitudeTrack from '@/lib/amplitude/track'
 
 export default function BuyersGuide() {
   const [currentCategory, setCurrentCategory] = useState(categories[1])
@@ -28,11 +28,11 @@ export default function BuyersGuide() {
   }
 
   useEffect(() => {
-    amplitude.getInstance().logEvent('guide_view', { category: categories[1].categoryName })
+    amplitudeTrack('guide_view', { category: categories[1].categoryName })
   }, [])
 
   const onClickCategory = (category) => {
-    amplitude.getInstance().logEvent('guide_view', { category: category.categoryName })
+    amplitudeTrack('guide_view', { category: category.categoryName })
 
     if (category.categoryData.length === 0) {
       alert('아직 준비 중입니다! 이메일을 등록해주시면 가장 먼저 업데이트 소식을 알려드릴게요.')
@@ -50,7 +50,7 @@ export default function BuyersGuide() {
       />
 
       <section className="mt-md-6 mt-3 pb-6">
-        <div className="space-y-2 pt-6 pb-2">
+        <div className="space-y-2 pb-2 pt-6">
           <h1 className="text-3xl font-extrabold leading-9 tracking-tight text-gray-900 dark:text-gray-100  sm:leading-10">
             애플 제품 구매 가이드
           </h1>
@@ -59,7 +59,7 @@ export default function BuyersGuide() {
           </p>
         </div>
 
-        <div className="flex flex-wrap items-center justify-center pt-4 pb-2">
+        <div className="flex flex-wrap items-center justify-center pb-2 pt-4">
           {categories.map((category) => (
             <button
               onClick={() => {
@@ -73,7 +73,7 @@ export default function BuyersGuide() {
                   : 'border-white'
               } ${
                 category.categoryData.length > 0 ? 'text-blue-700' : 'text-gray-300'
-              } mr-3 mb-3 rounded-full border  bg-white px-5 py-2.5 text-center text-base font-medium text-blue-700 hover:bg-blue-700 hover:text-white focus:outline-none focus:ring-4 focus:ring-blue-300 dark:border-blue-500 dark:bg-gray-900 dark:text-blue-500 dark:hover:bg-blue-500 dark:hover:text-white dark:focus:ring-blue-800`}
+              } mb-3 mr-3 rounded-full border  bg-white px-5 py-2.5 text-center text-base font-medium text-blue-700 hover:bg-blue-700 hover:text-white focus:outline-none focus:ring-4 focus:ring-blue-300 dark:border-blue-500 dark:bg-gray-900 dark:text-blue-500 dark:hover:bg-blue-500 dark:hover:text-white dark:focus:ring-blue-800`}
             >
               {category.categoryName}
             </button>

@@ -11,7 +11,6 @@ import LayoutWrapper from '@/components/LayoutWrapper'
 import { ClientReload } from '@/components/ClientReload'
 import { config } from '@fortawesome/fontawesome-svg-core'
 import '@fortawesome/fontawesome-svg-core/styles.css'
-import Amplitude from '@/components/analytics/Amplitude'
 import Analytics from '@/components/analytics'
 
 config.autoAddCss = false

@@ -3,10 +3,10 @@ import amplitude from 'amplitude-js'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons'
 import optionsMac from '@/data/options/mac'
-import { getPrices } from 'pages/buyers-guide'
 import useAsyncAll from 'hooks/useAsyncAll'
 import Skeleton from 'react-loading-skeleton'
 import optionsIpad from '@/data/options/ipad'
+import { getPrices } from 'utils/price'
 
 export default function DeskSection({ deskId, section }) {
   const { id: sectionId, images, productInfo, desc, appleProducts } = section

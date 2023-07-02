@@ -11,7 +11,7 @@ const optionsIpad = [
         title: 'iPad mini',
         alias: 'iPad mini',
         imgSrc: '/static/images/ipads/ipad-mini-2019.jpeg',
-        href: '/prices/ipad/ipad-mini',
+        href: '/prices/ipad/ipad-mini?optionId=1',
         specs: {
           year: '2021',
           cpu: 'A15 Bionic',
@@ -54,7 +54,7 @@ const optionsIpad = [
         title: 'iPad Air',
         alias: 'iPad Air',
         imgSrc: '/static/images/ipads/ipad-air-2022.jpeg',
-        href: '/prices/ipad/ipad-air',
+        href: '/prices/ipad/ipad-air?optionId=5',
         specs: {
           year: '2022',
           cpu: 'M1',
@@ -87,7 +87,7 @@ const optionsIpad = [
         title: 'iPad Air',
         alias: 'iPad Air',
         imgSrc: '/static/images/ipads/ipad-air-2022.jpeg',
-        href: '/prices/ipad/ipad-air',
+        href: '/prices/ipad/ipad-air?optionId=1',
         specs: {
           year: '2020',
           cpu: 'A14 Bionic',
@@ -130,7 +130,7 @@ const optionsIpad = [
         title: 'iPad',
         alias: 'iPad',
         imgSrc: '/static/images/ipads/ipad-2022.jpeg',
-        href: '/prices/ipad/ipad',
+        href: '/prices/ipad/ipad?optionId=9',
         specs: {
           year: '2022',
           cpu: 'A14 Bionic',
@@ -163,7 +163,7 @@ const optionsIpad = [
         title: 'iPad',
         alias: 'iPad',
         imgSrc: '/static/images/ipads/ipad-2021.jpeg',
-        href: '/prices/ipad/ipad',
+        href: '/prices/ipad/ipad?optionId=5',
         specs: {
           year: '2021',
           cpu: 'A13 Bionic',
@@ -196,7 +196,7 @@ const optionsIpad = [
         title: 'iPad',
         alias: 'iPad',
         imgSrc: '/static/images/ipads/ipad-2020.jpeg',
-        href: '/prices/ipad/ipad',
+        href: '/prices/ipad/ipad?optionId=1',
         specs: {
           year: '2020',
           cpu: 'A12 Bionic',
@@ -239,7 +239,7 @@ const optionsIpad = [
         title: 'iPad Pro 11',
         alias: 'iPad Pro 11',
         imgSrc: '/static/images/ipads/ipad-pro-11-2022.png',
-        href: '/prices/ipad/ipad-pro-11',
+        href: '/prices/ipad/ipad-pro-11?optionId=17',
         specs: {
           year: '2022',
           cpu: 'M2',
@@ -292,7 +292,7 @@ const optionsIpad = [
         title: 'iPad Pro 11',
         alias: 'iPad Pro 11',
         imgSrc: '/static/images/ipads/ipad-pro-11-2021.jpeg',
-        href: '/prices/ipad/ipad-pro-11',
+        href: '/prices/ipad/ipad-pro-11?optionId=9',
         specs: {
           year: '2021',
           cpu: 'M1',
@@ -345,7 +345,7 @@ const optionsIpad = [
         title: 'iPad Pro 11',
         alias: 'iPad Pro 11',
         imgSrc: '/static/images/ipads/ipad-pro-11-2020.jpeg',
-        href: '/prices/ipad/ipad-pro-11',
+        href: '/prices/ipad/ipad-pro-11?optionId=1',
         specs: {
           year: '2020',
           cpu: 'A12Z Bionic',
@@ -408,7 +408,7 @@ const optionsIpad = [
         title: 'iPad Pro 12.9',
         alias: 'iPad Pro 12.9',
         imgSrc: '/static/images/ipads/ipad-pro-12-9-2022.jpg',
-        href: '/prices/ipad/ipad-pro-12-9',
+        href: '/prices/ipad/ipad-pro-12-9?optionId=17',
         specs: {
           year: '2022',
           cpu: 'M2',
@@ -461,7 +461,7 @@ const optionsIpad = [
         title: 'iPad Pro 12.9',
         alias: 'iPad Pro 12.9',
         imgSrc: '/static/images/ipads/ipad-pro-12-9-2021.jpeg',
-        href: '/prices/ipad/ipad-pro-12-9',
+        href: '/prices/ipad/ipad-pro-12-9?optionId=9',
         specs: {
           year: '2021',
           cpu: 'M1',
@@ -514,7 +514,7 @@ const optionsIpad = [
         title: 'iPad Pro 12.9',
         alias: 'iPad Pro 12.9',
         imgSrc: '/static/images/ipads/ipad-pro-12-9-2022.jpg',
-        href: '/prices/ipad/ipad-pro-12-9',
+        href: '/prices/ipad/ipad-pro-12-9?optionId=1',
         specs: {
           year: '2020',
           cpu: 'A12Z Bionic',

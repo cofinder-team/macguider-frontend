@@ -1,13 +1,10 @@
 import { PageSEO } from '@/components/SEO'
-import React, { useEffect } from 'react'
-
+import React, { useCallback, useEffect } from 'react'
 import optionsIpad from '@/data/options/ipad'
 import Image from 'next/image'
-
 import Chart from 'chart.js/auto'
 import { Line } from 'react-chartjs-2'
 import { useState } from 'react'
-import axiosInstance from '@/lib/axios'
 import useAsync from 'hooks/useAsync'
 import { useScreenSize } from 'hooks/useScreenSize'
 
@@ -18,17 +15,10 @@ import amplitude from 'amplitude-js'
 import NewsletterForm from '@/components/NewsletterForm'
 import { pastTime } from '@/lib/utils/pastTime'
 import Promo from '@/components/Promo'
+import { getAppleProductInfo } from 'utils/model'
+import { getPrices } from 'utils/price'
 
-async function getPrices(itemId = 1, optionId = 1, unopened = false) {
-  const response = await axiosInstance.get(`/item/${itemId}/option/${optionId}`, {
-    params: {
-      unopened,
-    },
-  })
-  return response.data
-}
-
-const IpadModel = ({ model }) => {
+const IpadModel = ({ model, optionId }) => {
   useEffect(() => {
     amplitude.getInstance().logEvent('item_view', { item_class: 'ipad', item_detail: model })
   }, [model])
@@ -57,12 +47,19 @@ const IpadModel = ({ model }) => {
   }
 
   const { data: currentItemData, id: currentItemId } = currentItem
+  const initialModel = optionId
+    ? getAppleProductInfo(currentItemId, Number(optionId), 'ipad')
+    : currentItemData[0]
 
   // currentItem > currentModel > currentOption
-  const [currentModel, setCurrentModel] = useState(currentItemData[0])
-
+  const [currentModel, setCurrentModel] = useState(initialModel)
   const { title: modelTitle, specs, options, imgSrc, href } = currentModel
-  const [currentOption, setCurrentOption] = useState(options[0])
+
+  const initialOption = optionId
+    ? currentModel.options.find((option) => option.id === Number(optionId))
+    : currentModel.options[0]
+  const [currentOption, setCurrentOption] = useState(initialOption)
+
   const { connectivity, ssd } = currentOption
   const [unopened, setUnopened] = useState('false')
 
@@ -464,11 +461,12 @@ const IpadModel = ({ model }) => {
 }
 
 export async function getServerSideProps(context) {
-  const { model } = context.query
+  const { model, optionId = null } = context.query
 
   return {
     props: {
       model,
+      optionId,
     },
   }
 }

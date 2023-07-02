@@ -8,17 +8,8 @@ import categories from '@/data/guide/categories'
 import amplitude from 'amplitude-js'
 import GuideBriefRow from '@/components/guide/GuideBriefRow'
 import useAsyncAll from 'hooks/useAsyncAll'
-import axiosInstance from '@/lib/axios'
 import Promo from '@/components/Promo'
-
-export async function getPrices(itemId = 1, optionId = 1, unopened = false) {
-  const response = await axiosInstance.get(`/item/${itemId}/option/${optionId}`, {
-    params: {
-      unopened,
-    },
-  })
-  return response.data
-}
+import { getPrices } from 'utils/price'
 
 export default function BuyersGuide() {
   const [currentCategory, setCurrentCategory] = useState(categories[1])

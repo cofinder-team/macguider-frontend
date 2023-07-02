@@ -1,154 +1,162 @@
-import React, { useState } from 'react'
-import amplitude from 'amplitude-js'
+import React, { useCallback, useState } from 'react'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faChevronRight } from '@fortawesome/free-solid-svg-icons'
+import optionsMac from '@/data/options/mac'
+import useAsyncAll from 'hooks/useAsyncAll'
+import Skeleton from 'react-loading-skeleton'
+import optionsIpad from '@/data/options/ipad'
+import { getPrices } from 'utils/price'
+import amplitudeTrack from '@/lib/amplitude/track'
 
 export default function DeskSection({ deskId, section }) {
-  const { id: sectionId, images, productInfo, desc } = section
+  const { id: sectionId, images, productInfo, desc, appleProducts } = section
   // state for selectedImage in each section
   const [selectedImage, setSelectedImage] = useState(images[0])
-  const [expandedRows, setExpandedRows] = useState([])
 
-  const onClickImage = (image) => {
-    amplitude
-      .getInstance()
-      .logEvent('desk_image', { desk: deskId, section: sectionId, image: image.id })
-    setSelectedImage(image)
-  }
+  const { id: selectedImageId, src, alt } = selectedImage
 
-  const toggleRow = (itemId) => {
-    const isRowExpanded = expandedRows.includes(itemId)
-    if (isRowExpanded) {
-      setExpandedRows(expandedRows.filter((row) => row !== itemId))
-    } else {
-      amplitude
-        .getInstance()
-        .logEvent('desk_product', { desk: deskId, section: sectionId, product: itemId })
-      setExpandedRows([...expandedRows, itemId])
-    }
-  }
+  const onClickImage = useCallback(
+    (image) => {
+      amplitudeTrack('click_view_desk_image', { deskId, sectionId, imgSrc: src })
+      setSelectedImage(image)
+    },
+    [sectionId, deskId, src]
+  )
 
-  const onClickPurchase = (id, link) => {
-    amplitude.getInstance().logEvent('desk_buy', {
-      desk: deskId,
-      section: sectionId,
-      product: id,
-    })
+  const onClickPurchaseAccessory = useCallback(
+    (accessoryId, link) => {
+      amplitudeTrack('click_buy_accessory', {
+        deskId,
+        sectionId,
+        accessoryId,
+      })
 
-    window.open(link, '_blank')
-  }
+      window.open(link, '_blank')
+    },
+    [deskId, sectionId]
+  )
+
+  const onClickAppleProduct = useCallback(
+    (itemId, optionId, href) => {
+      amplitudeTrack('click_show_more_price_info_desk', {
+        deskId,
+        sectionId,
+        itemId,
+        optionId,
+      })
+
+      window.open(href, '_blank')
+    },
+    [deskId, sectionId]
+  )
+
+  const getAppleProductInfo = useCallback((id, optionId, category) => {
+    const target = category === 'mac' ? optionsMac : optionsIpad
+
+    const product = target
+      .find((e) => e.id === id)
+      ?.data.find((spec) => spec.options.map((option) => option.id).includes(optionId))
+
+    return product
+  }, [])
 
   return (
-    <>
+    <div>
       <div className="grid gap-4">
-        <div>
-          <img
-            className={`h-[280px] w-full rounded-lg md:h-[420px] ${
-              selectedImage.cover ? 'object-cover' : 'object-contain'
-            }`}
-            src={selectedImage.src}
-            alt={selectedImage.alt}
-            draggable="false"
-          />
+        <div className="relative h-[280px] md:h-[420px]">
+          <div className="relative h-full w-full overflow-hidden rounded-lg ">
+            <img className="h-full w-full object-cover" src={src} alt={alt} draggable="false" />
+          </div>
         </div>
-        <div className="grid grid-cols-5 gap-4">
-          {images.map((image) => (
-            <div
-              key={image.id}
-              onClick={() => {
-                onClickImage(image)
-              }}
-              className={`aspect-w-1 aspect-h-1 cursor-pointer overflow-hidden rounded-lg border-2 ${
-                selectedImage.id === image.id ? 'border-blue-800' : 'border-transparent'
-              }`}
-            >
-              <img
-                className={`h-full w-full object-contain ${
-                  image.cover ? 'object-cover' : 'object-contain'
-                }
-                `}
-                src={image.src}
-                alt={image.alt}
-                draggable="false"
-              />
-            </div>
-          ))}
-        </div>
-      </div>
 
-      <div
-        className="mt-6"
-        id="accordion-flush"
-        data-accordion="collapse"
-        data-active-classes="bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
-        data-inactive-classes="text-gray-500 dark:text-gray-400"
-      >
-        {productInfo.map(({ id, category, src, alt, title, desc, link }) => (
-          <React.Fragment key={id}>
-            <div id="accordion-flush-heading-1" onClick={() => toggleRow(id)}>
-              <button
-                type="button"
-                className="flex w-full items-center justify-between border-b border-gray-200 py-5 text-left font-medium text-gray-500 dark:border-gray-700 dark:text-gray-400"
-                data-accordion-target="#accordion-flush-body-1"
-                aria-expanded="true"
-                aria-controls="accordion-flush-body-1"
+        {images.length > 1 && (
+          <div className="grid grid-cols-5 gap-4">
+            {images.map((image) => (
+              <div
+                key={image.id}
+                onClick={() => {
+                  onClickImage(image)
+                }}
+                className={`aspect-h-1 aspect-w-1 cursor-pointer overflow-hidden rounded-lg border-2 ${
+                  selectedImageId === image.id ? 'border-blue-800' : 'border-transparent'
+                }`}
               >
-                <span>{category}</span>
-                <svg
-                  data-accordion-icon
-                  className={`h-6 w-6 shrink-0 ${expandedRows.includes(id) ? 'rotate-180' : ''}`}
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                    clipRule="evenodd"
-                  ></path>
-                </svg>
-              </button>
-            </div>
-            <div
-              id="accordion-flush-body-1"
-              aria-labelledby="accordion-flush-heading-1"
-              className={`${expandedRows.includes(id) ? 'block' : 'hidden'} `}
-            >
-              <div className="grid w-full grid-cols-1 items-center gap-x-6 gap-y-8 border-b border-gray-200 py-5 dark:border-gray-700 sm:grid-cols-12 lg:gap-x-8">
-                <div className="sm:col-span-4 lg:col-span-5">
-                  <div className="aspect-h-1 aspect-w-1 overflow-hidden rounded-lg ">
-                    <img src={src} alt={alt} className="object-contain object-center" />
-                  </div>
-                </div>
-                <div className="sm:col-span-8 lg:col-span-7">
-                  <h2 className="text-2xl font-bold text-gray-900 sm:pr-12">{title}</h2>
-                  <section aria-labelledby="information-heading" className="mt-3">
-                    <h3 id="information-heading" className="sr-only">
-                      Product information
-                    </h3>
-
-                    <div className="mt-6">
-                      <h4 className="sr-only">Description</h4>
-                    </div>
-                  </section>
-
-                  <section aria-labelledby="options-heading" className="mt-6">
-                    <div className="mt-6">
-                      <button
-                        type="submit"
-                        onClick={() => onClickPurchase(id, link)}
-                        className="flex w-full items-center justify-center rounded-md border border-transparent bg-blue-800 px-8 py-3 text-base font-medium text-white hover:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-50"
-                      >
-                        구매하러 가기
-                      </button>
-                    </div>
-                  </section>
-                </div>
+                <img
+                  className="h-full w-full object-contain object-cover"
+                  src={image.src}
+                  alt={image.alt}
+                  draggable="false"
+                />
               </div>
-            </div>
-          </React.Fragment>
-        ))}
+            ))}
+          </div>
+        )}
       </div>
 
       <p className="mt-6">{desc}</p>
-    </>
+
+      <div className="mt-6">
+        <h3 className="text-xl font-bold">사진 속 제품들</h3>
+
+        <ul role="list" className="divide-y divide-gray-100">
+          {appleProducts.map(({ id, optionId, category }, index) => {
+            const { title, imgSrc, specs, href } = getAppleProductInfo(id, optionId, category)
+
+            return (
+              <li key={`${id}-${optionId}`} className="relative flex w-full justify-between py-5">
+                <div className="flex max-w-[65%] gap-x-4 pr-6 sm:w-1/2 sm:flex-none ">
+                  <img
+                    className="h-12 w-12 flex-none rounded-md bg-gray-50 object-contain"
+                    src={imgSrc}
+                    alt={title}
+                  />
+                  <div className="min-w-0 flex-auto truncate">
+                    <p className="truncate text-sm font-semibold leading-6 text-gray-900">
+                      {title}
+                    </p>
+                    <p className="mt-1 truncate text-xs leading-5 text-gray-500">{specs.cpu}</p>
+                  </div>
+                </div>
+
+                <button
+                  onClick={() => {
+                    onClickAppleProduct(id, optionId, href)
+                  }}
+                  className="flex h-fit items-center rounded-lg  border border-blue-700 bg-blue-800  px-3 py-2 text-center text-sm font-medium text-white hover:bg-white hover:text-blue-800 focus:outline-none focus:ring-4 "
+                >
+                  <span className="ml-0.5 inline-block">적정 중고가격</span>
+
+                  <FontAwesomeIcon icon={faChevronRight} className="ml-2" />
+                </button>
+              </li>
+            )
+          })}
+          {productInfo.map(({ id: productId, title, category, src, alt, link }) => (
+            <li key={productId} className="relative flex w-full items-center justify-between py-5">
+              <div className="flex max-w-[75%] gap-x-4 pr-6 sm:w-1/2 sm:flex-none ">
+                <img
+                  className="h-12 w-12 flex-none rounded-md bg-gray-50 object-contain"
+                  src={src}
+                  alt={alt}
+                />
+                <div className="min-w-0 flex-auto truncate">
+                  <p className="mt-1 flex text-xs leading-5 text-gray-500">{category}</p>
+                  <p className="truncate text-sm font-semibold leading-6 text-gray-900">{title}</p>
+                </div>
+              </div>
+
+              <button
+                onClick={() => {
+                  onClickPurchaseAccessory(productId, link)
+                }}
+                className="flex h-fit items-center rounded-lg  border border-blue-700 bg-white px-3 py-2 text-center text-sm font-medium text-blue-700 hover:bg-blue-800 hover:text-white focus:outline-none focus:ring-4 focus:ring-blue-300 dark:border-white dark:bg-transparent dark:text-white "
+              >
+                구매하기
+              </button>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
   )
 }

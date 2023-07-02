@@ -11,7 +11,7 @@ const optionsIpad = [
         title: 'iPad mini',
         alias: 'iPad mini',
         imgSrc: '/static/images/ipads/ipad-mini-2019.jpeg',
-        href: 'https://www.google.com',
+        href: '/prices/ipad/ipad-mini?optionId=1',
         specs: {
           year: '2021',
           cpu: 'A15 Bionic',
@@ -47,13 +47,14 @@ const optionsIpad = [
     model: 'iPad Air',
     releasedDateHistory: ['2022-03-08', '2020-09-14', '2019-03-17', '2014-10-15', '2013-10-21'],
     desc: 'M1을 탑재한 iPad Air 는  10.9인치 Liquid Retina 디스플레이와 터치 ID, 2세대 Apple Pencil을 지원합니다. 출시주기 막바지에 다른만큼 곧 새로운 모델이 출시될 것으로 예상됩니다.',
+    href: '/prices/ipad/ipad-air',
     price: 929000, // 가장 최신 제품의 기본형의 가격
     data: [
       {
         title: 'iPad Air',
         alias: 'iPad Air',
         imgSrc: '/static/images/ipads/ipad-air-2022.jpeg',
-        href: 'https://www.google.com',
+        href: '/prices/ipad/ipad-air?optionId=5',
         specs: {
           year: '2022',
           cpu: 'M1',
@@ -86,7 +87,7 @@ const optionsIpad = [
         title: 'iPad Air',
         alias: 'iPad Air',
         imgSrc: '/static/images/ipads/ipad-air-2022.jpeg',
-        href: 'https://www.google.com',
+        href: '/prices/ipad/ipad-air?optionId=1',
         specs: {
           year: '2020',
           cpu: 'A14 Bionic',
@@ -129,7 +130,7 @@ const optionsIpad = [
         title: 'iPad',
         alias: 'iPad',
         imgSrc: '/static/images/ipads/ipad-2022.jpeg',
-        href: 'https://www.google.com',
+        href: '/prices/ipad/ipad?optionId=9',
         specs: {
           year: '2022',
           cpu: 'A14 Bionic',
@@ -162,7 +163,7 @@ const optionsIpad = [
         title: 'iPad',
         alias: 'iPad',
         imgSrc: '/static/images/ipads/ipad-2021.jpeg',
-        href: 'https://www.google.com',
+        href: '/prices/ipad/ipad?optionId=5',
         specs: {
           year: '2021',
           cpu: 'A13 Bionic',
@@ -195,7 +196,7 @@ const optionsIpad = [
         title: 'iPad',
         alias: 'iPad',
         imgSrc: '/static/images/ipads/ipad-2020.jpeg',
-        href: 'https://www.google.com',
+        href: '/prices/ipad/ipad?optionId=1',
         specs: {
           year: '2020',
           cpu: 'A12 Bionic',
@@ -238,7 +239,7 @@ const optionsIpad = [
         title: 'iPad Pro 11',
         alias: 'iPad Pro 11',
         imgSrc: '/static/images/ipads/ipad-pro-11-2022.png',
-        href: 'https://www.google.com',
+        href: '/prices/ipad/ipad-pro-11?optionId=17',
         specs: {
           year: '2022',
           cpu: 'M2',
@@ -291,7 +292,7 @@ const optionsIpad = [
         title: 'iPad Pro 11',
         alias: 'iPad Pro 11',
         imgSrc: '/static/images/ipads/ipad-pro-11-2021.jpeg',
-        href: 'https://www.google.com',
+        href: '/prices/ipad/ipad-pro-11?optionId=9',
         specs: {
           year: '2021',
           cpu: 'M1',
@@ -344,7 +345,7 @@ const optionsIpad = [
         title: 'iPad Pro 11',
         alias: 'iPad Pro 11',
         imgSrc: '/static/images/ipads/ipad-pro-11-2020.jpeg',
-        href: 'https://www.google.com',
+        href: '/prices/ipad/ipad-pro-11?optionId=1',
         specs: {
           year: '2020',
           cpu: 'A12Z Bionic',
@@ -407,7 +408,7 @@ const optionsIpad = [
         title: 'iPad Pro 12.9',
         alias: 'iPad Pro 12.9',
         imgSrc: '/static/images/ipads/ipad-pro-12-9-2022.jpg',
-        href: 'https://www.google.com',
+        href: '/prices/ipad/ipad-pro-12-9?optionId=17',
         specs: {
           year: '2022',
           cpu: 'M2',
@@ -460,7 +461,7 @@ const optionsIpad = [
         title: 'iPad Pro 12.9',
         alias: 'iPad Pro 12.9',
         imgSrc: '/static/images/ipads/ipad-pro-12-9-2021.jpeg',
-        href: 'https://www.google.com',
+        href: '/prices/ipad/ipad-pro-12-9?optionId=9',
         specs: {
           year: '2021',
           cpu: 'M1',
@@ -513,7 +514,7 @@ const optionsIpad = [
         title: 'iPad Pro 12.9',
         alias: 'iPad Pro 12.9',
         imgSrc: '/static/images/ipads/ipad-pro-12-9-2022.jpg',
-        href: 'https://www.google.com',
+        href: '/prices/ipad/ipad-pro-12-9?optionId=1',
         specs: {
           year: '2020',
           cpu: 'A12Z Bionic',

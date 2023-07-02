@@ -11,7 +11,7 @@ const optionsMac = [
         title: 'Mac mini',
         alias: 'Mac mini',
         imgSrc: '/static/images/macs/mac-mini.jpeg',
-        href: '/prices/mac/mac-mini',
+        href: '/prices/mac/mac-mini?optionId=7',
         specs: {
           year: '2022',
           cpu: 'M2 8코어 CPU 10코어 GPU',
@@ -53,7 +53,7 @@ const optionsMac = [
         title: 'Mac mini',
         alias: 'Mac mini',
         imgSrc: '/static/images/macs/mac-mini.jpeg',
-        href: 'https://www.google.com',
+        href: '/prices/mac/mac-mini?optionId=13',
         specs: {
           year: '2022',
           cpu: 'M2 Pro 10코어 CPU 16코어 GPU',
@@ -85,7 +85,7 @@ const optionsMac = [
         title: 'Mac mini',
         alias: 'Mac mini',
         imgSrc: '/static/images/macs/mac-mini.jpeg',
-        href: 'https://www.google.com',
+        href: '/prices/mac/mac-mini?optionId=17',
         specs: {
           year: '2022',
           cpu: 'M2 Pro 12코어 CPU 19코어 GPU',
@@ -117,7 +117,7 @@ const optionsMac = [
         title: 'Mac mini',
         alias: 'Mac mini',
         imgSrc: '/static/images/macs/mac-mini.jpeg',
-        href: 'https://www.google.com',
+        href: '/prices/mac/mac-mini?optionId=1',
         specs: {
           year: '2020',
           cpu: 'M1 8코어 CPU 8코어 GPU',
@@ -178,7 +178,7 @@ const optionsMac = [
         title: 'MacBook Air 13',
         alias: 'MacBook Air 13',
         imgSrc: '/static/images/macs/macbook-air-13-2022.jpeg',
-        href: 'https://www.google.com',
+        href: '/prices/mac/macbook-air-13?optionId=13',
         specs: {
           year: '2022',
           cpu: 'M2 8코어 CPU 8코어 GPU',
@@ -220,7 +220,7 @@ const optionsMac = [
         title: 'MacBook Air 13',
         alias: 'MacBook Air 13',
         imgSrc: '/static/images/macs/macbook-air-13-2022.jpeg',
-        href: 'https://www.google.com',
+        href: '/prices/mac/macbook-air-13?optionId=19',
         specs: {
           year: '2022',
           cpu: 'M2 8코어 CPU 10코어 GPU',
@@ -262,7 +262,7 @@ const optionsMac = [
         title: 'MacBook Air 13',
         alias: 'MacBook Air 13',
         imgSrc: '/static/images/macs/macbook-air-13-2020.jpeg',
-        href: 'https://www.google.com',
+        href: '/prices/mac/macbook-air-13?optionId=1',
 
         specs: {
           year: '2020',
@@ -305,7 +305,7 @@ const optionsMac = [
         title: 'MacBook Air 13',
         alias: 'MacBook Air 13',
         imgSrc: '/static/images/macs/macbook-air-13-2020.jpeg',
-        href: 'https://www.google.com',
+        href: '/prices/mac/macbook-air-13?optionId=7',
         specs: {
           year: '2020',
           cpu: 'M1 8코어 CPU 8코어 GPU',
@@ -357,7 +357,7 @@ const optionsMac = [
         title: 'MacBook Pro 13',
         alias: 'MacBook Pro 13',
         imgSrc: '/static/images/macs/macbook-pro-13-2022.jpeg',
-        href: 'https://www.google.com',
+        href: '/prices/mac/macbook-pro-13?optionId=7',
         specs: {
           year: '2022',
           cpu: 'M2 8코어 CPU 10코어 GPU',
@@ -399,7 +399,7 @@ const optionsMac = [
         title: 'MacBook Pro 13',
         alias: 'MacBook Pro 13',
         imgSrc: '/static/images/macs/macbook-pro-13-2020.jpeg',
-        href: 'https://www.google.com',
+        href: '/prices/mac/macbook-pro-13?optionId=1',
         specs: {
           year: '2020',
           cpu: 'M1 8코어 CPU 8코어 GPU',
@@ -451,7 +451,7 @@ const optionsMac = [
         title: 'MacBook Pro 14',
         alias: 'MacBook Pro 14',
         imgSrc: '/static/images/macs/macbook-pro-14-2023.jpeg',
-        href: 'https://www.google.com',
+        href: '/prices/mac/macbook-pro-14?optionId=21',
         specs: {
           year: '2023',
           cpu: 'M2 Pro 10코어 CPU 16코어 GPU',
@@ -483,7 +483,7 @@ const optionsMac = [
         title: 'MacBook Pro 14',
         alias: 'MacBook Pro 14',
         imgSrc: '/static/images/macs/macbook-pro-14-2023.jpeg',
-        href: 'https://www.google.com',
+        href: '/prices/mac/macbook-pro-14?optionId=25',
         specs: {
           year: '2023',
           cpu: 'M2 Pro 12코어 CPU 19코어 GPU',
@@ -515,7 +515,7 @@ const optionsMac = [
         title: 'MacBook Pro 14',
         alias: 'MacBook Pro 14',
         imgSrc: '/static/images/macs/macbook-pro-14-2023.jpeg',
-        href: 'https://www.google.com',
+        href: '/prices/mac/macbook-pro-14?optionId=29',
         specs: {
           year: '2023',
           cpu: 'M2 Max 12코어 CPU 30코어 GPU',
@@ -547,7 +547,7 @@ const optionsMac = [
         title: 'MacBook Pro 14',
         alias: 'MacBook Pro 14',
         imgSrc: '/static/images/macs/macbook-pro-14-2023.jpeg',
-        href: 'https://www.google.com',
+        href: '/prices/mac/macbook-pro-14?optionId=33',
         specs: {
           year: '2023',
           cpu: 'M2 Max 12코어 CPU 38코어 GPU',
@@ -579,7 +579,7 @@ const optionsMac = [
         title: 'MacBook Pro 14',
         alias: 'MacBook Pro 14',
         imgSrc: '/static/images/macs/macbook-pro-14-2021.jpeg',
-        href: 'https://www.google.com',
+        href: '/prices/mac/macbook-pro-14?optionId=1',
         specs: {
           year: '2021',
           cpu: 'M1 Pro 8코어 CPU 14코어 GPU',
@@ -611,7 +611,7 @@ const optionsMac = [
         title: 'MacBook Pro 14',
         alias: 'MacBook Pro 14',
         imgSrc: '/static/images/macs/macbook-pro-14-2021.jpeg',
-        href: 'https://www.google.com',
+        href: '/prices/mac/macbook-pro-14?optionId=5',
         specs: {
           year: '2021',
           cpu: 'M1 Pro 10코어 CPU 14코어 GPU',
@@ -643,7 +643,7 @@ const optionsMac = [
         title: 'MacBook Pro 14',
         alias: 'MacBook Pro 14',
         imgSrc: '/static/images/macs/macbook-pro-14-2021.jpeg',
-        href: 'https://www.google.com',
+        href: '/prices/mac/macbook-pro-14?optionId=9',
         specs: {
           year: '2021',
           cpu: 'M1 Pro 10코어 CPU 16코어 GPU',
@@ -675,7 +675,7 @@ const optionsMac = [
         title: 'MacBook Pro 14',
         alias: 'MacBook Pro 14',
         imgSrc: '/static/images/macs/macbook-pro-14-2021.jpeg',
-        href: 'https://www.google.com',
+        href: '/prices/mac/macbook-pro-14?optionId=13',
         specs: {
           year: '2021',
           cpu: 'M1 Max 10코어 CPU 24코어 GPU',
@@ -707,7 +707,7 @@ const optionsMac = [
         title: 'MacBook Pro 14',
         alias: 'MacBook Pro 14',
         imgSrc: '/static/images/macs/macbook-pro-14-2021.jpeg',
-        href: 'https://www.google.com',
+        href: '/prices/mac/macbook-pro-14?optionId=17',
         specs: {
           year: '2021',
           cpu: 'M1 Max 10코어 CPU 32코어 GPU',
@@ -749,7 +749,7 @@ const optionsMac = [
         title: 'MacBook Pro 16',
         alias: 'MacBook Pro 16',
         imgSrc: '/static/images/macs/macbook-pro-16-2023.jpeg',
-        href: 'https://www.google.com',
+        href: '/prices/mac/macbook-pro-16?optionId=13',
         specs: {
           year: '2023',
           cpu: 'M2 Pro 12코어 CPU 19코어 GPU',
@@ -781,7 +781,7 @@ const optionsMac = [
         title: 'MacBook Pro 16',
         alias: 'MacBook Pro 16',
         imgSrc: '/static/images/macs/macbook-pro-16-2023.jpeg',
-        href: 'https://www.google.com',
+        href: '/prices/mac/macbook-pro-16?optionId=17',
         specs: {
           year: '2023',
           cpu: 'M2 Max 12코어 CPU 30코어 GPU',
@@ -813,7 +813,7 @@ const optionsMac = [
         title: 'MacBook Pro 16',
         alias: 'MacBook Pro 16',
         imgSrc: '/static/images/macs/macbook-pro-16-2023.jpeg',
-        href: 'https://www.google.com',
+        href: '/prices/mac/macbook-pro-16?optionId=21',
         specs: {
           year: '2023',
           cpu: 'M2 Max 12코어 CPU 38코어 GPU',
@@ -845,7 +845,7 @@ const optionsMac = [
         title: 'MacBook Pro 16',
         alias: 'MacBook Pro 16',
         imgSrc: '/static/images/macs/macbook-pro-16-2021.jpeg',
-        href: 'https://www.google.com',
+        href: '/prices/mac/macbook-pro-16?optionId=1',
         specs: {
           year: '2021',
           cpu: 'M1 Pro 10코어 CPU 16코어 GPU',
@@ -877,7 +877,7 @@ const optionsMac = [
         title: 'MacBook Pro 16',
         alias: 'MacBook Pro 16',
         imgSrc: '/static/images/macs/macbook-pro-16-2021.jpeg',
-        href: 'https://www.google.com',
+        href: '/prices/mac/macbook-pro-16?optionId=5',
         specs: {
           year: '2021',
           cpu: 'M1 Max 10코어 CPU 24코어 GPU',
@@ -909,7 +909,7 @@ const optionsMac = [
         title: 'MacBook Pro 16',
         alias: 'MacBook Pro 16',
         imgSrc: '/static/images/macs/macbook-pro-16-2021.jpeg',
-        href: 'https://www.google.com',
+        href: '/prices/mac/macbook-pro-16?optionId=9',
         specs: {
           year: '2021',
           cpu: 'M1 Max 10코어 CPU 32코어 GPU',

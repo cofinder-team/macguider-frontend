@@ -2,12 +2,12 @@ import { PageSEO } from '@/components/SEO'
 import NewsletterForm from '@/components/NewsletterForm'
 import SectionDesk from '@/components/section/desk'
 import Promo from '@/components/Promo'
-import amplitude from 'amplitude-js'
 import { useEffect } from 'react'
+import amplitudeTrack from '@/lib/amplitude/track'
 
 export default function Desk() {
   useEffect(() => {
-    amplitude.getInstance().logEvent('page_view', { page_type: 'desk', page_detail: 'desk_main' })
+    amplitudeTrack('enter_desk_main')
   }, [])
   return (
     <>

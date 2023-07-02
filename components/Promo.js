@@ -1,5 +1,5 @@
 import Link from '@/components/Link'
-import amplitude from 'amplitude-js'
+import amplitudeTrack from '@/lib/amplitude/track'
 
 export default function Promo({
   imgSrc = 'https://images.unsplash.com/photo-1491933382434-500287f9b54b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=928&q=80',
@@ -9,7 +9,7 @@ export default function Promo({
   cta = '더 알아보기',
 }) {
   const onClickCta = () => {
-    amplitude.getInstance().logEvent('promo_cta', { promoTitle: title })
+    amplitudeTrack(`click_promo_cta_btn`, { promoTitle: title, promoHref: href })
   }
 
   return (

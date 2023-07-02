@@ -1,9 +1,13 @@
 import { faPaperPlane, faXmark } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
+import amplitudeTrack from '@/lib/amplitude/track'
 
 const StickyBanner = () => {
   const [bannerOpened, setBannerOpened] = useState(true)
+  const onClickSendFeedback = useCallback(() => {
+    amplitudeTrack('click_send_feedback')
+  }, [])
 
   return (
     bannerOpened && (
@@ -23,6 +27,7 @@ const StickyBanner = () => {
                 className="decoration-600 dark:decoration-500 inline font-medium text-blue-600 underline decoration-solid underline-offset-2 hover:no-underline dark:text-blue-500 md:ml-1.5"
                 target="_blank"
                 rel="noreferrer"
+                onClick={onClickSendFeedback}
               >
                 피드백 보내기 &rarr;
               </a>

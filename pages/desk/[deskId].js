@@ -1,22 +1,24 @@
-import { Fragment, useEffect, useState } from 'react'
+import { useCallback, useEffect } from 'react'
 import { PageSEO } from '@/components/SEO'
 import desks from '@/data/desks'
 import DeskSection from '@/components/desks/section'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCircleInfo } from '@fortawesome/free-solid-svg-icons'
 import { useRouter } from 'next/router'
-import amplitude from 'amplitude-js'
 import Promo from '@/components/Promo'
 import NewsletterForm from '@/components/NewsletterForm'
 import Head from 'next/head'
+import amplitudeTrack from '@/lib/amplitude/track'
 
 export default function Example({ deskId }) {
   useEffect(() => {
-    amplitude.getInstance().logEvent('desk_view', { desk: deskId })
+    amplitudeTrack('enter_desk_detail', { deskId })
   }, [deskId])
 
   const desk = desks.find((desk) => desk.id === deskId)
   const router = useRouter()
+
+  const onClickOtherDesk = useCallback((deskId) => {
+    amplitudeTrack('click_view_other_desk', { deskId })
+  }, [])
 
   return (
     <>
@@ -40,7 +42,7 @@ export default function Example({ deskId }) {
                 "autoClose": 1000,
                 "open": {
                   "trigger": "scroll",
-                  "scrollPercent": 35
+                  "scrollPercent": 50
                 },
                 "doNotShowAfterSubmit": true
               }
@@ -50,7 +52,7 @@ export default function Example({ deskId }) {
         ></script>
       </Head>
 
-      <section className="bg-white pt-8 pb-16 dark:bg-gray-900 lg:pt-16 ">
+      <section className="bg-white pb-16 pt-8 dark:bg-gray-900 lg:pt-16 ">
         <div className="mx-auto flex max-w-screen-xl justify-between ">
           <article className="format format-sm sm:format-base lg:format-lg format-blue dark:format-invert mx-auto w-full max-w-2xl">
             <div className=" mb-4 lg:mb-6">
@@ -140,7 +142,12 @@ export default function Example({ deskId }) {
                         className="flex items-end p-4 opacity-0 group-hover:opacity-100"
                         aria-hidden="true"
                       >
-                        <div className="w-full rounded-md bg-white bg-opacity-75 px-4 py-2 text-center text-sm font-medium text-gray-900 backdrop-blur backdrop-filter">
+                        <div
+                          onClick={() => {
+                            onClickOtherDesk(id)
+                          }}
+                          className="w-full rounded-md bg-white bg-opacity-75 px-4 py-2 text-center text-sm font-medium text-gray-900 backdrop-blur backdrop-filter"
+                        >
                           구경하러 가기
                         </div>
                       </div>

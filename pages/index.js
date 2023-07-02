@@ -9,10 +9,10 @@ import macModels from '@/data/models/mac'
 import ipadModels from '@/data/models/ipad'
 import ModelCard from '@/components/ModelCard'
 
-import amplitude from 'amplitude-js'
 import SectionDesk from '@/components/section/desk'
 import Link from '@/components/Link'
 import Promo from '@/components/Promo'
+import amplitudeTrack from '@/lib/amplitude/track'
 
 export async function getStaticProps() {
   const posts = await getAllFilesFrontMatter('blog')
@@ -22,7 +22,7 @@ export async function getStaticProps() {
 
 export default function Home() {
   useEffect(() => {
-    amplitude.getInstance().logEvent('page_view', { page_type: 'main', page_detail: 'main' })
+    amplitudeTrack('enter_home')
   }, [])
 
   return (
@@ -48,7 +48,7 @@ export default function Home() {
       </section>
 
       <section className="mt-md-6 mt-3">
-        <div className="space-y-2 pt-6 pb-2">
+        <div className="space-y-2 pb-2 pt-6">
           <div className="flex items-center">
             <h1 className="text-3xl font-extrabold leading-9 tracking-tight text-gray-900 dark:text-gray-100  sm:leading-10">
               아이패드 시세

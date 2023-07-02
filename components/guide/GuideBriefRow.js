@@ -2,10 +2,10 @@ import { useScreenSize } from 'hooks/useScreenSize'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import 'react-loading-skeleton/dist/skeleton.css'
 import { useCallback, useState } from 'react'
-import amplitude from 'amplitude-js'
 import { faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons'
 import Skeleton from 'react-loading-skeleton'
 import GuideExpandedRow from './GuideExpandedRow'
+import amplitudeTrack from '@/lib/amplitude/track'
 
 const purchaseTiming = {
   good: {
@@ -42,7 +42,7 @@ const GuideBriefRow = ({
     if (isRowExpanded) {
       setExpandedRows(expandedRows.filter((row) => row !== itemId))
     } else {
-      amplitude.getInstance().logEvent('guide_toggle', { item: itemId })
+      amplitudeTrack('toggle_guide_item', { itemId })
       setExpandedRows([...expandedRows, itemId])
     }
   }

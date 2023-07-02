@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useCallback, useEffect } from 'react'
 import { PageSEO } from '@/components/SEO'
 import desks from '@/data/desks'
 import DeskSection from '@/components/desks/section'
@@ -15,6 +15,10 @@ export default function Example({ deskId }) {
 
   const desk = desks.find((desk) => desk.id === deskId)
   const router = useRouter()
+
+  const onClickOtherDesk = useCallback((deskId) => {
+    amplitude.getInstance().logEvent('click_view_other_desk', { deskId })
+  }, [])
 
   return (
     <>
@@ -138,7 +142,12 @@ export default function Example({ deskId }) {
                         className="flex items-end p-4 opacity-0 group-hover:opacity-100"
                         aria-hidden="true"
                       >
-                        <div className="w-full rounded-md bg-white bg-opacity-75 px-4 py-2 text-center text-sm font-medium text-gray-900 backdrop-blur backdrop-filter">
+                        <div
+                          onClick={() => {
+                            onClickOtherDesk(id)
+                          }}
+                          className="w-full rounded-md bg-white bg-opacity-75 px-4 py-2 text-center text-sm font-medium text-gray-900 backdrop-blur backdrop-filter"
+                        >
                           구경하러 가기
                         </div>
                       </div>

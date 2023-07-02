@@ -12,7 +12,7 @@ const NewsletterForm = ({ title = 'MacGuider 최신 업데이트 소식 받기' 
   const subscribe = async (e) => {
     e.preventDefault()
 
-    amplitude.getInstance().logEvent('click_newsletter_subscribe')
+    amplitude.getInstance().logEvent('click_subscribe_newsletter')
 
     try {
       await axiosInstance.post(`/email/${inputEl.current.value}`)

@@ -16,9 +16,13 @@ export default function Example({ deskId }) {
   const desk = desks.find((desk) => desk.id === deskId)
   const router = useRouter()
 
-  const onClickOtherDesk = useCallback((deskId) => {
-    amplitudeTrack('click_view_other_desk', { deskId })
-  }, [])
+  const onClickOtherDesk = useCallback(
+    (deskId, href) => {
+      amplitudeTrack('click_view_other_desk', { deskId })
+      router.push(href)
+    },
+    [router]
+  )
 
   return (
     <>
@@ -76,7 +80,7 @@ export default function Example({ deskId }) {
                       맥가이더 에디터
                     </a>
                     <p className="text-base font-light text-gray-500 dark:text-gray-400">
-                      <time pubdate dateTime="2022-02-08" title="February 8th, 2022">
+                      <time dateTime="2022-02-08" title="February 8th, 2022">
                         2023년 6월 25일
                       </time>
                     </p>
@@ -133,7 +137,7 @@ export default function Example({ deskId }) {
                     key={id}
                     className="group relative cursor-pointer"
                     onClick={() => {
-                      router.push(href)
+                      onClickOtherDesk(id, href)
                     }}
                   >
                     <div className="aspect-h-3 aspect-w-4 overflow-hidden rounded-lg bg-gray-100">
@@ -142,12 +146,7 @@ export default function Example({ deskId }) {
                         className="flex items-end p-4 opacity-0 group-hover:opacity-100"
                         aria-hidden="true"
                       >
-                        <div
-                          onClick={() => {
-                            onClickOtherDesk(id)
-                          }}
-                          className="w-full rounded-md bg-white bg-opacity-75 px-4 py-2 text-center text-sm font-medium text-gray-900 backdrop-blur backdrop-filter"
-                        >
+                        <div className="w-full rounded-md bg-white bg-opacity-75 px-4 py-2 text-center text-sm font-medium text-gray-900 backdrop-blur backdrop-filter">
                           구경하러 가기
                         </div>
                       </div>

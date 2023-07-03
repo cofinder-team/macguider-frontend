@@ -72,7 +72,9 @@ const MobileNav = () => {
               <Link
                 href={link.href}
                 className={`text-2xl font-bold tracking-widest ${
-                  router.pathname === link.href ? 'text-blue-800' : 'text-gray-900'
+                  router.pathname.startsWith(link.href)
+                    ? 'text-blue-700'
+                    : 'text-gray-900 dark:text-gray-100'
                 }`}
                 onClick={onToggleNav}
               >

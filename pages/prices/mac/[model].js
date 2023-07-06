@@ -15,13 +15,45 @@ import Promo from '@/components/Promo'
 import { getPrices } from 'utils/price'
 import { getAppleProductInfo } from 'utils/model'
 import amplitudeTrack from '@/lib/amplitude/track'
+import Modal from '@/components/Modal'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import {
+  faChevronRight,
+  faCircleExclamation,
+  faPaperPlane,
+  faThumbsDown,
+  faThumbsUp,
+} from '@fortawesome/free-solid-svg-icons'
+import CoupangLogo from '@/data/coupang_logo.svg'
+import { HandThumbUpIcon, HandThumbDownIcon } from '@heroicons/react/24/outline'
 
 const leftColumnOffsetY = 150
+const products = [
+  {
+    id: 1,
+    name: 'Basic Tee',
+    href: '#',
+    imageSrc: 'https://tailwindui.com/img/ecommerce-images/product-page-01-related-product-01.jpg',
+    imageAlt: "Front of men's Basic Tee in black.",
+    price: '$35',
+    color: 'Black',
+  },
+  // More products...
+]
+const people = [
+  {
+    name: 'M2324',
+    title: '2022.03.12',
+    email: '블루, 오렌지, 레드',
+  },
+  // More people...
+]
 
 const MacModel = ({ model, optionId }) => {
   const container = useRef(null)
   const leftColumn = useRef(null)
   const [fixedElementWidth, setFixedElementWidth] = useState(0)
+  const modalRef = useRef(null)
 
   useEffect(() => {
     amplitudeTrack('enter_price_detail', { item_class: 'mac', item_detail: model })
@@ -123,7 +155,7 @@ const MacModel = ({ model, optionId }) => {
     : currentModel.options[0]
   const [currentOption, setCurrentOption] = useState(initialOption)
 
-  const { ram, ssd } = currentOption
+  const { ram: currentOptionRam, ssd: currentOptionSsd, id: currentOptionId } = currentOption
   const [unopened, setUnopened] = useState('false')
 
   // 가격 조회
@@ -148,6 +180,33 @@ const MacModel = ({ model, optionId }) => {
     }
   }
 
+  const onClickOption = () => {
+    if (modalRef.current) {
+      modalRef.current.setOpen(true)
+      modalRef.current.initializeOptions()
+    }
+  }
+
+  const changeModelOptions = (optionId) => {
+    // find selected Model which contains optionId
+    const selectedModel = currentItemData.find((model) =>
+      model.options.some((option) => option.id === optionId)
+    )
+
+    // find selected Option
+    const selectedOption = selectedModel.options.find((option) => option.id === optionId)
+
+    setCurrentModel(selectedModel)
+    setCurrentOption(selectedOption)
+    fetchPriceData(currentItemId, optionId, unopened)
+
+    amplitudeTrack('click_change_option', {
+      item_class: 'mac',
+      item_detail: model,
+      option_value: selectedModel.specs,
+    })
+  }
+
   const onInputOptionCPU = (optionIndex) => {
     const selectedModel = currentItemData[optionIndex]
     const defaultOption = selectedModel.options[0]
@@ -169,10 +228,19 @@ const MacModel = ({ model, optionId }) => {
     })
   }
 
+  const onInputPlatform = (platform) => {
+    if (platform !== '중고나라') {
+      alert('준비 중입니다. 이메일을 등록해주시면 가장 먼저 알려드릴게요!')
+      amplitudeTrack('click_change_platform', {
+        platform,
+      })
+    }
+  }
+
   // 미개봉 상태 변경
   const onInputOptionUnopened = (status) => {
     setUnopened(status)
-    fetchPriceData(currentItemId, currentOption.id, status)
+    fetchPriceData(currentItemId, currentOptionId, status)
 
     amplitudeTrack('click_select_option', {
       item_class: 'mac',
@@ -205,7 +273,15 @@ const MacModel = ({ model, optionId }) => {
         description={`ChatGPT가 알려주는 사양별 맥 시세 | ${modelTitle}`}
       />
 
-      <div ref={container} className="container relative md:py-6">
+      <Modal
+        ref={modalRef}
+        currentItem={currentItem}
+        currentModel={currentModel}
+        currentOption={currentOption}
+        onApply={changeModelOptions}
+      />
+
+      <div ref={container} className="container relative md:pt-6">
         <div
           ref={leftColumn}
           className={`md:fixed md:top-[${leftColumnOffsetY}px] `}
@@ -218,14 +294,24 @@ const MacModel = ({ model, optionId }) => {
           <Image
             alt={`${specs.year} ${modelTitle} 이미지`}
             src={imgSrc}
-            width={544}
+            width={576}
             height={306}
             priority="true"
             objectFit="contain"
             objectPosition="center"
           />
 
-          <ul className="mb-8 mt-2 space-y-1 text-left text-gray-500 dark:text-gray-400">
+          {md && (
+            <div className="flex justify-center md:px-10">
+              <div className="inline-flex items-center justify-center rounded-lg bg-gray-50  p-5 text-base font-medium text-gray-700">
+                <span className="font-semibold">정보가 도움이 되었나요?</span>
+                <HandThumbUpIcon className="ml-4 h-6 w-6 fill-blue-300" />
+                <HandThumbDownIcon className="ml-2 h-6 w-6" />
+              </div>
+            </div>
+          )}
+
+          {/* <ul className="mb-8 mt-2 space-y-1 text-left text-gray-500 dark:text-gray-400">
             <li className="flex items-center space-x-3">
               <svg
                 className="h-5 w-5 flex-shrink-0 text-green-500 dark:text-green-400"
@@ -296,104 +382,38 @@ const MacModel = ({ model, optionId }) => {
                 <span className="font-semibold text-gray-900 dark:text-white">끌어올린글 제외</span>
               </span>
             </li>
-          </ul>
+          </ul> */}
         </div>
 
         <div className="ml-auto flex-grow md:w-1/2 md:px-3">
           <h1 className="text-xl font-bold leading-9 tracking-tight text-gray-900 dark:text-gray-100 sm:leading-10 md:text-2xl">
-            {modelTitle} ({`${ram}, SSD ${ssd}`})
+            {`${specs.year} ${modelTitle}`}
           </h1>
 
           <div className="max-w-xl">
-            <ul className="mt-6 max-w-md divide-y divide-gray-200 dark:divide-gray-700">
-              <li className="pb-3 sm:pb-4">
-                <div className="flex items-center space-x-4">
-                  <div className="flex-shrink-0"></div>
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-medium text-gray-900 dark:text-white">
-                      적정가격
-                    </p>
-                    <p className="truncate text-sm text-gray-500 dark:text-gray-400">
-                      평균적으로 거래되는 가격
-                    </p>
-                  </div>
-                  <div className="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
-                    {loading || !fetchedData ? (
-                      <Skeleton width={md ? '8rem' : '5rem'} borderRadius="0.5rem" />
-                    ) : getPriceByLevel('mid') ? (
-                      <>
-                        <span>{getPriceByLevel('mid').toLocaleString()}</span>
-                        <span className="ml-1 block font-normal">원</span>
-                      </>
-                    ) : (
-                      <span>N/A</span>
-                    )}
-                  </div>
-                </div>
-              </li>
-
-              <li className="py-3 sm:py-4">
-                <div className="flex items-center space-x-4">
-                  <div className="flex-shrink-0"></div>
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-medium text-gray-900 dark:text-white">
-                      최저가격
-                    </p>
-                    <p className="truncate text-sm text-gray-500 dark:text-gray-400">
-                      평균보다 낮은 가격
-                    </p>
-                  </div>
-                  <div className="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
-                    {loading || !fetchedData ? (
-                      <Skeleton width={md ? '8rem' : '5rem'} borderRadius="0.5rem" />
-                    ) : getPriceByLevel('low') ? (
-                      <>
-                        <span>{getPriceByLevel('low').toLocaleString()}</span>
-                        <span className="ml-1 block font-normal">원</span>
-                      </>
-                    ) : (
-                      <span>N/A</span>
-                    )}
-                  </div>
-                </div>
-              </li>
-
-              <li className="py-3 sm:py-4">
-                <div className="flex items-center space-x-4">
-                  <div className="flex-shrink-0"></div>
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-medium text-gray-900 dark:text-white">
-                      최고가격
-                    </p>
-                    <p className="truncate text-sm text-gray-500 dark:text-gray-400">
-                      평균보다 높은 가격
-                    </p>
-                  </div>
-                  <div className="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
-                    {loading || !fetchedData ? (
-                      <Skeleton width={md ? '8rem' : '5rem'} borderRadius="0.5rem" />
-                    ) : getPriceByLevel('high') ? (
-                      <>
-                        <span>{getPriceByLevel('high').toLocaleString()}</span>
-                        <span className="ml-1 block font-normal">원</span>
-                      </>
-                    ) : (
-                      <span>N/A</span>
-                    )}
-                  </div>
-                </div>
-              </li>
-            </ul>
-
-            <div className="mt-3">
+            <div className="mt-6">
               <div className="w-full max-w-md">
-                <label
-                  htmlFor="cpuOptions"
-                  className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
+                <div
+                  onClick={onClickOption}
+                  className="flex cursor-pointer items-center justify-between rounded-lg border border-gray-200 bg-white px-4 py-2 shadow selection:w-full"
                 >
-                  CPU
-                </label>
-                <select
+                  <div>
+                    <h5 className="mb-1  text-sm text-gray-500">옵션선택</h5>
+
+                    <p className="font-semibold text-gray-700 dark:text-gray-400">
+                      {`${specs.cpu} / ${specs.gpu} / ${currentOptionSsd} / ${currentOptionRam}`}
+                    </p>
+                  </div>
+
+                  <a
+                    href="#"
+                    className="inline-flex items-center rounded-lg  px-3 py-2 text-center text-sm font-medium text-blue-700"
+                  >
+                    <FontAwesomeIcon icon={faChevronRight} />
+                  </a>
+                </div>
+
+                {/* <select
                   id="cpuOptions"
                   className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
                   onInput={(e) => onInputOptionCPU(e.target.value)}
@@ -404,10 +424,10 @@ const MacModel = ({ model, optionId }) => {
                       {model.specs.cpu} ({model.specs.year})
                     </option>
                   ))}
-                </select>
+                </select> */}
               </div>
 
-              <ul className="mt-3 flex w-full  max-w-xl flex-wrap items-center rounded-lg border border-gray-200 bg-white text-sm font-medium text-gray-900 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
+              {/* <ul className="mt-3 flex w-full  max-w-xl flex-wrap items-center rounded-lg border border-gray-200 bg-white text-sm font-medium text-gray-900 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
                 {options.map((option) => (
                   <li
                     key={option.id}
@@ -434,9 +454,9 @@ const MacModel = ({ model, optionId }) => {
                     </div>
                   </li>
                 ))}
-              </ul>
+              </ul> */}
 
-              <div className="grid max-w-md grid-cols-2 gap-2 py-5">
+              {/* <div className="grid max-w-md grid-cols-2 gap-2 py-5">
                 <div className="w-full">
                   <label
                     htmlFor="optionUnopened"
@@ -477,10 +497,215 @@ const MacModel = ({ model, optionId }) => {
                     </option>
                   </select>
                 </div>
+              </div> */}
+            </div>
+
+            <div className="mt-5">
+              <p className="text-md font-bold text-gray-900 dark:text-white">중고 시세</p>
+
+              <ul className="mt-2 max-w-md divide-y divide-gray-200 dark:divide-gray-700">
+                <li className="pb-3 sm:pb-4">
+                  <div className="flex items-center space-x-4">
+                    <div className="flex-shrink-0"></div>
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-sm font-medium text-gray-900 dark:text-white">
+                        중고거래 플랫폼
+                      </p>
+                    </div>
+                    <div className="inline-flex w-1/3 items-center text-base font-semibold text-gray-900 dark:text-white">
+                      <select
+                        id="cpuOptions"
+                        className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                        onInput={(e) => onInputPlatform(e.target.value)}
+                        value="중고나라"
+                      >
+                        <option value="중고나라">중고나라</option>
+                        <option value="번개장터">번개장터</option>
+                      </select>
+                    </div>
+                  </div>
+                </li>
+                <li className="py-3 sm:pb-4">
+                  <div className="flex items-center space-x-4">
+                    <div className="flex-shrink-0"></div>
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-sm font-medium text-gray-900 dark:text-white">
+                        제품 상태
+                      </p>
+                    </div>
+                    <div className="inline-flex w-1/3 items-center text-base font-semibold text-gray-900 dark:text-white">
+                      <select
+                        id="cpuOptions"
+                        className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                        onInput={(e) => onInputOptionCPU(e.target.value)}
+                        value={currentItemData.indexOf(currentModel)}
+                      >
+                        {currentItemData.map((model, index) => (
+                          <option key={model.specs.cpu} value={index}>
+                            S급
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+                </li>
+                <li className="py-3 sm:pb-4">
+                  <div className="flex items-center space-x-4">
+                    <div className="flex-shrink-0"></div>
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-sm font-medium text-gray-900 dark:text-white">
+                        적정가격
+                      </p>
+                      <p className="truncate text-sm text-gray-500 dark:text-gray-400">
+                        평균적으로 거래되는 가격
+                      </p>
+                    </div>
+                    <div className="text-base font-semibold text-gray-900 dark:text-white">
+                      {loading || !fetchedData ? (
+                        <Skeleton width={md ? '8rem' : '5rem'} borderRadius="0.5rem" />
+                      ) : getPriceByLevel('mid') ? (
+                        <>
+                          <span>{getPriceByLevel('mid').toLocaleString()}</span>
+                          <span className="ml-1 font-normal">원</span>
+                        </>
+                      ) : (
+                        <span>N/A</span>
+                      )}
+                    </div>
+                  </div>
+                </li>
+
+                <li className="py-3 sm:py-4">
+                  <div className="flex items-center space-x-4">
+                    <div className="flex-shrink-0"></div>
+                    <div className="min-w-0 flex-1">
+                      <p className="mb-1 truncate text-sm font-medium text-gray-900 dark:text-white">
+                        최저가격
+                      </p>
+                      <p className="truncate text-sm font-medium text-gray-900 dark:text-white">
+                        최고가격
+                      </p>
+                    </div>
+
+                    <div>
+                      <div className="mb-1 text-right text-base font-semibold text-gray-900 dark:text-white">
+                        {loading || !fetchedData ? (
+                          <Skeleton width={md ? '8rem' : '5rem'} borderRadius="0.5rem" />
+                        ) : getPriceByLevel('low') ? (
+                          <>
+                            <span>{getPriceByLevel('low').toLocaleString()}</span>
+                            <span className="ml-1 font-normal">원</span>
+                          </>
+                        ) : (
+                          <span>N/A</span>
+                        )}
+                      </div>
+                      <div className="text-right text-base font-semibold text-gray-900 dark:text-white">
+                        {loading || !fetchedData ? (
+                          <Skeleton width={md ? '8rem' : '5rem'} borderRadius="0.5rem" />
+                        ) : getPriceByLevel('high') ? (
+                          <>
+                            <span>{getPriceByLevel('high').toLocaleString()}</span>
+                            <span className="ml-1 font-normal">원</span>
+                          </>
+                        ) : (
+                          <span>N/A</span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </li>
+              </ul>
+
+              <div className="max-w-md cursor-pointer rounded bg-pink-50  py-3 sm:py-4">
+                <div className="flex items-center space-x-4 pr-2">
+                  <div className="flex-shrink-0"></div>
+                  <div className="min-w-0 flex-1 ">
+                    <p className="truncate text-sm font-semibold text-gray-900 dark:text-white">
+                      구매시기 가이드
+                    </p>
+                    <p className="truncate text-sm text-gray-500 dark:text-gray-400">
+                      지금 중고로 사도 괜찮을까요?
+                    </p>
+                  </div>
+                  <div className="inline-flex cursor-pointer items-center rounded-md  px-2 py-0.5 text-xs font-medium text-pink-700 ring-1 ring-inset ring-pink-700/10">
+                    경고
+                    <FontAwesomeIcon className="ml-1" icon={faChevronRight} />
+                  </div>
+                </div>
               </div>
             </div>
 
-            <div className="mt-3">
+            <div className="mt-5">
+              <p className="text-md font-bold text-gray-900 dark:text-white">새제품 정보</p>
+
+              <ul className="mt-2 max-w-md divide-y divide-gray-200 dark:divide-gray-700">
+                <li className="py-3 sm:pb-4">
+                  <div className="flex items-center space-x-4">
+                    <div className="flex-shrink-0"></div>
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-sm font-medium text-gray-900 dark:text-white">
+                        출시가
+                      </p>
+                    </div>
+                    <div className="text-base font-semibold text-gray-900 dark:text-white">
+                      {loading || !fetchedData ? (
+                        <Skeleton width={md ? '8rem' : '5rem'} borderRadius="0.5rem" />
+                      ) : getPriceByLevel('mid') ? (
+                        <>
+                          <span>{getPriceByLevel('mid').toLocaleString()}</span>
+                          <span className="ml-1 font-normal">원</span>
+                        </>
+                      ) : (
+                        <span>N/A</span>
+                      )}
+                    </div>
+                  </div>
+                </li>
+
+                <li className="py-3 sm:pb-4">
+                  <div className="flex items-center space-x-4">
+                    <div className="flex-shrink-0"></div>
+                    <div className="min-w-0 flex-1">
+                      <p className="w-16 truncate text-sm font-medium text-gray-900 grayscale dark:text-white">
+                        <CoupangLogo />
+                      </p>
+                    </div>
+                    <div className="text-base font-semibold text-gray-900 dark:text-white">
+                      {loading || !fetchedData ? (
+                        <Skeleton width={md ? '8rem' : '5rem'} borderRadius="0.5rem" />
+                      ) : getPriceByLevel('mid') ? (
+                        <>
+                          <span>{getPriceByLevel('mid').toLocaleString()}</span>
+                          <span className="ml-1 font-normal">원</span>
+                        </>
+                      ) : (
+                        <span>N/A</span>
+                      )}
+                    </div>
+                  </div>
+                </li>
+              </ul>
+              <div className="max-w-md cursor-pointer rounded bg-pink-50  py-3 sm:py-4">
+                <div className="flex items-center space-x-4 pr-2">
+                  <div className="flex-shrink-0"></div>
+                  <div className="min-w-0 flex-1 ">
+                    <p className="truncate text-sm font-semibold text-gray-900 dark:text-white">
+                      구매시기 가이드
+                    </p>
+                    <p className="truncate text-sm text-gray-500 dark:text-gray-400">
+                      지금 새제품을 사도 괜찮을까요?
+                    </p>
+                  </div>
+                  <div className="inline-flex cursor-pointer items-center rounded-md  px-2 py-0.5 text-xs font-medium text-pink-700 ring-1 ring-inset ring-pink-700/10">
+                    경고
+                    <FontAwesomeIcon className="ml-1" icon={faChevronRight} />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-5">
               <p className="text-md font-bold text-gray-900 dark:text-white">가격 그래프</p>
 
               {loading || !fetchedData ? (
@@ -509,7 +734,99 @@ const MacModel = ({ model, optionId }) => {
                 />
               )}
             </div>
+
+            <div className="mt-5">
+              <p className="text-md font-bold text-gray-900 dark:text-white">제품 정보</p>
+
+              <div className="mt-2 flow-root">
+                <div className="overflow-x-auto ">
+                  <div className="inline-block min-w-full align-middle ">
+                    <table className="min-w-full divide-y divide-gray-300">
+                      <thead>
+                        <tr className="divide-x divide-gray-200">
+                          <th
+                            scope="col"
+                            className="py-3.5 pl-4 pr-4 text-left text-sm font-semibold text-gray-900 sm:pl-0"
+                          >
+                            모델번호
+                          </th>
+                          <th
+                            scope="col"
+                            className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900"
+                          >
+                            출시일
+                          </th>
+                          <th
+                            scope="col"
+                            className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900"
+                          >
+                            색상
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-gray-200 bg-white">
+                        {people.map((person) => (
+                          <tr key={person.email} className="divide-x divide-gray-200">
+                            <td className="whitespace-nowrap py-4 pl-4 pr-4 text-sm font-medium text-gray-900 sm:pl-0">
+                              {person.name}
+                            </td>
+                            <td className="whitespace-nowrap p-4 text-sm text-gray-500">
+                              {person.title}
+                            </td>
+                            <td className="whitespace-nowrap p-4 text-sm text-gray-500">
+                              {person.email}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+
+              {/* <ul class="rf-configuration-subheader typography-body-reduced">
+                <li>Apple M2 칩(8코어 CPU, 10코어 GPU, 16코어 Neural Engine)</li>
+                <li>8GB 통합 메모리</li>
+                <li>256GB SSD 저장 장치</li>
+                <li>True Tone을 갖춘 38.9cm Liquid Retina 디스플레이³</li>
+                <li>1080p FaceTime HD 카메라</li>
+                <li>MagSafe&nbsp;3 충전 포트</li>
+                <li>Thunderbolt/USB&nbsp;4 포트 2개</li>
+                <li>35W 듀얼 USB-C 포트 전원 어댑터</li>
+                <li>백라이트 Magic Keyboard(Touch ID 탑재) - 한국어</li>
+              </ul> */}
+            </div>
           </div>
+        </div>
+      </div>
+
+      <div className="mt-12 border-t py-10 md:mt-24 ">
+        <h2 className="text-2xl font-bold tracking-tight text-gray-900">다른 제품 둘러보기</h2>
+
+        <div className="mt-6 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
+          {products.map((product) => (
+            <div key={product.id} className="group relative">
+              <div className="aspect-h-2 aspect-w-3 w-full overflow-hidden rounded-md bg-gray-200 group-hover:opacity-75 lg:aspect-none lg:h-40">
+                <img
+                  src={product.imageSrc}
+                  alt={product.imageAlt}
+                  className="h-full w-full object-cover object-center lg:h-full lg:w-full"
+                />
+              </div>
+              <div className="mt-4 flex justify-between">
+                <div>
+                  <h3 className="text-sm text-gray-700">
+                    <a href={product.href}>
+                      <span aria-hidden="true" className="absolute inset-0" />
+                      {product.name}
+                    </a>
+                  </h3>
+                  <p className="mt-1 text-sm text-gray-500">{product.color}</p>
+                </div>
+                <p className="text-sm font-medium text-gray-900">{product.price}</p>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
 

@@ -11,10 +11,54 @@ const optionsMac = [
         title: 'Mac mini',
         alias: 'Mac mini',
         imgSrc: '/static/images/macs/mac-mini.jpeg',
+        href: '/prices/mac/mac-mini?optionId=1',
+        specs: {
+          year: '2020',
+          cpu: 'M1 8코어',
+          gpu: '8코어',
+        },
+        options: [
+          {
+            id: 1,
+            ram: '8GB',
+            ssd: '256GB',
+          },
+          {
+            id: 2,
+            ram: '8GB',
+            ssd: '512GB',
+          },
+          {
+            id: 3,
+            ram: '8GB',
+            ssd: '1TB',
+          },
+          {
+            id: 4,
+            ram: '16GB',
+            ssd: '256GB',
+          },
+          {
+            id: 5,
+            ram: '16GB',
+            ssd: '512GB',
+          },
+          {
+            id: 6,
+            ram: '16GB',
+            ssd: '1TB',
+          },
+        ],
+      },
+      {
+        title: 'Mac mini',
+        alias: 'Mac mini',
+        imgSrc: '/static/images/macs/mac-mini.jpeg',
         href: '/prices/mac/mac-mini?optionId=7',
         specs: {
           year: '2022',
-          cpu: 'M2 8코어 CPU 10코어 GPU',
+          cpu: 'M2 8코어',
+          gpu: '10코어',
         },
         options: [
           {
@@ -56,7 +100,8 @@ const optionsMac = [
         href: '/prices/mac/mac-mini?optionId=13',
         specs: {
           year: '2022',
-          cpu: 'M2 Pro 10코어 CPU 16코어 GPU',
+          cpu: 'M2 Pro 10코어',
+          gpu: '16코어',
         },
         options: [
           {
@@ -88,7 +133,8 @@ const optionsMac = [
         href: '/prices/mac/mac-mini?optionId=17',
         specs: {
           year: '2022',
-          cpu: 'M2 Pro 12코어 CPU 19코어 GPU',
+          cpu: 'M2 Pro 12코어',
+          gpu: '19코어',
         },
         options: [
           {
@@ -109,48 +155,6 @@ const optionsMac = [
           {
             id: 20,
             ram: '32GB',
-            ssd: '1TB',
-          },
-        ],
-      },
-      {
-        title: 'Mac mini',
-        alias: 'Mac mini',
-        imgSrc: '/static/images/macs/mac-mini.jpeg',
-        href: '/prices/mac/mac-mini?optionId=1',
-        specs: {
-          year: '2020',
-          cpu: 'M1 8코어 CPU 8코어 GPU',
-        },
-        options: [
-          {
-            id: 1,
-            ram: '8GB',
-            ssd: '256GB',
-          },
-          {
-            id: 2,
-            ram: '8GB',
-            ssd: '512GB',
-          },
-          {
-            id: 3,
-            ram: '8GB',
-            ssd: '1TB',
-          },
-          {
-            id: 4,
-            ram: '16GB',
-            ssd: '256GB',
-          },
-          {
-            id: 5,
-            ram: '16GB',
-            ssd: '512GB',
-          },
-          {
-            id: 6,
-            ram: '16GB',
             ssd: '1TB',
           },
         ],
@@ -181,7 +185,8 @@ const optionsMac = [
         href: '/prices/mac/macbook-air-13?optionId=13',
         specs: {
           year: '2022',
-          cpu: 'M2 8코어 CPU 8코어 GPU',
+          cpu: 'M2 8코어',
+          gpu: '8코어',
         },
         options: [
           {
@@ -223,7 +228,8 @@ const optionsMac = [
         href: '/prices/mac/macbook-air-13?optionId=19',
         specs: {
           year: '2022',
-          cpu: 'M2 8코어 CPU 10코어 GPU',
+          cpu: 'M2 8코어',
+          gpu: '10코어',
         },
         options: [
           {
@@ -263,10 +269,10 @@ const optionsMac = [
         alias: 'MacBook Air 13',
         imgSrc: '/static/images/macs/macbook-air-13-2020.jpeg',
         href: '/prices/mac/macbook-air-13?optionId=1',
-
         specs: {
           year: '2020',
-          cpu: 'M1 8코어 CPU 7코어 GPU',
+          cpu: 'M1 8코어',
+          gpu: '8코어',
         },
         options: [
           {
@@ -308,7 +314,8 @@ const optionsMac = [
         href: '/prices/mac/macbook-air-13?optionId=7',
         specs: {
           year: '2020',
-          cpu: 'M1 8코어 CPU 8코어 GPU',
+          cpu: 'M1 8코어',
+          gpu: '8코어',
         },
         options: [
           {

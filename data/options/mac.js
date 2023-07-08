@@ -4,16 +4,21 @@ const optionsMac = [
     model: 'Mac mini',
     releasedDateHistory: ['2023-01-17', '2020-11-10', '2018-10-30'],
     desc: 'M2와 M2 Pro 칩을 탑재한 Mac mini는 미니라고 부를 수 없을 정도로 좋은 성능과 착한 가격을 가지고 있습니다. 뛰어난 가성비를 자랑하는 만큼 맥에 입문하기에 최적의 제품입니다.',
-    href: '/prices/mac/mac-mini',
+    href: '/prices/mac/mac-mini?optionId=7',
     price: 850000, // 가장 최신 제품의 기본형의 가격
+    imgSrc: '/static/images/macs/mac-mini.jpeg', // 대표 이미지
     data: [
       {
         title: 'Mac mini',
         alias: 'Mac mini',
         imgSrc: '/static/images/macs/mac-mini.jpeg',
         href: '/prices/mac/mac-mini?optionId=1',
+        isDeprecated: true, // 단종 여부
+        releasedDate: '2020-11-10',
+        colors: ['#f5f5f7'],
         specs: {
           year: '2020',
+          cpuType: 'M1',
           cpu: 'M1 8코어',
           gpu: '8코어',
         },
@@ -22,31 +27,37 @@ const optionsMac = [
             id: 1,
             ram: '8GB',
             ssd: '256GB',
+            modelNo: 'MGNR3xx/A',
           },
           {
             id: 2,
             ram: '8GB',
             ssd: '512GB',
+            modelNo: 'MGNT3xx/A',
           },
           {
             id: 3,
             ram: '8GB',
             ssd: '1TB',
+            modelNo: 'MGNT3xx/A',
           },
           {
             id: 4,
             ram: '16GB',
             ssd: '256GB',
+            modelNo: 'MGNR3xx/A',
           },
           {
             id: 5,
             ram: '16GB',
             ssd: '512GB',
+            modelNo: 'MGNT3xx/A',
           },
           {
             id: 6,
             ram: '16GB',
             ssd: '1TB',
+            modelNo: 'MGNT3xx/A',
           },
         ],
       },
@@ -55,8 +66,12 @@ const optionsMac = [
         alias: 'Mac mini',
         imgSrc: '/static/images/macs/mac-mini.jpeg',
         href: '/prices/mac/mac-mini?optionId=7',
+        isDeprecated: false, // 단종 여부
+        releasedDate: '2023-01-17',
+        colors: ['#f5f5f7'],
         specs: {
-          year: '2022',
+          year: '2023',
+          cpuType: 'M2',
           cpu: 'M2 8코어',
           gpu: '10코어',
         },
@@ -65,31 +80,43 @@ const optionsMac = [
             id: 7,
             ram: '8GB',
             ssd: '256GB',
+            price: 850000,
+            modelNo: 'MMFJ3xx/A',
           },
           {
             id: 8,
             ram: '8GB',
             ssd: '512GB',
+            price: 1120000,
+            modelNo: 'MMFK3xx/A',
           },
           {
             id: 9,
             ram: '8GB',
             ssd: '1TB',
+            price: 1390000,
+            modelNo: 'MMFJ3xx/A',
           },
           {
             id: 10,
             ram: '16GB',
             ssd: '256GB',
+            price: 1120000,
+            modelNo: 'MMFJ3xx/A',
           },
           {
             id: 11,
             ram: '16GB',
             ssd: '512GB',
+            price: 1390000,
+            modelNo: 'MMFK3xx/A',
           },
           {
             id: 12,
             ram: '16GB',
             ssd: '1TB',
+            price: 1660000,
+            modelNo: 'MMFK3xx/A',
           },
         ],
       },
@@ -98,8 +125,12 @@ const optionsMac = [
         alias: 'Mac mini',
         imgSrc: '/static/images/macs/mac-mini.jpeg',
         href: '/prices/mac/mac-mini?optionId=13',
+        isDeprecated: false, // 단종 여부
+        releasedDate: '2023-01-17',
+        colors: ['#f5f5f7'],
         specs: {
-          year: '2022',
+          year: '2023',
+          cpuType: 'M2 Pro',
           cpu: 'M2 Pro 10코어',
           gpu: '16코어',
         },
@@ -108,21 +139,29 @@ const optionsMac = [
             id: 13,
             ram: '16GB',
             ssd: '512GB',
+            price: 1790000,
+            modelNo: 'MNH73xx/A',
           },
           {
             id: 14,
             ram: '16GB',
             ssd: '1TB',
+            price: 2060000,
+            modelNo: 'MNH73xx/A',
           },
           {
             id: 15,
             ram: '32GB',
             ssd: '512GB',
+            price: 2330000,
+            modelNo: 'MNH73xx/A',
           },
           {
             id: 16,
             ram: '32GB',
             ssd: '1TB',
+            price: 2600000,
+            modelNo: 'MNH73xx/A',
           },
         ],
       },
@@ -131,8 +170,12 @@ const optionsMac = [
         alias: 'Mac mini',
         imgSrc: '/static/images/macs/mac-mini.jpeg',
         href: '/prices/mac/mac-mini?optionId=17',
+        isDeprecated: false, // 단종 여부
+        releasedDate: '2023-01-17',
+        colors: ['#f5f5f7'],
         specs: {
-          year: '2022',
+          year: '2023',
+          cpuType: 'M2 Pro',
           cpu: 'M2 Pro 12코어',
           gpu: '19코어',
         },
@@ -141,21 +184,29 @@ const optionsMac = [
             id: 17,
             ram: '16GB',
             ssd: '512GB',
+            price: 2195000,
+            modelNo: 'MNH73xx/A',
           },
           {
             id: 18,
             ram: '16GB',
             ssd: '1TB',
+            price: 2465000,
+            modelNo: 'MNH73xx/A',
           },
           {
             id: 19,
             ram: '32GB',
             ssd: '512GB',
+            price: 2735000,
+            modelNo: 'MNH73xx/A',
           },
           {
             id: 20,
             ram: '32GB',
             ssd: '1TB',
+            price: 3005000,
+            modelNo: 'MNH73xx/A',
           },
         ],
       },
@@ -167,6 +218,7 @@ const optionsMac = [
     desc: '완전히 리뉴얼된 MacBook Air는 가벼움은 유지하면서 더욱 선명한 Liquid Retina 디스플레이를 탑재하였습니다. MagSafe를 지원하여 조금 더 여유로워진 포트 구성을 가지고 있습니다.',
     href: '/prices/mac/macbook-air-13',
     price: 1590000, // 가장 최신 제품의 기본형의 가격
+    imgSrc: '/static/images/macs/macbook-air-13-2022.jpeg', // 대표 이미지
     releasedDateHistory: [
       '2022-06-06',
       '2022-11-10',
@@ -359,6 +411,7 @@ const optionsMac = [
     desc: 'MacBook Pro 엔트리 라인으로 터치바가 남아있는 유일한 제품입니다. M2 칩을 탑재하여 성능은 뛰어나지만 몇 년동안 동일한 디자인을 가지고 있어 약간 아쉬운 제품입니다.',
     href: '/prices/mac/macbook-pro-13',
     price: 1790000, // 가장 최신 제품의 기본형의 가격
+    imgSrc: '/static/images/macs/macbook-pro-13-2022.jpeg', // 대표 이미지
     data: [
       {
         title: 'MacBook Pro 13',
@@ -453,6 +506,7 @@ const optionsMac = [
     desc: 'M2 Pro와 M2 Max를 탑재한 14인치 MacBook Pro는 뛰어난 성능, 아름다운 디스플레이, 하루종일 가는 배터리, 넉넉한 포트구성 등 흠잡을 게 없는 제품입니다. 필요하다면 지금 구매하세요.',
     href: '/prices/mac/macbook-pro-14',
     price: 2790000, // 가장 최신 제품의 기본형의 가격
+    imgSrc: '/static/images/macs/macbook-pro-14-2023.jpeg', // 대표 이미지
     data: [
       {
         title: 'MacBook Pro 14',
@@ -751,6 +805,7 @@ const optionsMac = [
     desc: 'M2 Pro와 M2 Max를 탑재한 16인치 MacBook Pro는 뛰어난 성능, 아름다운 광활한 디스플레이, 하루종일 가는 배터리, 넉넉한 포트구성 등 거의 완벽한 제품입니다. 유일한 단점은 무게입니다. 필요하다면 지금 구매하세요.',
     href: '/prices/mac/macbook-pro-16',
     price: 3490000, // 가장 최신 제품의 기본형의 가격
+    imgSrc: '/static/images/macs/macbook-pro-16-2023.jpeg', // 대표 이미지
     data: [
       {
         title: 'MacBook Pro 16',

@@ -6,6 +6,7 @@ const optionsIpad = [
     desc: '이전 세대에 비해 더 커진 8.3인치 디스플레이와 A15 Bionic, 터치 ID, 그리고 2세대 Apple Pencil을 지원합니다. 오랫동안 업데이트가 되지 않은 만큼 곧 새로운 모델이 출시될 것으로 예상됩니다.',
     href: '/prices/ipad/ipad-mini',
     price: 769000, // 가장 최신 제품의 기본형의 가격
+    imgSrc: '/static/images/ipads/ipad-mini-2019.jpeg', // 대표 이미지
     data: [
       {
         title: 'iPad mini',
@@ -49,6 +50,7 @@ const optionsIpad = [
     desc: 'M1을 탑재한 iPad Air 는  10.9인치 Liquid Retina 디스플레이와 터치 ID, 2세대 Apple Pencil을 지원합니다. 출시주기 막바지에 다른만큼 곧 새로운 모델이 출시될 것으로 예상됩니다.',
     href: '/prices/ipad/ipad-air',
     price: 929000, // 가장 최신 제품의 기본형의 가격
+    imgSrc: '/static/images/ipads/ipad-air-2022.jpeg', // 대표 이미지
     data: [
       {
         title: 'iPad Air',
@@ -125,6 +127,7 @@ const optionsIpad = [
     href: '/prices/ipad/ipad',
     releasedDateHistory: ['2022-10-17', '2021-09-13', '2020-09-14', '2019-09-09', '2018-03-26'],
     price: 679000, // 가장 최신 제품의 기본형의 가격
+    imgSrc: '/static/images/ipads/ipad-2022.jpeg', // 대표 이미지
     data: [
       {
         title: 'iPad',
@@ -234,6 +237,7 @@ const optionsIpad = [
     desc: 'M2를 탑재한 iPad Pro 11은 ProMotion 기술이 적용된 Liquid Retina 디스플레이, 페이스 ID, 2세대 Apple Pencil을 지원합니다. 현존하는 태블릿 중 끝판왕 태블릿으로 필요하신 분은 당장 구매하세요.',
     href: '/prices/ipad/ipad-pro-11',
     price: 1249000, // 가장 최신 제품의 기본형의 가격
+    imgSrc: '/static/images/ipads/ipad-pro-11-2022.png', // 대표 이미지
     data: [
       {
         title: 'iPad Pro 11',
@@ -403,6 +407,7 @@ const optionsIpad = [
     desc: 'M2를 탑재한 iPad Pro 12.9는 ProMotion 기술이 적용된 광활한 Liquid Retina 디스플레이, 페이스 ID, 2세대 Apple Pencil을 지원합니다. 현존하는 태블릿 중 끝판왕 태블릿으로 필요하신 분은 당장 구매하세요.',
     href: '/prices/ipad/ipad-pro-12-9',
     price: 1729000, // 가장 최신 제품의 기본형의 가격
+    imgSrc: '/static/images/ipads/ipad-pro-12-9-2022.jpg', // 대표 이미지
     data: [
       {
         title: 'iPad Pro 12.9',

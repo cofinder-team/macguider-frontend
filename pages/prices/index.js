@@ -1,5 +1,3 @@
-import siteMetadata from '@/data/siteMetadata'
-import macModels from '@/data/models/mac'
 import ModelCard from '@/components/ModelCard'
 import { PageSEO } from '@/components/SEO'
 import ipadModels from '@/data/models/ipad'
@@ -7,6 +5,7 @@ import NewsletterForm from '@/components/NewsletterForm'
 import Promo from '@/components/Promo'
 import { useEffect } from 'react'
 import amplitudeTrack from '@/lib/amplitude/track'
+import optionsMac from '@/data/options/mac'
 
 export default function Prices() {
   useEffect(() => {
@@ -27,8 +26,8 @@ export default function Prices() {
         </div>
         <div className="mt-2">
           <div className="-m-4 flex flex-wrap">
-            {macModels.map((d) => (
-              <ModelCard key={d.title} title={d.title} imgSrc={d.imgSrc} href={d.href} />
+            {optionsMac.map((mac) => (
+              <ModelCard key={mac.title} title={mac.model} imgSrc={mac.imgSrc} href={mac.href} />
             ))}
           </div>
         </div>

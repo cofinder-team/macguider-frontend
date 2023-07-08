@@ -7,18 +7,21 @@ import Skeleton from 'react-loading-skeleton'
 import GuideExpandedRow from './GuideExpandedRow'
 import amplitudeTrack from '@/lib/amplitude/track'
 
-const purchaseTiming = {
+export const purchaseTiming = {
   good: {
+    bgColor: '#dcfce7',
     color: '#22C55E',
     text: '추천',
   },
   normal: {
+    bgColor: '#fef9c3',
     color: '#EAB308',
-    text: '주의',
+    text: '에매함',
   },
   bad: {
+    bgColor: '#fca5a5',
     color: '#EF4444',
-    text: '보류',
+    text: '경고',
   },
 }
 

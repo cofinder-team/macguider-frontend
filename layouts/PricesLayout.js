@@ -3,7 +3,6 @@ import Image from 'next/image'
 import optionsMac from '@/data/options/mac'
 import { useState } from 'react'
 import { useScreenSize } from 'hooks/useScreenSize'
-import 'react-loading-skeleton/dist/skeleton.css'
 import NewsletterForm from '@/components/NewsletterForm'
 import amplitudeTrack from '@/lib/amplitude/track'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -42,7 +41,9 @@ const PricesLayout = ({ currentItem, currentModel, currentOption, children }, re
     let lastScrollTop = 0
 
     const handleScroll = () => {
-      if (container.current && leftColumn.current) {
+      const isMobile = window.innerWidth <= 768
+
+      if (!isMobile && container.current && leftColumn.current) {
         let st = window.pageYOffset || document.documentElement.scrollTop
 
         if (st > lastScrollTop) {
@@ -51,11 +52,13 @@ const PricesLayout = ({ currentItem, currentModel, currentOption, children }, re
             leftColumn.current.getBoundingClientRect().bottom >=
             container.current.getBoundingClientRect().bottom
           ) {
-            leftColumn.current.classList.add('md:absolute', 'md:bottom-0')
-            leftColumn.current.classList.remove('md:fixed', `md:top-[${leftColumnOffsetY}px]`)
+            leftColumn.current.style.position = 'absolute'
+            leftColumn.current.style.bottom = '0'
+            leftColumn.current.style.top = 'auto'
           } else {
-            leftColumn.current.classList.add('md:fixed', `md:top-[${leftColumnOffsetY}px]`)
-            leftColumn.current.classList.remove('md:absolute', 'md:bottom-0')
+            leftColumn.current.style.position = 'fixed'
+            leftColumn.current.style.top = `${leftColumnOffsetY}px`
+            leftColumn.current.style.bottom = 'auto'
           }
         } else {
           // when scroll up
@@ -64,36 +67,41 @@ const PricesLayout = ({ currentItem, currentModel, currentOption, children }, re
             leftColumn.current.getBoundingClientRect().bottom ===
               container.current.getBoundingClientRect().bottom
           ) {
-            leftColumn.current.classList.add('md:fixed', `md:top-[${leftColumnOffsetY}px]`)
-            leftColumn.current.classList.remove('md:absolute', 'md:bottom-0')
+            // change the style of left column by changing style without changing class names
+            leftColumn.current.style.position = 'fixed'
+            leftColumn.current.style.top = `${leftColumnOffsetY}px`
+            leftColumn.current.style.bottom = 'auto'
           }
         }
         lastScrollTop = st <= 0 ? 0 : st
       }
     }
 
-    const updateFixedElementWidth = () => {
+    const handleResize = () => {
       const isMobile = window.innerWidth <= 768
 
       if (leftColumn.current && leftColumn.current.parentNode) {
+        const parentWidth = leftColumn.current.parentNode.offsetWidth
         if (isMobile) {
-          const parentWidth = leftColumn.current.parentNode.offsetWidth
+          leftColumn.current.style.position = 'static'
+          leftColumn.current.style.top = 'auto'
+          leftColumn.current.style.bottom = 'auto'
           setFixedElementWidth(parentWidth)
         } else {
-          const parentWidth = leftColumn.current.parentNode.offsetWidth
           const newWidth = parentWidth * 0.5 // Set to 50% of parent width
-
+          leftColumn.current.style.position = 'fixed'
+          leftColumn.current.style.top = `${leftColumnOffsetY}px`
           setFixedElementWidth(newWidth)
         }
       }
     }
 
-    updateFixedElementWidth()
-    window.addEventListener('resize', updateFixedElementWidth)
+    handleResize()
+    window.addEventListener('resize', handleResize)
     window.addEventListener('scroll', handleScroll)
 
     return () => {
-      window.removeEventListener('resize', updateFixedElementWidth)
+      window.removeEventListener('resize', handleResize)
       window.removeEventListener('scroll', handleScroll)
     }
   }, [])
@@ -107,9 +115,8 @@ const PricesLayout = ({ currentItem, currentModel, currentOption, children }, re
       <div ref={container} className="container relative md:pt-6">
         <div
           ref={leftColumn}
-          className={`md:fixed md:top-[${leftColumnOffsetY}px] `}
+          className="md:fixed"
           style={{
-            // 처음 마운트시 fixedElementWidth가 0이므로 visibility를 hidden으로 설정
             width: fixedElementWidth,
             visibility: fixedElementWidth ? 'visible' : 'hidden',
           }}

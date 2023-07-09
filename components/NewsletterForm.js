@@ -1,9 +1,9 @@
-import { useRef, useState } from 'react'
+import { forwardRef, useRef, useState } from 'react'
 
 import axiosInstance from '@/lib/axios'
 import amplitudeTrack from '@/lib/amplitude/track'
 
-const NewsletterForm = ({ title = 'MacGuider 최신 업데이트 소식 받기' }) => {
+const NewsletterForm = ({ title = 'MacGuider 최신 업데이트 소식 받기' }, ref) => {
   const inputEl = useRef(null)
   const [error, setError] = useState(false)
   const [message, setMessage] = useState('')
@@ -29,7 +29,7 @@ const NewsletterForm = ({ title = 'MacGuider 최신 업데이트 소식 받기' 
   }
 
   return (
-    <div>
+    <div ref={ref}>
       <div className="pb-1 text-lg font-semibold text-gray-800 dark:text-gray-100">{title}</div>
       <form className="flex flex-col sm:flex-row" onSubmit={subscribe}>
         <div>
@@ -69,7 +69,7 @@ const NewsletterForm = ({ title = 'MacGuider 최신 업데이트 소식 받기' 
   )
 }
 
-export default NewsletterForm
+export default forwardRef(NewsletterForm)
 
 export const BlogNewsletterForm = ({ title }) => (
   <div className="flex items-center justify-center">

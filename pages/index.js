@@ -3,13 +3,13 @@ import React, { useEffect } from 'react'
 import siteMetadata from '@/data/siteMetadata'
 import { getAllFilesFrontMatter } from '@/lib/mdx'
 import NewsletterForm from '@/components/NewsletterForm'
-import ipadModels from '@/data/models/ipad'
 import ModelCard from '@/components/ModelCard'
 import SectionDesk from '@/components/section/desk'
 import Link from '@/components/Link'
 import Promo from '@/components/Promo'
 import amplitudeTrack from '@/lib/amplitude/track'
 import optionsMac from '@/data/options/mac'
+import optionsIpad from '@/data/options/ipad'
 
 export async function getStaticProps() {
   const posts = await getAllFilesFrontMatter('blog')
@@ -38,7 +38,7 @@ export default function Home() {
         <div className="mt-2">
           <div className="-m-4 flex flex-wrap">
             {optionsMac.map((mac) => (
-              <ModelCard key={mac.title} title={mac.model} imgSrc={mac.imgSrc} href={mac.href} />
+              <ModelCard key={mac.id} title={mac.model} imgSrc={mac.imgSrc} href={mac.href} />
             ))}
           </div>
         </div>
@@ -58,8 +58,8 @@ export default function Home() {
         </div>
         <div className="mt-2">
           <div className="-m-4 flex flex-wrap">
-            {ipadModels.map((d) => (
-              <ModelCard key={d.title} title={d.title} imgSrc={d.imgSrc} href={d.href} />
+            {optionsIpad.map((ipad) => (
+              <ModelCard key={ipad.id} title={ipad.model} imgSrc={ipad.imgSrc} href={ipad.href} />
             ))}
           </div>
         </div>

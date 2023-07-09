@@ -4,7 +4,7 @@ const optionsIpad = [
     model: 'iPad mini',
     releasedDateHistory: ['2021-09-13', '2019-03-17', '2015-09-08', '2014-10-15', '2013-10-21'],
     desc: '이전 세대에 비해 더 커진 8.3인치 디스플레이와 A15 Bionic, 터치 ID, 그리고 2세대 Apple Pencil을 지원합니다. 오랫동안 업데이트가 되지 않은 만큼 곧 새로운 모델이 출시될 것으로 예상됩니다.',
-    href: '/prices/ipad/ipad-mini',
+    href: '/prices/ipad/ipad-mini?optionId=1',
     price: 769000, // 가장 최신 제품의 기본형의 가격
     imgSrc: '/static/images/ipads/ipad-mini-2019.jpeg', // 대표 이미지
     data: [
@@ -13,8 +13,11 @@ const optionsIpad = [
         alias: 'iPad mini',
         imgSrc: '/static/images/ipads/ipad-mini-2019.jpeg',
         href: '/prices/ipad/ipad-mini?optionId=1',
+        isDeprecated: false, // 단종 여부
+        releasedDate: '2020-11-10',
+        colors: ['스페이스 그레이', '핑크', '퍼플', '스타라이트'],
         specs: {
-          year: '2021',
+          year: '2020',
           cpu: 'A15 Bionic',
           gen: 6,
         },
@@ -23,21 +26,25 @@ const optionsIpad = [
             id: 1,
             connectivity: 'wifi',
             ssd: '64GB',
+            price: 769000,
           },
           {
             id: 2,
             connectivity: 'wifi',
             ssd: '256GB',
+            price: 1009000,
           },
           {
             id: 3,
             connectivity: 'cellular',
             ssd: '64GB',
+            price: 1009000,
           },
           {
             id: 4,
             connectivity: 'cellular',
             ssd: '256GB',
+            price: 1249000,
           },
         ],
       },

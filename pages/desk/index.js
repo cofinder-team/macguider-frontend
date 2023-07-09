@@ -2,13 +2,21 @@ import { PageSEO } from '@/components/SEO'
 import NewsletterForm from '@/components/NewsletterForm'
 import SectionDesk from '@/components/section/desk'
 import Promo from '@/components/Promo'
-import { useEffect } from 'react'
+import { useCallback, useEffect } from 'react'
 import amplitudeTrack from '@/lib/amplitude/track'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faPlus } from '@fortawesome/free-solid-svg-icons'
 
 export default function Desk() {
   useEffect(() => {
     amplitudeTrack('enter_desk_main')
   }, [])
+
+  const onClickUploadDesk = useCallback(() => {
+    amplitudeTrack('click_upload_desk')
+    window.open('https://tally.so/r/w54A6v', '_blank')
+  }, [])
+
   return (
     <>
       <PageSEO
@@ -17,13 +25,18 @@ export default function Desk() {
       />
 
       <div className="space-y-2 pt-6 pb-2">
-        <div className="flex items-center">
+        <div className="flex items-center justify-between">
           <h1 className="text-3xl font-extrabold leading-9 tracking-tight text-gray-900 dark:text-gray-100  sm:leading-10">
             오늘의 데스크
           </h1>
-          <div className="mx-2 rounded bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800 dark:bg-blue-900 dark:text-blue-300">
-            New
-          </div>
+
+          <button
+            onClick={onClickUploadDesk}
+            className="flex items-center rounded-lg bg-gray-800 px-3 py-2 text-sm font-medium text-white  focus:outline-none focus:ring-4 focus:ring-gray-300 "
+          >
+            <FontAwesomeIcon icon={faPlus} />
+            <span className="ml-2 inline-block">데스크 올리기</span>
+          </button>
         </div>
 
         <p className="text-lg leading-7 text-gray-500 dark:text-gray-400">

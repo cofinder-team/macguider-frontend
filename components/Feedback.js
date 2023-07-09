@@ -33,7 +33,7 @@ export default function Feedback() {
         </>
       ) : (
         <>
-          <span className="font-semibold">감사합니다.</span>
+          <span className="mr-2 inline-block font-semibold">감사합니다.</span>
           <a
             href="https://tally.so/r/mYRpxz"
             className="decoration-600 dark:decoration-500 inline font-medium text-blue-600 underline decoration-solid underline-offset-2 hover:no-underline dark:text-blue-500 md:ml-1.5"

@@ -1,8 +1,8 @@
-import { forwardRef, Fragment, useEffect, useImperativeHandle, useState } from 'react'
+import { forwardRef, Fragment, useCallback, useEffect, useImperativeHandle, useState } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
-import { ExclamationTriangleIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import { XMarkIcon } from '@heroicons/react/24/outline'
 
-function Modal({ currentItem, currentModel, currentOption, onApply }, ref) {
+function OptionsModalForMac({ currentItem, currentModel, currentOption, onApply }, ref) {
   const [open, setOpen] = useState(false)
 
   const { id: itemId, data: currentItemData } = currentItem
@@ -43,36 +43,43 @@ function Modal({ currentItem, currentModel, currentOption, onApply }, ref) {
     )
   )
 
-  //   const [isValidOption, setIsValidOption] = useState(true)
-
   const isValidOption =
     availableGpuOptions.includes(currentGpuOption) &&
     availableSsdOptions.includes(currentSsdOption) &&
     availableRamOptions.includes(currentRamOption)
 
-  const onClickCpuOption = (cpuOption) => {
+  const onClickCpuOption = useCallback((cpuOption) => {
     setCurrentCpuOption(cpuOption)
-  }
+  }, [])
 
-  const onClickGpuOption = (gpuOption) => {
-    if (availableGpuOptions.includes(gpuOption)) {
-      setCurrentGpuOption(gpuOption)
-    }
-  }
+  const onClickGpuOption = useCallback(
+    (gpuOption) => {
+      if (availableGpuOptions.includes(gpuOption)) {
+        setCurrentGpuOption(gpuOption)
+      }
+    },
+    [availableGpuOptions]
+  )
 
-  const onClickSsdOption = (ssdOption) => {
-    if (availableSsdOptions.includes(ssdOption)) {
-      setCurrentSsdOption(ssdOption)
-    }
-  }
+  const onClickSsdOption = useCallback(
+    (ssdOption) => {
+      if (availableSsdOptions.includes(ssdOption)) {
+        setCurrentSsdOption(ssdOption)
+      }
+    },
+    [availableSsdOptions]
+  )
 
-  const onClickRamOption = (ramOption) => {
-    if (availableRamOptions.includes(ramOption)) {
-      setCurrentRamOption(ramOption)
-    }
-  }
+  const onClickRamOption = useCallback(
+    (ramOption) => {
+      if (availableRamOptions.includes(ramOption)) {
+        setCurrentRamOption(ramOption)
+      }
+    },
+    [availableRamOptions]
+  )
 
-  const findOptionId = () => {
+  const findOptionId = useCallback(() => {
     const selectedModel = currentItemData.find(({ specs, options }) => {
       return (
         specs.cpu === currentCpuOption &&
@@ -91,21 +98,28 @@ function Modal({ currentItem, currentModel, currentOption, onApply }, ref) {
         onApply(selectedOptionId)
       }
     }
-  }
+  }, [
+    currentCpuOption,
+    currentGpuOption,
+    currentSsdOption,
+    currentRamOption,
+    currentItemData,
+    onApply,
+  ])
 
-  const initializeOptions = () => {
+  const initializeOptions = useCallback(() => {
     setCurrentCpuOption(currentModelSpecs.cpu)
     setCurrentGpuOption(currentModelSpecs.gpu)
     setCurrentSsdOption(currentOptionSsd)
     setCurrentRamOption(currentOptionRam)
-  }
+  }, [currentModelSpecs, currentOptionRam, currentOptionSsd])
 
-  const onClickApply = () => {
+  const onClickApply = useCallback(() => {
     if (isValidOption) {
       setOpen(false)
       findOptionId()
     }
-  }
+  }, [findOptionId, isValidOption])
 
   useImperativeHandle(ref, () => ({
     setOpen: (isOpen) => setOpen(isOpen),
@@ -291,4 +305,4 @@ function Modal({ currentItem, currentModel, currentOption, onApply }, ref) {
   )
 }
 
-export default forwardRef(Modal)
+export default forwardRef(OptionsModalForMac)

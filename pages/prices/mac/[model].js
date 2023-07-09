@@ -11,22 +11,13 @@ import Skeleton from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
 import NewsletterForm from '@/components/NewsletterForm'
 import { pastTime } from '@/lib/utils/pastTime'
-import Promo from '@/components/Promo'
 import { getPrices } from 'utils/price'
 import { getAppleProductInfo } from 'utils/model'
 import amplitudeTrack from '@/lib/amplitude/track'
-import Modal from '@/components/Modal'
+import OptionsModalForMac from '@/components/OptionsModalForMac'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {
-  faChevronRight,
-  faCircleExclamation,
-  faPaperPlane,
-  faPlus,
-  faThumbsDown,
-  faThumbsUp,
-} from '@fortawesome/free-solid-svg-icons'
+import { faChevronRight, faPlus } from '@fortawesome/free-solid-svg-icons'
 import CoupangLogo from '@/data/coupang_logo.svg'
-import { HandThumbUpIcon, HandThumbDownIcon } from '@heroicons/react/24/outline'
 import { purchaseTiming } from '@/components/guide/GuideBriefRow'
 import optionsIpad from '@/data/options/ipad'
 import SectionDesk from '@/components/section/desk'
@@ -34,18 +25,6 @@ import { useRouter } from 'next/router'
 import Feedback from '@/components/Feedback'
 
 const leftColumnOffsetY = 150
-const products = [
-  {
-    id: 1,
-    name: 'Basic Tee',
-    href: '#',
-    imageSrc: 'https://tailwindui.com/img/ecommerce-images/product-page-01-related-product-01.jpg',
-    imageAlt: "Front of men's Basic Tee in black.",
-    price: '$35',
-    color: 'Black',
-  },
-  // More products...
-]
 
 const MacModel = ({ model, optionId }) => {
   const container = useRef(null)
@@ -167,7 +146,6 @@ const MacModel = ({ model, optionId }) => {
     ssd: currentOptionSsd,
     id: currentOptionId,
     price: currentOptionPrice,
-    modelNo: currentOptionModelNo,
   } = currentOption
   const [unopened, setUnopened] = useState('false')
 
@@ -204,11 +182,10 @@ const MacModel = ({ model, optionId }) => {
     }
   }
 
-  const onClickDeskUpload = () => {
-    amplitudeTrack('click_upload_desk', { item_class: 'mac', item_detail: model })
-    // open in new tab
+  const onClickUploadDesk = useCallback(() => {
+    amplitudeTrack('click_upload_desk')
     window.open('https://tally.so/r/w54A6v', '_blank')
-  }
+  }, [])
 
   const onClickBuyersGuide = () => {
     amplitudeTrack('click_route_buyers_guide', { item_class: 'mac', item_detail: model })
@@ -370,7 +347,7 @@ const MacModel = ({ model, optionId }) => {
         description={`ChatGPT가 알려주는 사양별 맥 시세 | ${modelTitle}`}
       />
 
-      <Modal
+      <OptionsModalForMac
         ref={modalRef}
         currentItem={currentItem}
         currentModel={currentModel}
@@ -399,7 +376,7 @@ const MacModel = ({ model, optionId }) => {
           />
 
           {md && (
-            <div className="flex justify-center md:px-10">
+            <div className="flex justify-center xl:px-10">
               <Feedback />
             </div>
           )}
@@ -684,7 +661,7 @@ const MacModel = ({ model, optionId }) => {
               }
             </div>
 
-            <div className="mt-5">
+            <div className="mt-5 max-w-md">
               <p className="text-md font-bold text-gray-900 dark:text-white">제품 정보</p>
 
               <div className="mt-2 flow-root">
@@ -695,13 +672,7 @@ const MacModel = ({ model, optionId }) => {
                         <tr className="divide-x divide-gray-200">
                           <th
                             scope="col"
-                            className="py-3.5 pl-4 pr-4 text-left text-sm font-semibold text-gray-900 sm:pl-0"
-                          >
-                            모델번호
-                          </th>
-                          <th
-                            scope="col"
-                            className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900"
+                            className="w-6 px-4 py-3.5 text-left text-sm font-semibold text-gray-900"
                           >
                             출시일
                           </th>
@@ -715,24 +686,11 @@ const MacModel = ({ model, optionId }) => {
                       </thead>
                       <tbody className="divide-y divide-gray-200 bg-white">
                         <tr className="divide-x divide-gray-200">
-                          <td className="whitespace-nowrap py-4 pl-4 pr-4 text-sm font-medium text-gray-700 sm:pl-0">
-                            {currentOptionModelNo}
-                          </td>
                           <td className="whitespace-nowrap p-4 text-sm font-medium text-gray-700">
                             {releasedDate}
                           </td>
-                          <td className=" p-4 ">
-                            <div className="flex flex-wrap items-center space-x-1">
-                              {colors.map((color) => (
-                                <div
-                                  key={color}
-                                  className="h-6 w-6 rounded-full"
-                                  style={{
-                                    backgroundColor: color,
-                                  }}
-                                ></div>
-                              ))}
-                            </div>
+                          <td className="whitespace-nowrap p-4 text-sm font-medium text-gray-700">
+                            {colors.join(', ')}
                           </td>
                         </tr>
                       </tbody>
@@ -819,7 +777,7 @@ const MacModel = ({ model, optionId }) => {
         <div className="flex items-center justify-between">
           <h2 className="text-2xl font-bold tracking-tight text-gray-900">오늘의 데스크</h2>
           <button
-            onClick={onClickDeskUpload}
+            onClick={onClickUploadDesk}
             className="flex items-center rounded-lg bg-gray-800 px-3 py-2 text-sm font-medium text-white  focus:outline-none focus:ring-4 focus:ring-gray-300 "
           >
             <FontAwesomeIcon icon={faPlus} />

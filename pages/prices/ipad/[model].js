@@ -236,21 +236,23 @@ const IpadModel = ({ model, optionId }) => {
   }, [fetchedData])
 
   const getCoupangLastUpdatedTime = useCallback(() => {
-    // get diff time between now and last updated time (timestamp)
     if (fetchedData) {
-      const timestamp = fetchedData.time._seconds
-      const now = new Date().getTime() / 1000
-      const diff = now - timestamp
+      const lastUpdatedTime = fetchedData.time
+      const now = new Date()
+      const lastUpdated = new Date(lastUpdatedTime)
+      const diffTime = Math.abs(now - lastUpdated)
+      const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24))
+      const diffMinutes = Math.ceil(diffTime / (1000 * 60))
 
-      if (diff < 60) {
-        return `${Math.floor(diff)}초 전`
-      } else if (diff < 3600) {
-        return `${Math.floor(diff / 60)}분 전`
-      } else if (diff < 86400) {
-        return `${Math.floor(diff / 3600)}시간 전`
-      } else {
-        return `${Math.floor(diff / 86400)}일 전`
+      if (diffDays > 0) {
+        return `${diffDays}일 전`
       }
+
+      if (diffMinutes > 60) {
+        return `${Math.floor(diffMinutes / 60)}시간 전`
+      }
+
+      return `${diffMinutes}분 전`
     }
   }, [fetchedData])
 

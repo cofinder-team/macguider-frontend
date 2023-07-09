@@ -9,11 +9,14 @@ import Head from 'next/head'
 import amplitudeTrack from '@/lib/amplitude/track'
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { useScreenSize } from 'hooks/useScreenSize'
 
 export default function Example({ deskId }) {
   useEffect(() => {
     amplitudeTrack('enter_desk_detail', { deskId })
   }, [deskId])
+
+  const { md } = useScreenSize()
 
   const desk = desks.find((desk) => desk.id === deskId)
   const router = useRouter()
@@ -94,13 +97,15 @@ export default function Example({ deskId }) {
                   </div>
                 </div>
 
-                <button
-                  onClick={onClickUploadDesk}
-                  className="flex items-center rounded-lg bg-gray-800 px-3 py-2 text-sm font-medium text-white  focus:outline-none focus:ring-4 focus:ring-gray-300 "
-                >
-                  <FontAwesomeIcon icon={faPlus} />
-                  <span className="ml-2 inline-block">데스크 올리기</span>
-                </button>
+                {md && (
+                  <button
+                    onClick={onClickUploadDesk}
+                    className="flex w-32 items-center justify-center rounded-lg bg-gray-800 px-3 py-2 text-sm font-medium text-white  focus:outline-none focus:ring-4 focus:ring-gray-300 "
+                  >
+                    <FontAwesomeIcon icon={faPlus} />
+                    <span className="ml-2 inline-block">데스크 올리기</span>
+                  </button>
+                )}
               </div>
             </div>
 
@@ -144,7 +149,7 @@ export default function Example({ deskId }) {
             <h2 className="text-2xl font-bold tracking-tight text-gray-900">다른 데스크</h2>
             <button
               onClick={onClickUploadDesk}
-              className="flex items-center rounded-lg bg-gray-800 px-3 py-2 text-sm font-medium text-white  focus:outline-none focus:ring-4 focus:ring-gray-300 "
+              className="flex w-32 items-center justify-center rounded-lg bg-gray-800 px-3 py-2 text-sm font-medium text-white  focus:outline-none focus:ring-4 focus:ring-gray-300 "
             >
               <FontAwesomeIcon icon={faPlus} />
               <span className="ml-2 inline-block">데스크 올리기</span>

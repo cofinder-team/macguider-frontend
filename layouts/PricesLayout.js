@@ -181,7 +181,7 @@ const PricesLayout = ({ currentItem, currentModel, currentOption, children }, re
           <h2 className="text-2xl font-bold tracking-tight text-gray-900">오늘의 데스크</h2>
           <button
             onClick={onClickUploadDesk}
-            className="flex items-center rounded-lg bg-gray-800 px-3 py-2 text-sm font-medium text-white  focus:outline-none focus:ring-4 focus:ring-gray-300 "
+            className="flex w-32 items-center justify-center rounded-lg bg-gray-800 p-2 text-sm font-medium  text-white focus:outline-none focus:ring-4 focus:ring-gray-300 md:px-3"
           >
             <FontAwesomeIcon icon={faPlus} />
             <span className="ml-2 inline-block">데스크 올리기</span>

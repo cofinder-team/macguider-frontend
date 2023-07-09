@@ -32,7 +32,7 @@ export default function Desk() {
 
           <button
             onClick={onClickUploadDesk}
-            className="flex items-center rounded-lg bg-gray-800 px-3 py-2 text-sm font-medium text-white  focus:outline-none focus:ring-4 focus:ring-gray-300 "
+            className="flex w-32 items-center justify-center rounded-lg bg-gray-800 px-3 py-2 text-sm font-medium text-white  focus:outline-none focus:ring-4 focus:ring-gray-300 "
           >
             <FontAwesomeIcon icon={faPlus} />
             <span className="ml-2 inline-block">데스크 올리기</span>

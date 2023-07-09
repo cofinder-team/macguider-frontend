@@ -14,7 +14,7 @@ import Feedback from '@/components/Feedback'
 
 const leftColumnOffsetY = 150
 
-const PricesLayout = ({ currentItem, currentModel, children }, ref) => {
+const PricesLayout = ({ currentItem, currentModel, currentOption, children }, ref) => {
   const container = useRef(null)
   const leftColumn = useRef(null)
   const newsletterRef = useRef(null)
@@ -125,8 +125,8 @@ const PricesLayout = ({ currentItem, currentModel, children }, ref) => {
           />
 
           {md && (
-            <div className="flex justify-center xl:px-10">
-              <Feedback />
+            <div className="mt-2 flex justify-center xl:px-10">
+              <Feedback currentItem={currentItem} currentOption={currentOption} />
             </div>
           )}
         </div>

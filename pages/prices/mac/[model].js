@@ -20,7 +20,7 @@ import CoupangLogo from '@/data/coupang_logo.svg'
 import { purchaseTiming } from '@/components/guide/GuideBriefRow'
 import { useRouter } from 'next/router'
 import Feedback from '@/components/Feedback'
-import PricesLayout from '@/components/layout/Prices'
+import PricesLayout from '@/layouts/PricesLayout'
 
 const MacModel = ({ model, optionId }) => {
   const modalRef = useRef(null)
@@ -98,8 +98,11 @@ const MacModel = ({ model, optionId }) => {
 
   const getPriceByLevel = useCallback(
     (level) => {
-      const price = fetchedData.data.slice(-1)[0][level]
-      return price
+      const price = fetchedData.data.filter((data) => data && data[level]).slice(-1)[0]
+
+      if (price) {
+        return price[level]
+      }
     },
     [fetchedData]
   )
@@ -141,7 +144,7 @@ const MacModel = ({ model, optionId }) => {
       setCurrentOption(selectedOption)
       fetchPriceData(currentItemId, optionId, unopened)
 
-      amplitudeTrack('click_change_option', {
+      amplitudeTrack('click_change_options', {
         item_class: 'mac',
         item_detail: model,
         option_value: selectedModel.specs,
@@ -292,7 +295,12 @@ const MacModel = ({ model, optionId }) => {
         onApply={changeModelOptions}
       />
 
-      <PricesLayout currentItem={currentItem} currentModel={currentModel} ref={layoutRef}>
+      <PricesLayout
+        currentItem={currentItem}
+        currentModel={currentModel}
+        currentOption={currentOption}
+        ref={layoutRef}
+      >
         <h1 className="text-xl font-bold leading-9 tracking-tight text-gray-900 dark:text-gray-100 sm:leading-10 md:text-2xl">
           {`${specs.year} ${modelTitle} ${specs.cpuType}`}
         </h1>
@@ -640,7 +648,7 @@ const MacModel = ({ model, optionId }) => {
 
           {!md && (
             <div className="mt-10 inline-flex w-full items-center justify-center rounded-lg bg-gray-100  p-5 text-base font-medium text-gray-700">
-              <Feedback />
+              <Feedback currentItem={currentItem} currentOption={currentOption} />
             </div>
           )}
         </div>

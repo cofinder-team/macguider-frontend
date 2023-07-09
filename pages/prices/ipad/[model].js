@@ -14,7 +14,7 @@ import { pastTime } from '@/lib/utils/pastTime'
 import { getAppleProductInfo } from 'utils/model'
 import { getPrices } from 'utils/price'
 import amplitudeTrack from '@/lib/amplitude/track'
-import PricesLayout from '@/components/layout/Prices'
+import PricesLayout from '@/layouts/PricesLayout'
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { purchaseTiming } from '@/components/guide/GuideBriefRow'
@@ -96,10 +96,16 @@ const IpadModel = ({ model, optionId }) => {
     alert('데이터를 불러오는데 실패했습니다. 잠시 후 다시 시도해주세요.')
   }
 
-  const getPriceByLevel = (level) => {
-    const price = fetchedData.data.slice(-1)[0][level]
-    return price
-  }
+  const getPriceByLevel = useCallback(
+    (level) => {
+      const price = fetchedData.data.filter((data) => data && data[level]).slice(-1)[0]
+
+      if (price) {
+        return price[level]
+      }
+    },
+    [fetchedData]
+  )
 
   const fetchPriceData = useCallback(
     async (itemId, optionId, unopened) => {
@@ -262,7 +268,7 @@ const IpadModel = ({ model, optionId }) => {
       setCurrentOption(selectedOption)
       fetchPriceData(currentItemId, optionId, unopened)
 
-      amplitudeTrack('click_change_option', {
+      amplitudeTrack('click_change_options', {
         item_class: 'ipad',
         item_detail: model,
         option_value: selectedModel.specs,
@@ -286,7 +292,12 @@ const IpadModel = ({ model, optionId }) => {
         onApply={changeModelOptions}
       />
 
-      <PricesLayout currentItem={currentItem} currentModel={currentModel} ref={layoutRef}>
+      <PricesLayout
+        currentItem={currentItem}
+        currentModel={currentModel}
+        currentOption={currentOption}
+        ref={layoutRef}
+      >
         <h1 className="text-xl font-bold leading-9 tracking-tight text-gray-900 dark:text-gray-100 sm:leading-10 md:text-2xl">
           {`${specs.year} ${modelTitle} ${specs.cpu}`}
         </h1>
@@ -636,7 +647,7 @@ const IpadModel = ({ model, optionId }) => {
 
           {!md && (
             <div className="mt-10 inline-flex w-full items-center justify-center rounded-lg bg-gray-100  p-5 text-base font-medium text-gray-700">
-              <Feedback />
+              <Feedback currentItem={currentItem} currentOption={currentOption} />
             </div>
           )}
         </div>

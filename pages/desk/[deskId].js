@@ -7,17 +7,31 @@ import Promo from '@/components/Promo'
 import NewsletterForm from '@/components/NewsletterForm'
 import Head from 'next/head'
 import amplitudeTrack from '@/lib/amplitude/track'
+import { faPlus } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { useScreenSize } from 'hooks/useScreenSize'
 
 export default function Example({ deskId }) {
   useEffect(() => {
     amplitudeTrack('enter_desk_detail', { deskId })
   }, [deskId])
 
+  const { md } = useScreenSize()
+
   const desk = desks.find((desk) => desk.id === deskId)
   const router = useRouter()
 
-  const onClickOtherDesk = useCallback((deskId) => {
-    amplitudeTrack('click_view_other_desk', { deskId })
+  const onClickOtherDesk = useCallback(
+    (deskId, href) => {
+      amplitudeTrack('click_view_other_desk', { deskId })
+      router.push(href)
+    },
+    [router]
+  )
+
+  const onClickUploadDesk = useCallback(() => {
+    amplitudeTrack('click_upload_desk')
+    window.open('https://tally.so/r/w54A6v', '_blank')
   }, [])
 
   return (
@@ -60,7 +74,7 @@ export default function Example({ deskId }) {
                 {desk.name}
               </h1>
 
-              <address className="flex items-center not-italic">
+              <div className="flex items-center justify-between not-italic">
                 <div className="mr-3 inline-flex items-center text-sm text-gray-900 dark:text-white">
                   <img
                     className="mr-4 h-12 w-12 rounded-full object-cover"
@@ -76,13 +90,23 @@ export default function Example({ deskId }) {
                       맥가이더 에디터
                     </a>
                     <p className="text-base font-light text-gray-500 dark:text-gray-400">
-                      <time pubdate dateTime="2022-02-08" title="February 8th, 2022">
+                      <time dateTime="2022-02-08" title="February 8th, 2022">
                         2023년 6월 25일
                       </time>
                     </p>
                   </div>
                 </div>
-              </address>
+
+                {md && (
+                  <button
+                    onClick={onClickUploadDesk}
+                    className="flex w-32 items-center justify-center rounded-lg bg-gray-800 px-3 py-2 text-sm font-medium text-white  focus:outline-none focus:ring-4 focus:ring-gray-300 "
+                  >
+                    <FontAwesomeIcon icon={faPlus} />
+                    <span className="ml-2 inline-block">데스크 올리기</span>
+                  </button>
+                )}
+              </div>
             </div>
 
             <div
@@ -121,7 +145,17 @@ export default function Example({ deskId }) {
 
       <aside aria-label="Related articles" className="lg:py-10">
         <div className="mx-auto max-w-screen-xl md:px-4">
-          <h2 className="mb-8 text-2xl font-bold text-gray-900 dark:text-white">다른 데스크</h2>
+          <div className="mb-8 flex items-center justify-between">
+            <h2 className="text-2xl font-bold tracking-tight text-gray-900">다른 데스크</h2>
+            <button
+              onClick={onClickUploadDesk}
+              className="flex w-32 items-center justify-center rounded-lg bg-gray-800 px-3 py-2 text-sm font-medium text-white  focus:outline-none focus:ring-4 focus:ring-gray-300 "
+            >
+              <FontAwesomeIcon icon={faPlus} />
+              <span className="ml-2 inline-block">데스크 올리기</span>
+            </button>
+          </div>
+
           <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-4">
             {
               // select  maximum 4 random desks
@@ -133,24 +167,11 @@ export default function Example({ deskId }) {
                     key={id}
                     className="group relative cursor-pointer"
                     onClick={() => {
-                      router.push(href)
+                      onClickOtherDesk(id, href)
                     }}
                   >
                     <div className="aspect-h-3 aspect-w-4 overflow-hidden rounded-lg bg-gray-100">
                       <img src={imageSrc} alt={imageAlt} className="object-cover object-center" />
-                      <div
-                        className="flex items-end p-4 opacity-0 group-hover:opacity-100"
-                        aria-hidden="true"
-                      >
-                        <div
-                          onClick={() => {
-                            onClickOtherDesk(id)
-                          }}
-                          className="w-full rounded-md bg-white bg-opacity-75 px-4 py-2 text-center text-sm font-medium text-gray-900 backdrop-blur backdrop-filter"
-                        >
-                          구경하러 가기
-                        </div>
-                      </div>
                     </div>
                     <div className="mt-4 text-base font-medium text-gray-900">
                       <h3>

@@ -28,6 +28,12 @@ const PricesLayout = ({ currentItem, currentModel, currentOption, children }, re
     window.open('https://tally.so/r/w54A6v', '_blank')
   }, [])
 
+  const onClickOtherItem = useCallback((item) => {
+    amplitudeTrack('click_view_other_product', {
+      itemId: item.id,
+    })
+  }, [])
+
   const scrollToNewsletterForm = () => {
     if (newsletterRef.current) {
       newsletterRef.current.scrollIntoView({
@@ -147,26 +153,26 @@ const PricesLayout = ({ currentItem, currentModel, currentOption, children }, re
         <div className="mt-6 grid grid-cols-2 gap-x-6 gap-y-10 lg:grid-cols-4 xl:gap-x-8">
           {optionsMac
             .concat(optionsIpad)
-            .filter((device) => device.id !== currentItemId)
+            .filter((item) => item.id !== currentItemId)
             .slice(0, 8)
-            .map((device) => (
-              <div key={device.id} className="group relative">
+            .map((item) => (
+              <div key={item.id} className="group relative" onClick={() => onClickOtherItem(item)}>
                 <div className=" w-full overflow-hidden rounded-md  bg-white ">
                   <Image
                     objectFit="contain"
                     objectPosition="center"
                     width="544"
                     height="306"
-                    src={device.imgSrc}
-                    alt={device.model}
+                    src={item.imgSrc}
+                    alt={item.model}
                   />
                 </div>
                 <div className="mt-2 flex justify-center md:mt-4 lg:justify-start">
                   <div>
                     <h3 className="text-sm font-medium text-gray-900">
-                      <a href={device.href}>
+                      <a href={item.href}>
                         <span aria-hidden="true" className="absolute inset-0" />
-                        {device.model}
+                        {item.model}
                       </a>
                     </h3>
                   </div>

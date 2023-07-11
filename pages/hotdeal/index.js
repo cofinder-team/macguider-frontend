@@ -8,16 +8,14 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
 import HotdealLayout from '@/layouts/HotdealLayout'
 import Image from '@/components/Image'
+import { useRouter } from 'next/router'
 
 export default function HotDeal() {
   useEffect(() => {
     amplitudeTrack('enter_page_hot_deal')
   }, [])
 
-  const onClickUploadDesk = useCallback(() => {
-    amplitudeTrack('click_upload_desk')
-    window.open('https://tally.so/r/w54A6v', '_blank')
-  }, [])
+  const router = useRouter()
 
   return (
     <>
@@ -38,19 +36,17 @@ export default function HotDeal() {
             <div>
               <div className="mb-3 flex items-center justify-between gap-x-6 rounded-md bg-gradient-to-br from-purple-600 to-blue-500  px-3 py-2.5 sm:pr-3.5 md:px-6 lg:pl-8">
                 <p className="text-sm leading-6 text-white">
-                  <a href="#">
-                    <strong className="text-lg font-bold ">초핫딜</strong>
-                    <svg
-                      viewBox="0 0 2 2"
-                      className="mx-2 inline h-0.5 w-0.5 fill-current"
-                      aria-hidden="true"
-                    >
-                      <circle cx={1} cy={1} r={1} />
-                    </svg>
-                    <span className="text-md">
-                      현재 중고시세보다 <strong>10% 이상</strong> 저렴한 제품
-                    </span>
-                  </a>
+                  <strong className="text-lg font-bold ">초핫딜</strong>
+                  <svg
+                    viewBox="0 0 2 2"
+                    className="mx-2 inline h-0.5 w-0.5 fill-current"
+                    aria-hidden="true"
+                  >
+                    <circle cx={1} cy={1} r={1} />
+                  </svg>
+                  <span className="text-md">
+                    현재 중고시세보다 <strong>10% 이상</strong> 저렴한 제품
+                  </span>
                 </p>
               </div>
 
@@ -62,6 +58,9 @@ export default function HotDeal() {
                       <div
                         key={id}
                         className="w-full max-w-sm cursor-pointer overflow-hidden rounded-lg border border-gray-200 bg-white shadow"
+                        onClick={() => {
+                          router.push('/hotdeal/details')
+                        }}
                       >
                         <div className="relative">
                           <Image
@@ -111,19 +110,17 @@ export default function HotDeal() {
             <div>
               <div className="mb-3 flex items-center justify-between gap-x-6 rounded-md bg-gradient-to-br from-green-400 to-blue-600 px-3 py-2.5 sm:pr-3.5 md:px-6 lg:pl-8">
                 <p className="text-sm leading-6 text-white">
-                  <a href="#">
-                    <strong className="text-lg font-bold ">꿀딜</strong>
-                    <svg
-                      viewBox="0 0 2 2"
-                      className="mx-2 inline h-0.5 w-0.5 fill-current"
-                      aria-hidden="true"
-                    >
-                      <circle cx={1} cy={1} r={1} />
-                    </svg>
-                    <span className="text-md">
-                      현재 중고시세보다 <strong>5% 이상</strong> 저렴한 제품
-                    </span>
-                  </a>
+                  <strong className="text-lg font-bold ">꿀딜</strong>
+                  <svg
+                    viewBox="0 0 2 2"
+                    className="mx-2 inline h-0.5 w-0.5 fill-current"
+                    aria-hidden="true"
+                  >
+                    <circle cx={1} cy={1} r={1} />
+                  </svg>
+                  <span className="text-md">
+                    현재 중고시세보다 <strong>5% 이상</strong> 저렴한 제품
+                  </span>
                 </p>
               </div>
 
@@ -135,6 +132,9 @@ export default function HotDeal() {
                       <div
                         key={id}
                         className="w-full max-w-sm cursor-pointer overflow-hidden rounded-lg border border-gray-200 bg-white shadow"
+                        onClick={() => {
+                          router.push('/hotdeal/details')
+                        }}
                       >
                         <div className="relative">
                           <Image

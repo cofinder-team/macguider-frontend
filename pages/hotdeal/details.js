@@ -107,7 +107,7 @@ export default function HotDeal() {
 
       <HotdealLayout
         leftCol={
-          <div className="relative min-h-[360px] px-6 md:p-6">
+          <div className="relative min-h-[360px] md:p-6">
             <div className="text-2xl font-normal leading-8 ">
               <div>이 제품은 평균 시세보다</div>
 

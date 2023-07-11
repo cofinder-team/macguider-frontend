@@ -162,7 +162,7 @@ const HotdealLayout = ({ leftCol, rightCol }, ref) => {
             visibility: fixedElementWidth ? 'visible' : 'hidden',
           }}
         >
-          <div className="overflow-hidden rounded-lg shadow-lg">
+          <div className="overflow-hidden rounded-lg md:shadow-lg">
             {leftCol}
 
             <div className=" flex items-center justify-center bg-black p-3  text-white">
@@ -195,10 +195,6 @@ const HotdealLayout = ({ leftCol, rightCol }, ref) => {
                     >
                       미리 알림받기
                     </button>
-
-                    {/* <button className="rounded-md bg-gradient-to-br from-purple-600 to-blue-500 px-5 py-2.5 text-center text-sm font-bold text-white hover:bg-gradient-to-bl focus:outline-none focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-800">
-                      미리 알림받기
-                    </button> */}
                   </div>
                 </form>
               </div>
@@ -208,6 +204,37 @@ const HotdealLayout = ({ leftCol, rightCol }, ref) => {
 
         <div className="ml-auto flex-grow md:w-1/2 md:px-3">{rightCol}</div>
       </div>
+      {!md && (
+        <div className=" bg-white py-8 ">
+          <div className="mx-auto max-w-7xl px-4 md:px-8">
+            <div className="max-w-2xl text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+              <h2 className="inline text-2xl sm:block">매일 중고핫딜 소식을 받고 싶다면?</h2>{' '}
+            </div>
+            <form className="mt-3 max-w-md">
+              <div className="flex gap-x-4">
+                <label htmlFor="email-address" className="sr-only">
+                  Email address
+                </label>
+                <input
+                  id="email-address"
+                  name="email"
+                  type="email"
+                  autoComplete="email"
+                  required
+                  className="min-w-0 flex-auto rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  placeholder="이메일을 입력하세요"
+                />
+                <button
+                  type="submit"
+                  className="flex-none rounded-md bg-black px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                >
+                  미리 알림받기
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
       <div className="mt-6 border-t py-10 md:mt-12">
         <h2 className="text-2xl font-bold tracking-tight text-gray-900">

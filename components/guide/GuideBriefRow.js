@@ -16,7 +16,7 @@ export const purchaseTiming = {
   normal: {
     bgColor: '#fef9c3',
     color: '#EAB308',
-    text: '에매함',
+    text: '애매함',
   },
   bad: {
     bgColor: '#fca5a5',

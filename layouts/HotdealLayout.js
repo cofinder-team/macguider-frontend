@@ -170,7 +170,18 @@ const HotdealLayout = ({ leftCol, rightCol }, ref) => {
               &nbsp; 남음
             </div>
 
-            <div className=" bg-white py-8 ">
+            {/* <div className="flex items-center justify-between  bg-gray-100 px-3 py-2 text-sm xl:py-3 xl:px-5 xl:text-base">
+              <div className="font-semibold text-gray-500">핫딜이 시작하면 바로 알려드릴게요!</div>
+
+              <button
+                type="button"
+                className="rounded-full bg-white px-3 py-2 text-center text-sm font-bold text-blue-600 hover:bg-blue-800 hover:text-white focus:outline-none focus:ring-4 focus:ring-blue-300 xl:px-5"
+              >
+                알림 받기
+              </button>
+            </div> */}
+
+            {/* <div className=" bg-white py-8 ">
               <div className="mx-auto max-w-7xl px-4 md:px-8">
                 <div className="max-w-2xl text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
                   <h2 className="inline text-2xl sm:block">매일 중고핫딜 소식을 받고 싶다면?</h2>{' '}
@@ -198,13 +209,13 @@ const HotdealLayout = ({ leftCol, rightCol }, ref) => {
                   </div>
                 </form>
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
 
         <div className="ml-auto flex-grow md:w-1/2 md:px-3">{rightCol}</div>
       </div>
-      {!md && (
+      {/* {!md && (
         <div className=" bg-white py-8 ">
           <div className="mx-auto max-w-7xl px-4 md:px-8">
             <div className="max-w-2xl text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
@@ -234,44 +245,7 @@ const HotdealLayout = ({ leftCol, rightCol }, ref) => {
             </form>
           </div>
         </div>
-      )}
-
-      <div className="mt-6 border-t py-10 md:mt-12">
-        <h2 className="text-2xl font-bold tracking-tight text-gray-900">
-          적정 중고 시세를 알려드려요
-        </h2>
-
-        <div className="mt-6 grid grid-cols-2 gap-x-6 gap-y-10 lg:grid-cols-4 xl:gap-x-8">
-          {optionsMac
-            .slice(0, 4)
-            .concat(optionsIpad)
-            .slice(0, 8)
-            .map((item) => (
-              <div key={item.id} className="group relative" onClick={() => onClickOtherItem(item)}>
-                <div className=" w-full overflow-hidden rounded-md  bg-white ">
-                  <Image
-                    objectFit="contain"
-                    objectPosition="center"
-                    width="544"
-                    height="306"
-                    src={item.imgSrc}
-                    alt={item.model}
-                  />
-                </div>
-                <div className="mt-2 flex justify-center md:mt-4 lg:justify-start">
-                  <div>
-                    <h3 className="text-sm font-medium text-gray-900">
-                      {/* <a href={item.href}>
-                        <span aria-hidden="true" className="absolute inset-0" />
-                        {item.model}
-                      </a> */}
-                    </h3>
-                  </div>
-                </div>
-              </div>
-            ))}
-        </div>
-      </div>
+      )} */}
     </>
   )
 }

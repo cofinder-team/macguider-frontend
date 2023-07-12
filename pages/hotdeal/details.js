@@ -180,9 +180,14 @@ export default function HotDeal() {
 
       <div ref={container} className="container flex">
         <div className="md:w-1/2 md:px-5">
-          <div className="space-y-1 text-3xl font-bold">
+          <div className=" mt-3 space-y-1 text-3xl font-bold md:mt-0">
             <div className="flex items-center">
-              <div className="flex cursor-pointer  items-center border-b-2 border-black">
+              <div
+                className="flex cursor-pointer  items-center border-b-2 border-black"
+                onClick={() => {
+                  router.push('/prices/mac/macbook-pro-13')
+                }}
+              >
                 <span>지금 평균 시세</span>
                 <ArrowUpRightIcon className="h-8 w-8" />
               </div>
@@ -207,17 +212,18 @@ export default function HotDeal() {
 
               <div className="flex-1 truncate pl-3">
                 <div className="items-center space-x-1 selection:flex">
-                  <span className="inline-flex items-center rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">
+                  <span className="rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-600 dark:bg-gray-700 dark:text-gray-300">
                     중고나라
                   </span>
-                  <span className="inline-flex items-center rounded-md bg-yellow-50 px-2 py-1 text-xs font-medium text-yellow-800 ring-1 ring-inset ring-yellow-600/20">
+
+                  <span className="rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800 dark:bg-blue-900 dark:text-blue-300">
                     S급
                   </span>
                 </div>
-                <h5 className="mt-1 truncate text-lg font-semibold tracking-tight text-gray-900">
+                <h5 className="mt-1 truncate text-base font-semibold tracking-tight text-gray-900">
                   MacBook Pro 13-inch M1 2020
                 </h5>
-                <div className="mt-2">
+                <div className="mt-1">
                   <div className="text-sm font-semibold  text-gray-500 ">평균 시세</div>
                   <div className="text-lg font-bold text-gray-900">1,920,000원</div>
                 </div>
@@ -225,6 +231,9 @@ export default function HotDeal() {
                 <button
                   type="button"
                   className="mt-2 rounded-full bg-blue-700 px-5 py-2 text-center text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                  onClick={() => {
+                    router.push('/prices/mac/macbook-pro-13')
+                  }}
                 >
                   더 알아보기
                 </button>
@@ -273,7 +282,7 @@ export default function HotDeal() {
                     src={'/static/images/ipads/ipad-pro-11-2022.png'}
                     className="h-full w-full object-contain object-center"
                   />
-                  <div className="text-md absolute  top-0 left-0 flex h-full w-full items-center justify-center  font-extrabold text-white ">
+                  <div className="absolute top-0  left-0 flex h-full w-full items-center justify-center text-base  font-extrabold text-white ">
                     <div className="absolute top-0 left-0 h-full w-full bg-black opacity-40" />
                     <div className="absolute top-0 left-0 flex h-full w-full items-center justify-center">
                       판매완료
@@ -283,24 +292,27 @@ export default function HotDeal() {
 
                 <div className="flex-1 truncate pl-3">
                   <div className="items-center space-x-1  selection:flex">
-                    <span className="inline-flex items-center rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">
+                    <span className="rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-600 dark:bg-gray-700 dark:text-gray-300">
                       중고나라
                     </span>
-                    <span className="inline-flex items-center rounded-md bg-yellow-50 px-2 py-1 text-xs font-medium text-yellow-800 ring-1 ring-inset ring-yellow-600/20">
+
+                    <span className="rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800 dark:bg-blue-900 dark:text-blue-300">
                       S급
                     </span>
                   </div>
 
-                  <h5 className="mt-1 truncate text-lg font-semibold tracking-tight text-gray-900">
+                  <h5 className="mt-1 truncate  text-sm font-semibold tracking-tight text-gray-900">
                     MacBook Pro 13-inch M1 2020
                   </h5>
 
-                  <div className="flex items-center ">
-                    <span className="text-lg font-bold text-red-600">53%</span>
-
-                    <div className="ml-1 text-sm  text-gray-500 line-through ">1,920,000원</div>
+                  <div className=" flex items-center text-lg">
+                    <span className="font-bold text-red-500">53%</span>
+                    <div className="ml-1 font-bold text-gray-900">1,920,000원</div>
                   </div>
-                  <div className="text-md font-bold text-gray-900 ">1,920,000원</div>
+                  <div className="text-xs  text-gray-500">
+                    <span>평균 중고가&nbsp;</span>
+                    1,920,000원
+                  </div>
                 </div>
               </div>
               <div className="flex h-[130px] w-full cursor-pointer items-center overflow-hidden rounded-lg border border-gray-200 bg-white p-3 shadow">
@@ -310,7 +322,7 @@ export default function HotDeal() {
                     src={'/static/images/ipads/ipad-pro-11-2022.png'}
                     className="h-full w-full object-contain object-center"
                   />
-                  <div className="text-md absolute  top-0 left-0 flex h-full w-full items-center justify-center  font-extrabold text-white ">
+                  <div className="absolute top-0  left-0 flex h-full w-full items-center justify-center text-base  font-extrabold text-white ">
                     <div className="absolute top-0 left-0 h-full w-full bg-black opacity-40" />
                     <div className="absolute top-0 left-0 flex h-full w-full items-center justify-center">
                       판매완료
@@ -320,24 +332,27 @@ export default function HotDeal() {
 
                 <div className="flex-1 truncate pl-3">
                   <div className="items-center space-x-1  selection:flex">
-                    <span className="inline-flex items-center rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">
+                    <span className="rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-600 dark:bg-gray-700 dark:text-gray-300">
                       중고나라
                     </span>
-                    <span className="inline-flex items-center rounded-md bg-yellow-50 px-2 py-1 text-xs font-medium text-yellow-800 ring-1 ring-inset ring-yellow-600/20">
+
+                    <span className="rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800 dark:bg-blue-900 dark:text-blue-300">
                       S급
                     </span>
                   </div>
 
-                  <h5 className="mt-1 truncate text-lg font-semibold tracking-tight text-gray-900">
+                  <h5 className="mt-1 truncate  text-sm font-semibold tracking-tight text-gray-900">
                     MacBook Pro 13-inch M1 2020
                   </h5>
 
-                  <div className="flex items-center ">
-                    <span className="text-lg font-bold text-red-600">53%</span>
-
-                    <div className="ml-1 text-sm  text-gray-500 line-through ">1,920,000원</div>
+                  <div className=" flex items-center text-lg">
+                    <span className="font-bold text-red-500">53%</span>
+                    <div className="ml-1 font-bold text-gray-900">1,920,000원</div>
                   </div>
-                  <div className="text-md font-bold text-gray-900 ">1,920,000원</div>
+                  <div className="text-xs  text-gray-500">
+                    <span>평균 중고가&nbsp;</span>
+                    1,920,000원
+                  </div>
                 </div>
               </div>
               <div className="flex h-[130px] w-full cursor-pointer items-center overflow-hidden rounded-lg border border-gray-200 bg-white p-3 shadow">
@@ -347,7 +362,7 @@ export default function HotDeal() {
                     src={'/static/images/ipads/ipad-pro-11-2022.png'}
                     className="h-full w-full object-contain object-center"
                   />
-                  <div className="text-md absolute  top-0 left-0 flex h-full w-full items-center justify-center  font-extrabold text-white ">
+                  <div className="absolute top-0  left-0 flex h-full w-full items-center justify-center text-base  font-extrabold text-white ">
                     <div className="absolute top-0 left-0 h-full w-full bg-black opacity-40" />
                     <div className="absolute top-0 left-0 flex h-full w-full items-center justify-center">
                       판매완료
@@ -357,24 +372,27 @@ export default function HotDeal() {
 
                 <div className="flex-1 truncate pl-3">
                   <div className="items-center space-x-1  selection:flex">
-                    <span className="inline-flex items-center rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">
+                    <span className="rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-600 dark:bg-gray-700 dark:text-gray-300">
                       중고나라
                     </span>
-                    <span className="inline-flex items-center rounded-md bg-yellow-50 px-2 py-1 text-xs font-medium text-yellow-800 ring-1 ring-inset ring-yellow-600/20">
+
+                    <span className="rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800 dark:bg-blue-900 dark:text-blue-300">
                       S급
                     </span>
                   </div>
 
-                  <h5 className="mt-1 truncate text-lg font-semibold tracking-tight text-gray-900">
+                  <h5 className="mt-1 truncate  text-sm font-semibold tracking-tight text-gray-900">
                     MacBook Pro 13-inch M1 2020
                   </h5>
 
-                  <div className="flex items-center ">
-                    <span className="text-lg font-bold text-red-600">53%</span>
-
-                    <div className="ml-1 text-sm  text-gray-500 line-through ">1,920,000원</div>
+                  <div className=" flex items-center text-lg">
+                    <span className="font-bold text-red-500">53%</span>
+                    <div className="ml-1 font-bold text-gray-900">1,920,000원</div>
                   </div>
-                  <div className="text-md font-bold text-gray-900 ">1,920,000원</div>
+                  <div className="text-xs  text-gray-500">
+                    <span>평균 중고가&nbsp;</span>
+                    1,920,000원
+                  </div>
                 </div>
               </div>
             </div>

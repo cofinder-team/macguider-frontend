@@ -261,10 +261,10 @@ const HotdealLayout = ({ leftCol, rightCol }, ref) => {
                 <div className="mt-2 flex justify-center md:mt-4 lg:justify-start">
                   <div>
                     <h3 className="text-sm font-medium text-gray-900">
-                      <a href={item.href}>
+                      {/* <a href={item.href}>
                         <span aria-hidden="true" className="absolute inset-0" />
                         {item.model}
-                      </a>
+                      </a> */}
                     </h3>
                   </div>
                 </div>

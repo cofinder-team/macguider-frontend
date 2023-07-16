@@ -33,9 +33,14 @@ function useAsync(callback, callbackParams = [], deps = []) {
   })
 
   const fetchData = async (callbackParams = []) => {
+    const startTime = performance.now()
+
     dispatch({ type: 'LOADING' })
     try {
       const data = await callback(...callbackParams)
+      const endTime = performance.now()
+      const duration = endTime - startTime
+      console.log('Time taken for API fetching:', duration, 'milliseconds')
       dispatch({ type: 'SUCCESS', data })
     } catch (e) {
       dispatch({ type: 'ERROR', error: e })

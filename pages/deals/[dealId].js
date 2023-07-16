@@ -10,6 +10,7 @@ import { getPrices } from 'utils/price'
 import { useRouter } from 'next/router'
 import { useScreenSize } from 'hooks/useScreenSize'
 import { ArrowUpRightIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import { getDeals } from 'utils/deals'
 
 const rightColumnOffsetY = 112
 
@@ -545,4 +546,69 @@ export default function HotDeal() {
       </div>
     </>
   )
+}
+
+export async function getServerSideProps(context) {
+  const { dealId } = context.query
+
+  const deals = await getDeals()
+  const deal = deals.find((deal) => deal.id === Number(dealId))
+
+  if (deal) {
+    const { type, itemId, price, sold, unopened, source, url } = deal
+  }
+
+  // const getModel = async (newItemId, itemType) => {
+  //   const res = await axiosInstanceV2.get(`/item/${itemType}/${newItemId}`)
+  //   const { model: itemId, option: optionId, type, details } = res.data
+  //   let target
+
+  //   if (type === 'M') {
+  //     // 맥일 경우
+  //     target = optionsMac
+  //   } else {
+  //     // 아이패드일 경우
+  //     target = optionsIpad
+  //   }
+
+  //   const name = target.find((device) => device.id == itemId).model
+  //   return {
+  //     ...details,
+  //     name,
+  //     type,
+  //   }
+  // }
+
+  // const getAvgPrice = async (newItemId, itemType, unused) => {
+  //   const res = await axiosInstanceV2.get(`/price/deal/${itemType}/${newItemId}`, {
+  //     params: {
+  //       unused,
+  //     },
+  //   })
+
+  //   const avgPrice = res.data.average
+
+  //   return avgPrice
+  // }
+
+  // deals = await Promise.all(
+  //   deals.map(async (deal) => {
+  //     const model = await getModel(deal.itemId, deal.type)
+  //     const avgPrice = await getAvgPrice(deal.itemId, deal.type, deal.unopened)
+
+  //     console.log(model)
+
+  //     return {
+  //       ...deal,
+  //       model,
+  //       avgPrice,
+  //     }
+  //   })
+  // )
+
+  return {
+    props: {
+      dealId,
+    },
+  }
 }

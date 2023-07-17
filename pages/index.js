@@ -26,12 +26,6 @@ export default function Home() {
   return (
     <>
       <PageSEO title={siteMetadata.title} description={siteMetadata.description} />
-      <img
-        src={
-          'https://cafeptthumb-phinf.pstatic.net/MjAyMzA3MTJfMTU1/MDAxNjg5MTY4NzU2Mjcx.xEx-C-cZqxl0pT-QRP3vFAbd-DY3GKIoFcEm_yOYORog.0rkPGcHHMCRan69vP6cwMo69MGc_-lALk070v_Y_Ec4g.JPEG/B9E8F8FE-BD25-40C3-AB00-FABAC51533F3.jpeg'
-        }
-        alt="test"
-      />
       <section className="mt-md-6 mt-3">
         <div className="space-y-2 pb-2 md:pt-6">
           <h1 className="text-3xl font-extrabold leading-9 tracking-tight text-gray-900 dark:text-gray-100  sm:leading-10">

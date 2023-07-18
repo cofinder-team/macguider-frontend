@@ -5,24 +5,37 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faHandPointUp, faPlus } from '@fortawesome/free-solid-svg-icons'
 import Image from '@/components/Image'
 import Skeleton from 'react-loading-skeleton'
-import useAsync from 'hooks/useAsync'
 import { getPrices } from 'utils/price'
 import { useRouter } from 'next/router'
 import { useScreenSize } from 'hooks/useScreenSize'
 import { ArrowUpRightIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { getDeals } from 'utils/deals'
+import { axiosInstanceV2 } from '@/lib/axios'
+import optionsMac from '@/data/options/mac'
+import optionsIpad from '@/data/options/ipad'
+import { pastTime } from '@/lib/utils/pastTime'
+import Banner from '@/components/Banner'
+import useAsyncAll from 'hooks/useAsyncAll'
 
 const rightColumnOffsetY = 112
 
-export default function HotDeal() {
-  const [unopened, setUnopened] = useState('false')
+const sampleDevices = optionsMac
+  .sort(() => Math.random() - Math.random())
+  .slice(0, 3)
+  .concat(optionsIpad.slice(0, 3))
+
+export default function Deal({ deals, model, deal, price }) {
+  const router = useRouter()
+  const { sm, md, lg } = useScreenSize()
   const [isCoverRemoved, setIsCoverRemoved] = useState(false)
   const [fixedElementWidth, setFixedElementWidth] = useState(0)
-
   const rightColumn = useRef(null)
-
   const container = useRef(null)
-  let currentItem = null
+
+  const { coupang: coupangPrices, data: joonggonaraPrices, time: coupangLastUpdated } = price
+
+  const { id: dealId, type, source, url, unused, sold, price: dealPrice } = deal
+  const { name, details, href, option: optionId } = model
 
   useEffect(() => {
     let lastScrollTop = 0
@@ -89,52 +102,98 @@ export default function HotDeal() {
   }, [])
 
   useEffect(() => {
-    amplitudeTrack('enter_page_deals_detail')
-  }, [])
-
-  const { sm, md, lg } = useScreenSize()
+    amplitudeTrack('enter_page_deal_detail', {
+      dealId,
+    })
+  }, [dealId])
 
   // 가격 조회
-  const [state, refetch] = useAsync(getPrices, [1, 1, unopened], [])
+  const [state, refetch] = useAsyncAll(
+    getPrices,
+    sampleDevices.map((device) => [device.id, device.data[0].options[0].id, false]),
+    []
+  )
   const { loading, data: fetchedData, error } = state
-
-  const router = useRouter()
 
   // 가격 데이터 fetch 실패시 alert창 띄우기
   if (error) {
     alert('데이터를 불러오는데 실패했습니다. 잠시 후 다시 시도해주세요.')
   }
 
-  const getPriceByLevel = useCallback(
-    (level) => {
-      const price = fetchedData.data.filter((data) => data && data[level]).slice(-1)[0]
+  const parseUrl = useCallback(() => {
+    return url.replace('https://cafe.naver.com', 'https://m.cafe.naver.com')
+  }, [url])
 
-      if (price) {
-        return price[level]
+  const getPriceByLevel = useCallback(
+    (level = 'mid') => {
+      const latestPrice = joonggonaraPrices.filter((data) => data && data[level]).slice(-1)[0]
+
+      if (latestPrice) {
+        return latestPrice[level]
       }
     },
-    [fetchedData]
+    [joonggonaraPrices]
   )
+
+  const onClickPriceDetails = useCallback(() => {
+    amplitudeTrack('click_price_details', {
+      dealId,
+    })
+
+    const convertedHref = href.replace(/optionId=\d+/, `optionId=${optionId}`)
+    window.open(convertedHref, '_blank')
+  }, [dealId, optionId, href])
 
   const onClickIframeCover = useCallback(() => {
     setIsCoverRemoved(true)
-  }, [])
+    amplitudeTrack('click_iframe_cover', {
+      dealId,
+    })
+  }, [dealId])
+
+  const onClickOtherPriceDetails = useCallback(
+    (item) => {
+      amplitudeTrack('click_other_price_details', {
+        itemId: item.id,
+      })
+
+      window.open(item.href, '_blank')
+    },
+    [dealId]
+  )
+
+  const onClickOtherDeal = useCallback(
+    (dealId) => {
+      router.push(`/deals/${dealId}`)
+      amplitudeTrack('click_other_deal', {
+        dealId,
+      })
+    },
+    [router]
+  )
+
+  const onClickRedirectToSource = useCallback(() => {
+    amplitudeTrack('click_redirect_to_source', {
+      dealId,
+      source,
+    })
+    window.open(url, '_blank')
+  }, [dealId, url])
 
   const getCoupangPrice = useCallback(() => {
-    if (fetchedData) {
-      const coupangPrice = fetchedData.coupang.slice(-1)[0]?.price
+    const coupangPrice = coupangPrices.slice(-1)[0]?.price
 
-      if (coupangPrice) {
-        return coupangPrice
-      }
+    if (coupangPrice) {
+      return coupangPrice
     }
-  }, [fetchedData])
+  }, [coupangPrices])
 
   const getCoupangLastUpdatedTime = useCallback(() => {
-    if (fetchedData) {
-      const lastUpdatedTime = fetchedData.time
+    const coupangLastUpdatedTime = coupangLastUpdated
+
+    if (coupangLastUpdatedTime) {
       const now = new Date()
-      const lastUpdated = new Date(lastUpdatedTime)
+      const lastUpdated = new Date(coupangLastUpdatedTime)
       const diffTime = Math.abs(now - lastUpdated)
       const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24))
       const diffMinutes = Math.ceil(diffTime / (1000 * 60))
@@ -149,7 +208,13 @@ export default function HotDeal() {
 
       return `${diffMinutes}분 전`
     }
-  }, [fetchedData])
+  }, [])
+
+  const getDiscountPercentage = useCallback((price, avgPrice) => {
+    if (avgPrice) {
+      return Math.round((1 - price / avgPrice) * 100)
+    }
+  }, [])
 
   return (
     <>
@@ -158,24 +223,44 @@ export default function HotDeal() {
       <div ref={container} className="container md:flex">
         <div className="md:w-1/2 md:px-5">
           <div className="space-y-1 text-xl font-bold md:mt-0">
-            <p className="text-base font-semibold text-gray-500">MacBook Pro 13 - 2020</p>
-            <div className="flex items-center ">
-              <div
-                className="flex cursor-pointer  items-center border-b-2 border-black hover:bg-gray-200"
-                onClick={() => {
-                  router.push('/prices/mac/macbook-pro-13')
-                }}
-              >
-                <span>중고 시세</span>
-                <ArrowUpRightIcon className="h-6 w-6" />
-              </div>
-              <div className="ml-1">보다</div>
-            </div>
+            <p className="text-base font-semibold text-gray-500">
+              {type === 'M' ? (
+                <>
+                  {`${name} ${details.chip}`}
+                  <br />
+                  {`${details.cpu}코어 GPU ${details.gpu}코어, SSD ${details.ssd}`}
+                </>
+              ) : (
+                <>
+                  {`${name} ${details.gen}세대`}
+                  <br />
+                  {`${model.cellular ? 'Wi-Fi + Cellular' : 'Wi-Fi'}, ${details.storage}`}
+                </>
+              )}
+            </p>
+            {getPriceByLevel() ? (
+              <>
+                <div className="flex items-center" onClick={onClickPriceDetails}>
+                  <div className="flex cursor-pointer  items-center border-b-2 border-black hover:bg-gray-200">
+                    <span>중고 시세</span>
+                    <ArrowUpRightIcon className="h-6 w-6" />
+                  </div>
+                  <div className="ml-1">보다</div>
+                </div>
 
-            <div>
-              <span className="text-blue-500 ">120,000원</span>
-              &nbsp;더 저렴해요
-            </div>
+                <div>
+                  <span className="text-blue-500 ">
+                    {(getPriceByLevel() - dealPrice).toLocaleString()}원
+                  </span>
+                  &nbsp;더 저렴해요
+                </div>
+              </>
+            ) : (
+              <div>
+                아쉽지만 현재 중고 시세를
+                <br /> 가져올 수 없어요
+              </div>
+            )}
           </div>
 
           <div className="mt-3">
@@ -187,15 +272,16 @@ export default function HotDeal() {
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-sm text-gray-500 dark:text-gray-400">중고나라</p>
                     <p className="truncate text-base font-bold text-gray-900 dark:text-white">
-                      1,920,000원
+                      {getPriceByLevel() ? `${getPriceByLevel().toLocaleString()}원` : 'N/A'}
                       <span className="ml-2 inline-block text-sm font-normal text-gray-400">
-                        12일 전
+                        {pastTime()}
                       </span>
                     </p>
                   </div>
                   <button
                     type="button"
                     className="rounded-full bg-blue-600 px-3 py-2 text-center text-sm font-bold text-white hover:bg-blue-800  focus:outline-none focus:ring-4 focus:ring-blue-300 xl:px-5"
+                    onClick={onClickPriceDetails}
                   >
                     더 알아보기
                   </button>
@@ -206,9 +292,9 @@ export default function HotDeal() {
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-sm text-gray-500 dark:text-gray-400">쿠팡</p>
                     <p className="truncate text-base font-bold text-gray-900 dark:text-white">
-                      1,920,000원
+                      {getCoupangPrice() ? `${getCoupangPrice().toLocaleString()}원` : '품절'}
                       <span className="ml-2 inline-block text-sm font-normal text-gray-400">
-                        12일 전
+                        {getCoupangLastUpdatedTime()}
                       </span>
                     </p>
                   </div>
@@ -218,24 +304,27 @@ export default function HotDeal() {
           </div>
 
           <div className="mt-5 md:hidden">
-            <div className="flex items-center">
-              <h3 className=" text-lg font-bold">제품 상세 정보</h3>
-              <div className="ml-2 flex items-center">
-                <span className="rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-600 dark:bg-gray-700 dark:text-gray-300">
-                  중고나라
-                </span>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center">
+                <h3 className="text-lg font-bold">제품 상세 정보</h3>
+                <div className="ml-2 flex items-center">
+                  <span className="rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-600 dark:bg-gray-700 dark:text-gray-300">
+                    {source}
+                  </span>
 
-                <span className="ml-1 inline-block rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800 dark:bg-blue-900 dark:text-blue-300">
-                  S급
-                </span>
+                  <span className="ml-1 inline-block rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800 dark:bg-blue-900 dark:text-blue-300">
+                    {unused ? '미개봉' : 'S급'}
+                  </span>
+                </div>
               </div>
+
+              <span className="cursor-pointer text-sm underline" onClick={onClickRedirectToSource}>
+                {source}에서 보기
+              </span>
             </div>
 
             <div className="relative mt-1 overflow-hidden rounded-lg border-2 border-gray-400">
-              <iframe
-                src="https://m.cafe.naver.com/joonggonara/1001412562"
-                className="h-[500px] w-full"
-              />
+              <iframe src={parseUrl()} className="h-[500px] w-full" />
 
               {!isCoverRemoved && (
                 <div
@@ -251,245 +340,144 @@ export default function HotDeal() {
             </div>
           </div>
 
-          <div className="mt-5 md:mt-24">
-            <h3 className=" text-lg font-bold">다른 중고 꿀매물</h3>
+          {deals.length > 0 && (
+            <div className="mt-5 md:mt-24">
+              <h3 className="text-lg font-bold">다른 중고 꿀매물</h3>
 
-            <div className="space-y-3">
-              <div className="flex h-[130px] w-full cursor-pointer items-center overflow-hidden  bg-white">
-                <div className="flex-1 truncate">
-                  <div className="items-center space-x-1  selection:flex">
-                    <span className="rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-600 dark:bg-gray-700 dark:text-gray-300">
-                      중고나라
-                    </span>
+              <div className="mt-1 space-y-1">
+                {deals
+                  .sort(() => Math.random() - Math.random())
+                  .filter(({ avgPrice }) => avgPrice)
+                  .slice(0, 3)
+                  .map(
+                    ({
+                      id: dealId,
+                      source,
+                      price,
+                      sold,
+                      unused,
+                      itemId,
+                      type: itemType,
+                      model,
+                      avgPrice,
+                    }) => (
+                      <div
+                        key={dealId}
+                        className="flex h-[110px] w-full cursor-pointer items-center overflow-hidden  bg-white"
+                        onClick={() => {
+                          onClickOtherDeal(dealId)
+                        }}
+                      >
+                        <div className="flex-1 truncate">
+                          {/* <div className="items-center space-x-1  selection:flex">
+                            <span className="rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-600 dark:bg-gray-700 dark:text-gray-300">
+                              {source}
+                            </span>
 
-                    <span className="rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800 dark:bg-blue-900 dark:text-blue-300">
-                      S급
-                    </span>
-                  </div>
-
-                  <h5 className="mt-1 truncate  text-sm font-semibold tracking-tight text-gray-900">
-                    MacBook Pro 13-inch M1 2020
-                  </h5>
-
-                  <div className=" flex items-center text-lg">
-                    <div className="font-bold text-gray-900">1,920,000원</div>
-                  </div>
-                  <div className="text-xs  text-gray-500">
-                    <span>평균 중고가&nbsp;</span>
-                    1,920,000원
-                  </div>
-                </div>
-
-                <div className="relative flex h-full w-1/5 max-w-[100px] items-center">
-                  <div className="aspect-1 overflow-hidden rounded-md">
-                    <img
-                      alt={'hello'}
-                      src={
-                        'https://static.waveon.io/img/apps/18146/KakaoTalk_20230712_085626802.jpg'
-                      }
-                      className="h-full w-full object-contain object-center"
-                    />
-                  </div>
-
-                  {/* <div className="absolute top-0  left-0 flex h-full w-full items-center justify-center text-base  font-extrabold text-white ">
-                            <div className="absolute top-0 left-0 h-full w-full bg-black opacity-40" />
-                            <div className="absolute top-0 left-0 flex h-full w-full items-center justify-center">
-                              판매완료
-                            </div>
+                            <span className="rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800 dark:bg-blue-900 dark:text-blue-300">
+                              {unused ? '미개봉' : 'S급'}
+                            </span>
                           </div> */}
-                </div>
-              </div>
-              <div className="flex h-[130px] w-full cursor-pointer items-center overflow-hidden  bg-white">
-                <div className="flex-1 truncate">
-                  <div className="items-center space-x-1  selection:flex">
-                    <span className="rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-600 dark:bg-gray-700 dark:text-gray-300">
-                      중고나라
-                    </span>
 
-                    <span className="rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800 dark:bg-blue-900 dark:text-blue-300">
-                      S급
-                    </span>
-                  </div>
+                          <h5 className="mt-1 truncate  text-sm font-semibold tracking-tight text-gray-900">
+                            <span className="mr-1 inline-block text-base text-blue-400">
+                              {unused ? '미개봉' : 'S급'}
+                            </span>
 
-                  <h5 className="mt-1 truncate  text-sm font-semibold tracking-tight text-gray-900">
-                    MacBook Pro 13-inch M1 2020
-                  </h5>
+                            {itemType === 'M' ? (
+                              <>
+                                <span className="text-base">
+                                  {`${model.name} ${model.details.chip}`}
+                                </span>
 
-                  <div className=" flex items-center text-lg">
-                    <div className="font-bold text-gray-900">1,920,000원</div>
-                  </div>
-                  <div className="text-xs  text-gray-500">
-                    <span>평균 중고가&nbsp;</span>
-                    1,920,000원
-                  </div>
-                </div>
+                                <br />
+                                <span className="mr-1 inline-block text-sm text-gray-700">
+                                  {source}
+                                </span>
+                                <span className=" text-sm text-gray-400">{`${model.details.cpu}코어 GPU ${model.details.gpu}코어, SSD ${model.details.ssd}`}</span>
+                              </>
+                            ) : (
+                              `${model.name} ${model.details.gen}세대 ${
+                                model.details.cellular ? 'Wi-Fi + Cellular' : 'Wi-Fi'
+                              } (${model.details.storage})`
+                            )}
+                          </h5>
 
-                <div className="relative flex h-full w-1/5 max-w-[100px] items-center">
-                  <div className="aspect-1 overflow-hidden rounded-md">
-                    <img
-                      alt={'hello'}
-                      src={
-                        'https://static.waveon.io/img/apps/18146/KakaoTalk_20230712_085626802.jpg'
-                      }
-                      className="h-full w-full object-contain object-center"
-                    />
-                  </div>
-
-                  {/* <div className="absolute top-0  left-0 flex h-full w-full items-center justify-center text-base  font-extrabold text-white ">
-                            <div className="absolute top-0 left-0 h-full w-full bg-black opacity-40" />
-                            <div className="absolute top-0 left-0 flex h-full w-full items-center justify-center">
-                              판매완료
+                          <div className=" flex items-center text-lg">
+                            <div className="font-bold text-gray-900">
+                              {price?.toLocaleString()}원
                             </div>
-                          </div> */}
-                </div>
-              </div>
-              <div className="flex h-[130px] w-full cursor-pointer items-center overflow-hidden  bg-white">
-                <div className="flex-1 truncate">
-                  <div className="items-center space-x-1  selection:flex">
-                    <span className="rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-600 dark:bg-gray-700 dark:text-gray-300">
-                      중고나라
-                    </span>
+                          </div>
 
-                    <span className="rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800 dark:bg-blue-900 dark:text-blue-300">
-                      S급
-                    </span>
-                  </div>
-
-                  <h5 className="mt-1 truncate  text-sm font-semibold tracking-tight text-gray-900">
-                    MacBook Pro 13-inch M1 2020
-                  </h5>
-
-                  <div className=" flex items-center text-lg">
-                    <div className="font-bold text-gray-900">1,920,000원</div>
-                  </div>
-                  <div className="text-xs  text-gray-500">
-                    <span>평균 중고가&nbsp;</span>
-                    1,920,000원
-                  </div>
-                </div>
-
-                <div className="relative flex h-full w-1/5 max-w-[100px] items-center">
-                  <div className="aspect-1 overflow-hidden rounded-md">
-                    <img
-                      alt={'hello'}
-                      src={
-                        'https://static.waveon.io/img/apps/18146/KakaoTalk_20230712_085626802.jpg'
-                      }
-                      className="h-full w-full object-contain object-center"
-                    />
-                  </div>
-
-                  {/* <div className="absolute top-0  left-0 flex h-full w-full items-center justify-center text-base  font-extrabold text-white ">
-                            <div className="absolute top-0 left-0 h-full w-full bg-black opacity-40" />
-                            <div className="absolute top-0 left-0 flex h-full w-full items-center justify-center">
-                              판매완료
+                          {avgPrice && (
+                            <div className="text-xs  text-gray-500">
+                              <span className="font-semibold text-blue-500">
+                                {getDiscountPercentage(price, avgPrice)}%&nbsp;
+                              </span>
+                              <span>평균 중고가&nbsp;</span>
+                              {avgPrice.toLocaleString()}원
                             </div>
-                          </div> */}
-                </div>
+                          )}
+                        </div>
+
+                        <div className="relative flex h-full w-1/5 max-w-[100px] items-center">
+                          <div className="relative aspect-1 overflow-hidden rounded-md">
+                            <img
+                              src={`${process.env.NEXT_PUBLIC_API_URL_V2}/deal/${dealId}/image`}
+                              alt={`${model.name} 썸네일`}
+                              className="h-full w-full object-contain object-center"
+                            />
+
+                            {sold && (
+                              <div className="absolute top-0  left-0 flex h-full w-full items-center justify-center text-sm font-bold text-white ">
+                                <div className="absolute top-0 left-0 h-full w-full bg-black opacity-40" />
+                                <div className="absolute top-0 left-0 flex h-full w-full items-center justify-center">
+                                  판매완료
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    )
+                  )}
               </div>
             </div>
-          </div>
+          )}
 
           <div className="mt-5">
             <h3 className=" text-lg font-bold">적정 중고시세를 알려드려요</h3>
+            <div className="mt-1 space-y-2">
+              {sampleDevices.map((device, index) => (
+                <div
+                  key={device.id}
+                  className="flex h-[110px] w-full cursor-pointer items-center overflow-hidden  bg-white "
+                  onClick={() => {
+                    onClickOtherPriceDetails(device)
+                  }}
+                >
+                  <div className="relative h-full w-1/3">
+                    <img
+                      alt={device.model}
+                      src={device.imgSrc}
+                      className="h-full w-full object-contain object-center"
+                    />
+                  </div>
+                  <div className="flex-1 truncate pl-3">
+                    <h5 className="mt-1 truncate  text-sm  font-semibold tracking-tight text-gray-600 ">
+                      {device.model}
+                    </h5>
 
-            <div className="space-y-3">
-              <div className="flex h-[130px] w-full cursor-pointer items-center overflow-hidden  bg-white">
-                <div className="relative h-full w-1/3">
-                  <img
-                    alt={'hello'}
-                    src={'/static/images/ipads/ipad-pro-11-2022.png'}
-                    className="h-full w-full object-contain object-center"
-                  />
-                  {/* <div className="absolute top-0  left-0 flex h-full w-full items-center justify-center text-base  font-extrabold text-white ">
-                            <div className="absolute top-0 left-0 h-full w-full bg-black opacity-40" />
-                            <div className="absolute top-0 left-0 flex h-full w-full items-center justify-center">
-                              판매완료
-                            </div>
-                          </div> */}
-                </div>
-                <div className="flex-1 truncate pl-3">
-                  <h5 className="mt-1 truncate  text-sm  font-semibold tracking-tight text-gray-600 ">
-                    MacBook Pro 13-inch M1 2020
-                  </h5>
-
-                  <div className=" flex items-center text-lg">
-                    <div className="font-bold text-gray-900">1,920,000원 부터</div>
+                    {loading || !fetchedData ? (
+                      <Skeleton containerClassName="flex-1" borderRadius="0.5rem" />
+                    ) : (
+                      <div className="font-bold text-gray-900">
+                        {fetchedData[index].data.slice(-1)[0].mid.toLocaleString()}원 부터
+                      </div>
+                    )}
                   </div>
                 </div>
-              </div>
-              <div className="flex h-[130px] w-full cursor-pointer items-center overflow-hidden  bg-white">
-                <div className="relative h-full w-1/3">
-                  <img
-                    alt={'hello'}
-                    src={'/static/images/ipads/ipad-pro-11-2022.png'}
-                    className="h-full w-full object-contain object-center"
-                  />
-                  {/* <div className="absolute top-0  left-0 flex h-full w-full items-center justify-center text-base  font-extrabold text-white ">
-                            <div className="absolute top-0 left-0 h-full w-full bg-black opacity-40" />
-                            <div className="absolute top-0 left-0 flex h-full w-full items-center justify-center">
-                              판매완료
-                            </div>
-                          </div> */}
-                </div>
-                <div className="flex-1 truncate pl-3">
-                  <h5 className="mt-1 truncate  text-sm  font-semibold tracking-tight text-gray-600 ">
-                    MacBook Pro 13-inch M1 2020
-                  </h5>
-
-                  <div className=" flex items-center text-lg">
-                    <div className="font-bold text-gray-900">1,920,000원 부터</div>
-                  </div>
-                </div>
-              </div>
-              <div className="flex h-[130px] w-full cursor-pointer items-center overflow-hidden  bg-white">
-                <div className="relative h-full w-1/3">
-                  <img
-                    alt={'hello'}
-                    src={'/static/images/ipads/ipad-pro-11-2022.png'}
-                    className="h-full w-full object-contain object-center"
-                  />
-                  {/* <div className="absolute top-0  left-0 flex h-full w-full items-center justify-center text-base  font-extrabold text-white ">
-                            <div className="absolute top-0 left-0 h-full w-full bg-black opacity-40" />
-                            <div className="absolute top-0 left-0 flex h-full w-full items-center justify-center">
-                              판매완료
-                            </div>
-                          </div> */}
-                </div>
-                <div className="flex-1 truncate pl-3">
-                  <h5 className="mt-1 truncate  text-sm  font-semibold tracking-tight text-gray-600 ">
-                    MacBook Pro 13-inch M1 2020
-                  </h5>
-
-                  <div className=" flex items-center text-lg">
-                    <div className="font-bold text-gray-900">1,920,000원 부터</div>
-                  </div>
-                </div>
-              </div>
-              <div className="flex h-[130px] w-full cursor-pointer items-center overflow-hidden  bg-white">
-                <div className="relative h-full w-1/3">
-                  <img
-                    alt={'hello'}
-                    src={'/static/images/ipads/ipad-pro-11-2022.png'}
-                    className="h-full w-full object-contain object-center"
-                  />
-                  {/* <div className="absolute top-0  left-0 flex h-full w-full items-center justify-center text-base  font-extrabold text-white ">
-                            <div className="absolute top-0 left-0 h-full w-full bg-black opacity-40" />
-                            <div className="absolute top-0 left-0 flex h-full w-full items-center justify-center">
-                              판매완료
-                            </div>
-                          </div> */}
-                </div>
-                <div className="flex-1 truncate pl-3">
-                  <h5 className="mt-1 truncate  text-sm  font-semibold tracking-tight text-gray-600 ">
-                    MacBook Pro 13-inch M1 2020
-                  </h5>
-
-                  <div className=" flex items-center text-lg">
-                    <div className="font-bold text-gray-900">1,920,000원 부터</div>
-                  </div>
-                </div>
-              </div>
+              ))}
             </div>
           </div>
         </div>
@@ -526,89 +514,87 @@ export default function HotDeal() {
         )}
       </div>
 
-      <div className="pointer-events-none fixed inset-x-0 bottom-0 sm:flex sm:justify-center sm:px-6 sm:pb-5 lg:px-8">
-        <div className="pointer-events-auto flex items-center justify-between gap-x-6 bg-gray-900 px-6 py-2.5 sm:rounded-xl sm:py-3 sm:pl-4 sm:pr-3.5">
-          <p className="text-sm leading-6 text-white">
-            <a href="https://tally.so/r/mOlRPM">
-              매일 중고 핫딜이 시작되면 알려드릴게요
-              <span className="ml-2 inline-block ">
-                <span aria-hidden="true" className="inline-block">
-                  &rarr;
-                </span>
-              </span>
-            </a>
-          </p>
-          <button type="button" className="-m-1.5 flex-none p-1.5">
-            <span className="sr-only">Dismiss</span>
-            <XMarkIcon className="h-5 w-5 text-white" aria-hidden="true" />
-          </button>
-        </div>
-      </div>
+      <Banner />
     </>
   )
+}
+
+const getModel = async (newItemId, itemType) => {
+  const res = await axiosInstanceV2.get(`/item/${itemType}/${newItemId}`)
+  const { model: itemId, type } = res.data
+  let target
+
+  if (type === 'M') {
+    // 맥일 경우
+    target = optionsMac
+  } else {
+    // 아이패드일 경우
+    target = optionsIpad
+  }
+
+  const found = target.find((device) => device.id == itemId)
+  const { model, href } = found
+
+  return {
+    ...res.data,
+    name: model,
+    href,
+  }
+}
+
+const getAvgPrice = async (newItemId, itemType, unused) => {
+  const res = await axiosInstanceV2.get(`/price/deal/${itemType}/${newItemId}`, {
+    params: {
+      unused,
+    },
+  })
+
+  const avgPrice = res.data.average
+
+  return avgPrice
 }
 
 export async function getServerSideProps(context) {
   const { dealId } = context.query
 
-  const deals = await getDeals()
-  const deal = deals.find((deal) => deal.id === Number(dealId))
+  let deals = await getDeals()
+  const deal = deals.find((deal) => deal.id === Number(dealId)) || null
+  deals = deals.filter((deal) => deal.id !== Number(dealId))
 
-  if (deal) {
-    const { type, itemId, price, sold, unopened, source, url } = deal
+  deals = await Promise.all(
+    deals.map(async (deal) => {
+      const model = await getModel(deal.itemId, deal.type)
+      console.log(model.details)
+      const avgPrice = await getAvgPrice(deal.itemId, deal.type, deal.unused)
+
+      return {
+        ...deal,
+        model,
+        avgPrice,
+      }
+    })
+  )
+
+  let model = null
+
+  if (!deal) {
+    return {
+      redirect: {
+        destination: '/deals',
+        permanent: false,
+      },
+    }
   }
 
-  // const getModel = async (newItemId, itemType) => {
-  //   const res = await axiosInstanceV2.get(`/item/${itemType}/${newItemId}`)
-  //   const { model: itemId, option: optionId, type, details } = res.data
-  //   let target
-
-  //   if (type === 'M') {
-  //     // 맥일 경우
-  //     target = optionsMac
-  //   } else {
-  //     // 아이패드일 경우
-  //     target = optionsIpad
-  //   }
-
-  //   const name = target.find((device) => device.id == itemId).model
-  //   return {
-  //     ...details,
-  //     name,
-  //     type,
-  //   }
-  // }
-
-  // const getAvgPrice = async (newItemId, itemType, unused) => {
-  //   const res = await axiosInstanceV2.get(`/price/deal/${itemType}/${newItemId}`, {
-  //     params: {
-  //       unused,
-  //     },
-  //   })
-
-  //   const avgPrice = res.data.average
-
-  //   return avgPrice
-  // }
-
-  // deals = await Promise.all(
-  //   deals.map(async (deal) => {
-  //     const model = await getModel(deal.itemId, deal.type)
-  //     const avgPrice = await getAvgPrice(deal.itemId, deal.type, deal.unopened)
-
-  //     console.log(model)
-
-  //     return {
-  //       ...deal,
-  //       model,
-  //       avgPrice,
-  //     }
-  //   })
-  // )
-
+  const { type, itemId, unused } = deal
+  model = await getModel(itemId, type)
+  const price = await getPrices(model.model, model.option, unused)
   return {
     props: {
-      dealId,
+      deals,
+      deal,
+      model,
+      price,
     },
   }
 }

@@ -140,7 +140,7 @@ export default function Deals() {
         </div>
       </div>
 
-      <div className="mt-2 grid grid-cols-1 xl:grid-cols-2 xl:gap-4">
+      <div className="mt-2 grid grid-cols-1 xl:grid-cols-2 xl:gap-x-16 xl:gap-y-4">
         {loading
           ? Array.from({ length: 6 }).map((_, index) => (
               <div className="flex h-[120px] items-center" key={index}>

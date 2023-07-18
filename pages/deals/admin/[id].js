@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useState } from 'react'
-import { convertDealFromRaw, getDealRaw, getItems } from 'utils/deals'
+import { convertDealFromRaw, getDealRaw, getItems, getItemPrice } from 'utils/deals'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons'
-import { useRouter } from 'next/router'
 
 export default function DealAdmin({ id }) {
   const [dealRaw, setDealRaw] = useState()
+  const [itemPrice, setItemPrice] = useState()
   const [items, setItems] = useState([])
 
   useEffect(() => {
@@ -30,6 +30,17 @@ export default function DealAdmin({ id }) {
       })
   }, [id])
 
+  useEffect(() => {
+    if (!dealRaw) return
+    const { type, itemId, unused } = dealRaw
+    if (!type || !itemId) return
+    getItemPrice(type, itemId, unused)
+      .then((itemPrice) => {
+        setItemPrice(itemPrice)
+      })
+      .catch()
+  }, [dealRaw])
+
   const models = [
     { id: 1, model: 'Mac Mini', alias: 'Mini' },
     { id: 2, model: 'MacBook Air', alias: 'Air' },
@@ -37,8 +48,8 @@ export default function DealAdmin({ id }) {
     { id: 4, model: 'MacBook Pro 14', alias: 'Pro14' },
     { id: 5, model: 'MacBook Pro 16', alias: 'Pro16' },
     { id: 6, model: 'iPad Mini', alias: 'Mini' },
-    { id: 7, model: 'iPad', alias: 'Normal' },
-    { id: 8, model: 'iPad Air', alias: 'Air' },
+    { id: 7, model: 'iPad Air', alias: 'Air' },
+    { id: 8, model: 'iPad', alias: 'Normal' },
     { id: 9, model: 'iPad Pro 11', alias: 'Pro11' },
     { id: 10, model: 'iPad Pro 12.9', alias: 'Pro12.9' },
   ]
@@ -65,6 +76,7 @@ export default function DealAdmin({ id }) {
                   ...item?.details,
                   unused: dealRaw?.unused,
                   price: dealRaw?.price?.toLocaleString(),
+                  average: itemPrice?.average?.toLocaleString(),
                 }))(
                   items.find((item) => item?.type === dealRaw?.type && item?.id === dealRaw?.itemId)
                 )
@@ -122,7 +134,13 @@ export default function DealAdmin({ id }) {
             {items
               .filter((item) => item.type === dealRaw.type)
               .map((item) => (
-                <div key={item?.id} className="flex justify-between py-1">
+                <div
+                  key={item?.id}
+                  className={
+                    (item.id === dealRaw?.itemId ? 'font-semibold text-[blue] ' : '') +
+                    'flex justify-between py-1'
+                  }
+                >
                   {Object.entries({
                     model: models.find((m) => m.id === item?.model)?.alias,
                     ...item.details,

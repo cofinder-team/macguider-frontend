@@ -70,3 +70,8 @@ export async function convertDealFromRaw(id, payload) {
   const response = await axiosInstanceV2.put(`/deal/raw/${id}`, payload)
   return response.data
 }
+
+export async function getItemPrice(type, itemId, unused) {
+  const response = await axiosInstanceV2.get(`/price/deal/${type}/${itemId}?unused=${unused}`)
+  return response.data
+}

@@ -10,12 +10,12 @@ import { useRouter } from 'next/router'
 import { useScreenSize } from 'hooks/useScreenSize'
 import { ArrowUpRightIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { getDeals } from 'utils/deals'
-import { axiosInstanceV2 } from '@/lib/axios'
 import optionsMac from '@/data/options/mac'
 import optionsIpad from '@/data/options/ipad'
 import { pastTime } from '@/lib/utils/pastTime'
 import Banner from '@/components/Banner'
 import useAsyncAll from 'hooks/useAsyncAll'
+import 'react-loading-skeleton/dist/skeleton.css'
 
 const rightColumnOffsetY = 112
 
@@ -24,7 +24,7 @@ const sampleDevices = optionsMac
   .slice(0, 3)
   .concat(optionsIpad.slice(0, 3))
 
-export default function Deal({ deals, model, deal, price }) {
+export default function Deal({ deals, deal, price }) {
   const router = useRouter()
   const { sm, md, lg } = useScreenSize()
   const [isCoverRemoved, setIsCoverRemoved] = useState(false)
@@ -32,10 +32,9 @@ export default function Deal({ deals, model, deal, price }) {
   const rightColumn = useRef(null)
   const container = useRef(null)
 
+  const { id: dealId, type, source, url, unused, sold, price: dealPrice, model } = deal
   const { coupang: coupangPrices, data: joonggonaraPrices, time: coupangLastUpdated } = price
-
-  const { id: dealId, type, source, url, unused, sold, price: dealPrice } = deal
-  const { name, details, href, option: optionId } = model
+  const { gen, storage, cellular, name, chip, cpu, gpu, ram, ssd, itemId, optionId } = model
 
   useEffect(() => {
     let lastScrollTop = 0
@@ -140,9 +139,9 @@ export default function Deal({ deals, model, deal, price }) {
       dealId,
     })
 
-    const convertedHref = href.replace(/optionId=\d+/, `optionId=${optionId}`)
-    window.open(convertedHref, '_blank')
-  }, [dealId, optionId, href])
+    const convertedUrl = url.replace(/optionId=\d+/, `optionId=${optionId}`)
+    window.open(convertedUrl, '_blank')
+  }, [dealId, optionId, url])
 
   const onClickIframeCover = useCallback(() => {
     setIsCoverRemoved(true)
@@ -151,16 +150,13 @@ export default function Deal({ deals, model, deal, price }) {
     })
   }, [dealId])
 
-  const onClickOtherPriceDetails = useCallback(
-    (item) => {
-      amplitudeTrack('click_other_price_details', {
-        itemId: item.id,
-      })
+  const onClickOtherPriceDetails = useCallback((item) => {
+    amplitudeTrack('click_other_price_details', {
+      itemId: item.id,
+    })
 
-      window.open(item.href, '_blank')
-    },
-    [dealId]
-  )
+    window.open(item.href, '_blank')
+  }, [])
 
   const onClickOtherDeal = useCallback(
     (dealId) => {
@@ -178,7 +174,7 @@ export default function Deal({ deals, model, deal, price }) {
       source,
     })
     window.open(url, '_blank')
-  }, [dealId, url])
+  }, [dealId, url, source])
 
   const getCoupangPrice = useCallback(() => {
     const coupangPrice = coupangPrices.slice(-1)[0]?.price
@@ -218,7 +214,7 @@ export default function Deal({ deals, model, deal, price }) {
 
   return (
     <>
-      <PageSEO title={`중고 꿀매 찾기`} description={`매일 중고 꿀매를 대신 찾아드립니다`} />
+      <PageSEO title={`중고 핫딜`} description={`매일 중고 꿀매를 대신 찾아드립니다`} />
 
       <div ref={container} className="container md:flex">
         <div className="md:w-1/2 md:px-5">
@@ -226,15 +222,15 @@ export default function Deal({ deals, model, deal, price }) {
             <p className="text-base font-semibold text-gray-500">
               {type === 'M' ? (
                 <>
-                  {`${name} ${details.chip}`}
+                  {`${name} ${chip}`}
                   <br />
-                  {`${details.cpu}코어 GPU ${details.gpu}코어, SSD ${details.ssd}`}
+                  {`${cpu}코어 GPU ${gpu}코어, SSD ${ssd}`}
                 </>
               ) : (
                 <>
-                  {`${name} ${details.gen}세대`}
+                  {`${name} ${gen}세대`}
                   <br />
-                  {`${model.cellular ? 'Wi-Fi + Cellular' : 'Wi-Fi'}, ${details.storage}`}
+                  {`${model.cellular ? 'Wi-Fi + Cellular' : 'Wi-Fi'}, ${storage}`}
                 </>
               )}
             </p>
@@ -362,50 +358,37 @@ export default function Deal({ deals, model, deal, price }) {
                       avgPrice,
                     }) => (
                       <div
-                        key={dealId}
-                        className="flex h-[110px] w-full cursor-pointer items-center overflow-hidden  bg-white"
                         onClick={() => {
                           onClickOtherDeal(dealId)
                         }}
+                        className="flex h-[120px] w-full cursor-pointer items-center overflow-hidden  bg-white"
+                        key={dealId}
                       >
-                        <div className="flex-1 truncate">
-                          {/* <div className="items-center space-x-1  selection:flex">
-                            <span className="rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-600 dark:bg-gray-700 dark:text-gray-300">
-                              {source}
+                        <div className="mr-2 flex-1 truncate">
+                          <div className="mt-1 truncate  text-base  font-medium tracking-tight text-gray-600">
+                            <span className="mr-1 inline-block font-semibold">
+                              {unused ? (
+                                <span className="text-blue-500">미개봉</span>
+                              ) : (
+                                <span className="text-green-500">S급</span>
+                              )}
                             </span>
-
-                            <span className="rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800 dark:bg-blue-900 dark:text-blue-300">
-                              {unused ? '미개봉' : 'S급'}
-                            </span>
-                          </div> */}
-
-                          <h5 className="mt-1 truncate  text-sm font-semibold tracking-tight text-gray-900">
-                            <span className="mr-1 inline-block text-base text-blue-400">
-                              {unused ? '미개봉' : 'S급'}
-                            </span>
-
-                            {itemType === 'M' ? (
-                              <>
-                                <span className="text-base">
-                                  {`${model.name} ${model.details.chip}`}
-                                </span>
-
-                                <br />
-                                <span className="mr-1 inline-block text-sm text-gray-700">
-                                  {source}
-                                </span>
-                                <span className=" text-sm text-gray-400">{`${model.details.cpu}코어 GPU ${model.details.gpu}코어, SSD ${model.details.ssd}`}</span>
-                              </>
-                            ) : (
-                              `${model.name} ${model.details.gen}세대 ${
-                                model.details.cellular ? 'Wi-Fi + Cellular' : 'Wi-Fi'
-                              } (${model.details.storage})`
-                            )}
-                          </h5>
+                            {itemType === 'M'
+                              ? `${model.name} ${model.chip}`
+                              : `${model.name} ${model.gen}세대`}
+                          </div>
+                          <div className="text-xs font-normal text-gray-500">
+                            <span className="mr-1 inline-block  text-gray-600">{source}</span>
+                            {itemType === 'M'
+                              ? `${model.cpu}코어 GPU ${model.gpu}코어, SSD ${model.ssd}`
+                              : `${model.cellular ? 'Wi-Fi + Cellular' : 'Wi-Fi'} (${
+                                  model.storage
+                                })`}
+                          </div>
 
                           <div className=" flex items-center text-lg">
                             <div className="font-bold text-gray-900">
-                              {price?.toLocaleString()}원
+                              {avgPrice?.toLocaleString()}원
                             </div>
                           </div>
 
@@ -414,18 +397,18 @@ export default function Deal({ deals, model, deal, price }) {
                               <span className="font-semibold text-blue-500">
                                 {getDiscountPercentage(price, avgPrice)}%&nbsp;
                               </span>
-                              <span>평균 중고가&nbsp;</span>
-                              {avgPrice.toLocaleString()}원
+                              <span>평균&nbsp;</span>
+                              {avgPrice?.toLocaleString()}원
                             </div>
                           )}
                         </div>
 
-                        <div className="relative flex h-full w-1/5 max-w-[100px] items-center">
+                        <div className="flex h-full w-1/4 max-w-[100px] items-center">
                           <div className="relative aspect-1 overflow-hidden rounded-md">
                             <img
                               src={`${process.env.NEXT_PUBLIC_API_URL_V2}/deal/${dealId}/image`}
                               alt={`${model.name} 썸네일`}
-                              className="h-full w-full object-contain object-center"
+                              className="h-full w-full object-cover object-center"
                             />
 
                             {sold && (
@@ -469,7 +452,7 @@ export default function Deal({ deals, model, deal, price }) {
                     </h5>
 
                     {loading || !fetchedData ? (
-                      <Skeleton containerClassName="flex-1" borderRadius="0.5rem" />
+                      <Skeleton containerClassName="flex-1" borderRadius="0.5rem" width="120px" />
                     ) : (
                       <div className="font-bold text-gray-900">
                         {fetchedData[index].data.slice(-1)[0].mid.toLocaleString()}원 부터
@@ -491,6 +474,28 @@ export default function Deal({ deals, model, deal, price }) {
               }}
               ref={rightColumn}
             >
+              <div className="mb-2 flex items-center justify-between">
+                <div className="flex items-center">
+                  <h3 className="text-lg font-bold">제품 상세 정보</h3>
+                  <div className="ml-2 flex items-center">
+                    <span className="rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-600 dark:bg-gray-700 dark:text-gray-300">
+                      {source}
+                    </span>
+
+                    <span className="ml-1 inline-block rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800 dark:bg-blue-900 dark:text-blue-300">
+                      {unused ? '미개봉' : 'S급'}
+                    </span>
+                  </div>
+                </div>
+
+                <span
+                  className="cursor-pointer text-sm underline"
+                  onClick={onClickRedirectToSource}
+                >
+                  {source}에서 보기
+                </span>
+              </div>
+
               <div className="relative overflow-hidden rounded-lg border-2 border-gray-400">
                 <iframe
                   src="https://m.cafe.naver.com/joonggonara/1001412562"
@@ -519,63 +524,12 @@ export default function Deal({ deals, model, deal, price }) {
   )
 }
 
-const getModel = async (newItemId, itemType) => {
-  const res = await axiosInstanceV2.get(`/item/${itemType}/${newItemId}`)
-  const { model: itemId, type } = res.data
-  let target
-
-  if (type === 'M') {
-    // 맥일 경우
-    target = optionsMac
-  } else {
-    // 아이패드일 경우
-    target = optionsIpad
-  }
-
-  const found = target.find((device) => device.id == itemId)
-  const { model, href } = found
-
-  return {
-    ...res.data,
-    name: model,
-    href,
-  }
-}
-
-const getAvgPrice = async (newItemId, itemType, unused) => {
-  const res = await axiosInstanceV2.get(`/price/deal/${itemType}/${newItemId}`, {
-    params: {
-      unused,
-    },
-  })
-
-  const avgPrice = res.data.average
-
-  return avgPrice
-}
-
 export async function getServerSideProps(context) {
   const { dealId } = context.query
-
   let deals = await getDeals()
   const deal = deals.find((deal) => deal.id === Number(dealId)) || null
+  const { model, unused } = deal
   deals = deals.filter((deal) => deal.id !== Number(dealId))
-
-  deals = await Promise.all(
-    deals.map(async (deal) => {
-      const model = await getModel(deal.itemId, deal.type)
-      console.log(model.details)
-      const avgPrice = await getAvgPrice(deal.itemId, deal.type, deal.unused)
-
-      return {
-        ...deal,
-        model,
-        avgPrice,
-      }
-    })
-  )
-
-  let model = null
 
   if (!deal) {
     return {
@@ -586,14 +540,12 @@ export async function getServerSideProps(context) {
     }
   }
 
-  const { type, itemId, unused } = deal
-  model = await getModel(itemId, type)
-  const price = await getPrices(model.model, model.option, unused)
+  const price = await getPrices(model.itemId, model.optionId, unused)
+
   return {
     props: {
       deals,
       deal,
-      model,
       price,
     },
   }

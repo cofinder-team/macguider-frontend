@@ -157,19 +157,11 @@ export default function Deal({ dealId }) {
     return url.replace('https://cafe.naver.com', 'https://m.cafe.naver.com')
   }, [currentDeal])
 
-  const getPriceByLevel = useCallback(
-    (level = 'mid') => {
-      if (!priceInfo) return
-      const { data: joonggonaraPrices } = priceInfo
+  const getAvgPrice = useCallback(() => {
+    if (!currentDeal) return
 
-      const latestPrice = joonggonaraPrices.filter((data) => data && data[level]).slice(-1)[0]
-
-      if (latestPrice) {
-        return latestPrice[level]
-      }
-    },
-    [priceInfo]
-  )
+    return currentDeal.avgPrice
+  }, [currentDeal])
 
   const onClickPriceDetails = useCallback(() => {
     if (!priceInfo || !currentDeal) return
@@ -299,7 +291,7 @@ export default function Deal({ dealId }) {
                     </>
                   )}
                 </p>
-                {getPriceByLevel() ? (
+                {getAvgPrice() ? (
                   <>
                     <div className="flex items-center" onClick={onClickPriceDetails}>
                       <div className="flex cursor-pointer  items-center border-b-2 border-black hover:bg-gray-200">
@@ -311,7 +303,7 @@ export default function Deal({ dealId }) {
 
                     <div>
                       <span className="text-blue-500 ">
-                        {(getPriceByLevel() - currentDeal.price).toLocaleString()}원
+                        {(getAvgPrice() - currentDeal.price).toLocaleString()}원
                       </span>
                       &nbsp;더 저렴해요
                     </div>
@@ -331,14 +323,14 @@ export default function Deal({ dealId }) {
 
             <ul className="mt-2 max-w-md divide-y divide-gray-200 dark:divide-gray-700">
               <li className="pb-3 sm:pb-4">
-                {loading || !priceInfo ? (
+                {loading || !currentDeal ? (
                   <Skeleton height="2rem" />
                 ) : (
                   <div className="flex items-center space-x-4">
                     <div className="min-w-0 flex-1">
                       <p className="truncate text-sm text-gray-500 dark:text-gray-400">중고나라</p>
                       <p className="truncate text-base font-bold text-gray-900 dark:text-white">
-                        {getPriceByLevel() ? `${getPriceByLevel().toLocaleString()}원` : 'N/A'}
+                        {getAvgPrice() ? `${getAvgPrice().toLocaleString()}원` : 'N/A'}
                         <span className="ml-2 inline-block text-sm font-normal text-gray-400">
                           {pastTime()}
                         </span>

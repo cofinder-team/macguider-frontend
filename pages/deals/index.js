@@ -11,12 +11,12 @@ import useAsync from 'hooks/useAsync'
 import Skeleton from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
 
-const categories = ['10% 이상', '5% 이상']
+// const categories = ['10% 이상', '5% 이상']
 
 export default function Deals() {
   const router = useRouter()
-  const [currentCategory, setCurrentCategory] = useState('10% 이상')
-  const [currentDeals, setCurrentDeals] = useState([])
+  // const [currentCategory, setCurrentCategory] = useState('10% 이상')
+  // const [currentDeals, setCurrentDeals] = useState([])
   const [lastUpdatedTime, setLastUpdatedTime] = useState(new Date())
   const [visibleLastUpdatedTime, setVisibleLastUpdatedTime] = useState()
 
@@ -31,22 +31,22 @@ export default function Deals() {
     amplitudeTrack('enter_page_deals')
   }, [])
 
-  useEffect(() => {
-    if (deals) {
-      if (currentCategory === '10% 이상') {
-        setCurrentDeals(deals.filter((deal) => deal.avgPrice && deal.avgPrice >= deal.price * 0.9))
-      } else {
-        setCurrentDeals(
-          deals.filter(
-            (deal) =>
-              deal.avgPrice &&
-              deal.avgPrice >= deal.price * 0.95 &&
-              deal.avgPrice < deal.price * 0.9
-          )
-        )
-      }
-    }
-  }, [currentCategory, deals])
+  // useEffect(() => {
+  //   if (deals) {
+  //     if (currentCategory === '10% 이상') {
+  //       setCurrentDeals(deals.filter((deal) => deal.avgPrice && deal.avgPrice >= deal.price * 0.9))
+  //     } else {
+  //       setCurrentDeals(
+  //         deals.filter(
+  //           (deal) =>
+  //             deal.avgPrice &&
+  //             deal.avgPrice >= deal.price * 0.95 &&
+  //             deal.avgPrice < deal.price * 0.9
+  //         )
+  //       )
+  //     }
+  //   }
+  // }, [currentCategory, deals])
 
   useEffect(() => {
     setVisibleLastUpdatedTime('방금 전')
@@ -75,12 +75,12 @@ export default function Deals() {
     [router]
   )
 
-  const onClickCategory = useCallback((category) => {
-    setCurrentCategory(category)
-    amplitudeTrack('click_change_category', {
-      category,
-    })
-  }, [])
+  // const onClickCategory = useCallback((category) => {
+  //   setCurrentCategory(category)
+  //   amplitudeTrack('click_change_category', {
+  //     category,
+  //   })
+  // }, [])
 
   const onClickHandleReload = useCallback(async () => {
     amplitudeTrack('click_reload_deals')
@@ -102,8 +102,8 @@ export default function Deals() {
       <PageSEO title={`중고 핫딜`} description={`매일 중고 꿀매를 대신 찾아드립니다`} />
       <h1 className="text-2xl font-bold">중고 Apple 제품 보물찾기 &#128142;</h1>
       <p className="font-base text-sm text-gray-500">시세보다 저렴한 중고 애플 제품을 모아왔어요</p>
-      <div className="mt-4 text-sm font-medium text-gray-500 dark:border-gray-700 dark:text-gray-400">
-        <div className="flex items-center justify-between">
+      <div className="sticky top-[88px] z-10 mt-4 text-sm font-medium md:static  md:top-auto">
+        {/* <div className="flex items-center justify-between">
           <ul className="-mb-px flex flex-wrap text-center">
             {categories.map((category) => (
               <li
@@ -131,17 +131,24 @@ export default function Deals() {
             <FontAwesomeIcon icon={faRotateRight} />
             <span className="inlin-block ml-1">{visibleLastUpdatedTime}</span>
           </div>
-        </div>
+        </div> */}
 
-        <div className="-mx-4 bg-gray-100 p-4">
-          평균 중고 시세보다&nbsp;
-          <span className="font-bold text-gray-700">{currentCategory}&nbsp;</span>
-          저렴한 제품들이에요
+        <div className="-mx-4 flex items-center justify-between bg-gray-100 p-4 text-gray-600">
+          <div>
+            평균 중고 시세보다&nbsp;
+            {/* <span className="font-bold text-gray-700">{currentCategory}&nbsp;</span> */}
+            저렴한 제품들이에요
+          </div>
+
+          <div className="flex cursor-pointer items-center " onClick={onClickHandleReload}>
+            <FontAwesomeIcon icon={faRotateRight} />
+            <span className="inlin-block ml-1">{visibleLastUpdatedTime}</span>
+          </div>
         </div>
       </div>
 
       <div className="mt-2 grid grid-cols-1 xl:grid-cols-2 xl:gap-x-16 xl:gap-y-4">
-        {loading
+        {loading || !deals
           ? Array.from({ length: 6 }).map((_, index) => (
               <div className="flex h-[120px] items-center" key={index}>
                 <div className="mr-2 flex-1">
@@ -157,7 +164,7 @@ export default function Deals() {
                 </div>
               </div>
             ))
-          : currentDeals.map(
+          : deals.map(
               ({
                 id,
                 source,

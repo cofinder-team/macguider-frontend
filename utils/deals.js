@@ -28,27 +28,14 @@ export async function getDeals() {
     }
   }
 
-  const getAvgPrice = async (newItemId, itemType, unused) => {
-    const res = await axiosInstanceV2.get(`/price/deal/${itemType}/${newItemId}`, {
-      params: {
-        unused,
-      },
-    })
-
-    const avgPrice = res.data.average
-
-    return avgPrice
-  }
-
   deals = await Promise.all(
     deals.map(async (deal) => {
       const model = await getModel(deal.itemId, deal.type)
-      const avgPrice = await getAvgPrice(deal.itemId, deal.type, deal.unused)
 
       return {
         ...deal,
         model,
-        avgPrice,
+        avgPrice: deal.average,
       }
     })
   )

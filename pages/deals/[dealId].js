@@ -376,7 +376,7 @@ export default function Deal({ dealId }) {
 
           <div className="mt-5 md:hidden">
             {loading || !currentDeal ? (
-              <Skeleton count={3} />
+              <Skeleton height="1.5rem" />
             ) : (
               <div className="flex items-center justify-between">
                 <div className="flex items-center">
@@ -401,27 +401,25 @@ export default function Deal({ dealId }) {
               </div>
             )}
 
-            <div className="relative mt-1 overflow-hidden rounded-lg border-2 border-gray-400">
-              {loadingDeals ? (
-                <Skeleton height={500} />
-              ) : (
-                <>
-                  <iframe src={parseUrl()} className="h-[500px] w-full" />
+            {loadingDeals ? (
+              <Skeleton height={500} />
+            ) : (
+              <div className="relative mt-1 overflow-hidden rounded-lg border-2 border-gray-400">
+                <iframe src={parseUrl()} className="h-[500px] w-full" />
 
-                  {!isCoverRemoved && (
-                    <div
-                      onClick={onClickIframeCover}
-                      className="absolute top-0 left-0 flex h-full w-full flex-col items-center justify-center bg-black text-white opacity-80"
-                    >
-                      <div className="mb-3">
-                        <FontAwesomeIcon icon={faHandPointUp} className="text-4xl" />
-                      </div>
-                      스크롤해서 정보를 확인할 수 있어요
+                {!isCoverRemoved && (
+                  <div
+                    onClick={onClickIframeCover}
+                    className="absolute top-0 left-0 flex h-full w-full flex-col items-center justify-center bg-black text-white opacity-80"
+                  >
+                    <div className="mb-3">
+                      <FontAwesomeIcon icon={faHandPointUp} className="text-4xl" />
                     </div>
-                  )}
-                </>
-              )}
-            </div>
+                    스크롤해서 정보를 확인할 수 있어요
+                  </div>
+                )}
+              </div>
+            )}
           </div>
 
           <div className="mt-5 md:mt-24">
@@ -577,7 +575,9 @@ export default function Deal({ dealId }) {
               ref={rightColumn}
             >
               {loading || !currentDeal ? (
-                <Skeleton height="2rem" />
+                <div className="mb-2">
+                  <Skeleton height="2rem" />
+                </div>
               ) : (
                 <div className="mb-2 flex items-center justify-between">
                   <div className="flex items-center">
@@ -602,24 +602,30 @@ export default function Deal({ dealId }) {
                 </div>
               )}
 
-              <div className="relative overflow-hidden rounded-lg border-2 border-gray-400">
-                <iframe
-                  src="https://m.cafe.naver.com/joonggonara/1001412562"
-                  className="h-[720px] w-full"
-                />
+              {loading || !currentDeal ? (
+                <div className="mb-2">
+                  <Skeleton height="720px" />
+                </div>
+              ) : (
+                <div className="relative overflow-hidden rounded-lg border-2 border-gray-400">
+                  <iframe
+                    src="https://m.cafe.naver.com/joonggonara/1001412562"
+                    className="h-[720px] w-full"
+                  />
 
-                {!isCoverRemoved && (
-                  <div
-                    onClick={onClickIframeCover}
-                    className="absolute top-0 left-0 flex h-full w-full flex-col items-center justify-center bg-black text-white opacity-80"
-                  >
-                    <div className="mb-3">
-                      <FontAwesomeIcon icon={faHandPointUp} className="text-4xl" />
+                  {!isCoverRemoved && (
+                    <div
+                      onClick={onClickIframeCover}
+                      className="absolute top-0 left-0 flex h-full w-full flex-col items-center justify-center bg-black text-white opacity-80"
+                    >
+                      <div className="mb-3">
+                        <FontAwesomeIcon icon={faHandPointUp} className="text-4xl" />
+                      </div>
+                      스크롤해서 정보를 확인할 수 있어요
                     </div>
-                    스크롤해서 정보를 확인할 수 있어요
-                  </div>
-                )}
-              </div>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         )}

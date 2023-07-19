@@ -179,6 +179,15 @@ export default function DealAdmin({ id }) {
 export async function getServerSideProps(context) {
   const { id } = context.query
 
+  if (process.env.NEXT_PUBLIC_NODE_ENV === 'prod') {
+    return {
+      redirect: {
+        destination: '/',
+        permanent: false,
+      },
+    }
+  }
+
   return {
     props: {
       id,

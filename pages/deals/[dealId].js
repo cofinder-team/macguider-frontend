@@ -481,7 +481,7 @@ export default function Deal({ dealId }) {
 
                             <div className=" flex items-center text-lg">
                               <div className="font-bold text-gray-900">
-                                {avgPrice?.toLocaleString()}원
+                                {price?.toLocaleString()}원
                               </div>
                             </div>
 

@@ -600,10 +600,7 @@ export default function Deal({ dealId }) {
                 </div>
               ) : (
                 <div className="relative overflow-hidden rounded-lg border-2 border-gray-400">
-                  <iframe
-                    src="https://m.cafe.naver.com/joonggonara/1001412562"
-                    className="h-[720px] w-full"
-                  />
+                  <iframe src={parseUrl()} className="h-[720px] w-full" />
 
                   {!isCoverRemoved && (
                     <div

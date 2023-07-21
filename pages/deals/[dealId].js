@@ -279,7 +279,7 @@ export default function Deal({ dealId }) {
                     <>
                       {`${currentDeal.model.name} ${currentDeal.model.chip}`}
                       <br />
-                      {`${currentDeal.model.cpu}코어 GPU ${currentDeal.model.gpu}코어, SSD ${currentDeal.model.ssd}`}
+                      {`CPU ${currentDeal.model.cpu}코어, GPU ${currentDeal.model.gpu}코어, RAM ${currentDeal.model.ram}GB, SSD ${currentDeal.model.ssd}`}
                     </>
                   ) : (
                     <>
@@ -470,10 +470,10 @@ export default function Deal({ dealId }) {
                                 ? `${model.name} ${model.chip}`
                                 : `${model.name} ${model.gen}세대`}
                             </div>
-                            <div className="text-xs font-normal text-gray-500">
+                            <div className="truncate text-xs font-normal text-gray-500">
                               <span className="mr-1 inline-block  text-gray-600">{source}</span>
                               {itemType === 'M'
-                                ? `${model.cpu}코어 GPU ${model.gpu}코어, SSD ${model.ssd}`
+                                ? `CPU ${model.cpu} GPU ${model.gpu}, RAM ${model.ram}GB, SSD ${model.ssd}`
                                 : `${model.cellular ? 'Wi-Fi + Cellular' : 'Wi-Fi'} (${
                                     model.storage
                                   })`}

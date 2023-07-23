@@ -1,8 +1,6 @@
 import { PageSEO } from '@/components/SEO'
 import { useCallback, useEffect, useState } from 'react'
 import amplitudeTrack from '@/lib/amplitude/track'
-import Image from '@/components/Image'
-import { useRouter } from 'next/router'
 import { getDeals } from 'utils/deals'
 import Banner from '@/components/Banner'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -164,7 +162,8 @@ export default function Deals() {
                 model,
                 avgPrice,
               }) => (
-                <div
+                <Link
+                  href={`/deals/${id}`}
                   onClick={() => {
                     onClickDealCard(id)
                   }}
@@ -226,7 +225,7 @@ export default function Deals() {
                       )}
                     </div>
                   </div>
-                </div>
+                </Link>
               )
             )}
       </div>

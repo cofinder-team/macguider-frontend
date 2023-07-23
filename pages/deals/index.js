@@ -10,13 +10,13 @@ import { faRotateRight } from '@fortawesome/free-solid-svg-icons'
 import useAsync from 'hooks/useAsync'
 import Skeleton from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
+import Link from '@/components/Link'
 
-// const categories = ['10% 이상', '5% 이상']
+const categories = ['Mac', 'iPad']
 
 export default function Deals() {
-  const router = useRouter()
-  // const [currentCategory, setCurrentCategory] = useState('10% 이상')
-  // const [currentDeals, setCurrentDeals] = useState([])
+  const [currentCategory, setCurrentCategory] = useState(categories[0])
+  const [currentDeals, setCurrentDeals] = useState([])
   const [lastUpdatedTime, setLastUpdatedTime] = useState(new Date())
   const [visibleLastUpdatedTime, setVisibleLastUpdatedTime] = useState()
 
@@ -31,22 +31,15 @@ export default function Deals() {
     amplitudeTrack('enter_page_deals')
   }, [])
 
-  // useEffect(() => {
-  //   if (deals) {
-  //     if (currentCategory === '10% 이상') {
-  //       setCurrentDeals(deals.filter((deal) => deal.avgPrice && deal.avgPrice >= deal.price * 0.9))
-  //     } else {
-  //       setCurrentDeals(
-  //         deals.filter(
-  //           (deal) =>
-  //             deal.avgPrice &&
-  //             deal.avgPrice >= deal.price * 0.95 &&
-  //             deal.avgPrice < deal.price * 0.9
-  //         )
-  //       )
-  //     }
-  //   }
-  // }, [currentCategory, deals])
+  useEffect(() => {
+    if (deals) {
+      if (currentCategory === 'Mac') {
+        setCurrentDeals(deals.filter((deal) => deal.type === 'M'))
+      } else {
+        setCurrentDeals(deals.filter((deal) => deal.type !== 'M'))
+      }
+    }
+  }, [currentCategory, deals])
 
   useEffect(() => {
     setVisibleLastUpdatedTime('방금 전')
@@ -65,33 +58,33 @@ export default function Deals() {
     return () => clearInterval(interval)
   }, [lastUpdatedTime])
 
-  const onClickDealCard = useCallback(
-    (dealId) => {
-      router.push(`/deals/${dealId}`)
-      amplitudeTrack('click_deal_card', {
-        dealId,
-      })
-    },
-    [router]
-  )
+  const onClickDealCard = useCallback((dealId) => {
+    amplitudeTrack('click_deal_card', {
+      dealId,
+    })
+  }, [])
 
-  // const onClickCategory = useCallback((category) => {
-  //   setCurrentCategory(category)
-  //   amplitudeTrack('click_change_category', {
-  //     category,
-  //   })
-  // }, [])
+  const fetchDeals = useCallback(() => {
+    refetch()
+    setLastUpdatedTime(new Date())
+  }, [refetch])
+
+  const onClickCategory = useCallback((category) => {
+    setCurrentCategory(category)
+    amplitudeTrack('click_change_category', {
+      category,
+    })
+  }, [])
 
   const onClickHandleReload = useCallback(async () => {
     amplitudeTrack('click_reload_deals')
 
     try {
-      refetch()
-      setLastUpdatedTime(new Date())
+      fetchDeals()
     } catch (error) {
       console.error('Error fetching deals:', error)
     }
-  }, [refetch])
+  }, [fetchDeals])
 
   const getDiscountPercentage = useCallback((price, avgPrice) => {
     return Math.round((1 - price / avgPrice) * 100)
@@ -102,36 +95,30 @@ export default function Deals() {
       <PageSEO title={`중고 핫딜`} description={`매일 중고 꿀매를 대신 찾아드립니다`} />
       <h1 className="text-2xl font-bold">중고 Apple 제품 보물찾기 &#128142;</h1>
       <p className="font-base text-sm text-gray-500">시세보다 저렴한 중고 애플 제품을 모아왔어요</p>
-      <div className="sticky top-[88px] z-10 mt-4 text-sm font-medium md:static  md:top-auto">
-        {/* <div className="flex items-center justify-between">
-          <ul className="-mb-px flex flex-wrap text-center">
-            {categories.map((category) => (
-              <li
-                className="mr-2 cursor-pointer"
-                key={category}
-                onClick={() => {
-                  onClickCategory(category)
-                }}
-              >
-                <span
-                  className={`inline-block rounded-t-lg border-b-2 border-transparent p-2 text-base 
+      <div className="sticky top-[88px] z-10 mt-4 bg-white text-sm font-medium  md:static md:top-auto">
+        <ul className="-mb-px flex flex-wrap text-center">
+          {categories.map((category) => (
+            <li
+              className="mr-2 cursor-pointer"
+              key={category}
+              onClick={() => {
+                onClickCategory(category)
+              }}
+            >
+              <span
+                className={`inline-block rounded-t-lg border-b-2 border-transparent p-2 text-base 
               ${
                 currentCategory === category
                   ? 'border-gray-800 font-bold text-gray-800'
                   : 'hover:border-gray-300 hover:text-gray-600'
               }
               `}
-                >
-                  {category}
-                </span>
-              </li>
-            ))}
-          </ul>
-          <div className="flex cursor-pointer items-center" onClick={onClickHandleReload}>
-            <FontAwesomeIcon icon={faRotateRight} />
-            <span className="inlin-block ml-1">{visibleLastUpdatedTime}</span>
-          </div>
-        </div> */}
+              >
+                {category}
+              </span>
+            </li>
+          ))}
+        </ul>
 
         <div className="-mx-4 flex items-center justify-between bg-gray-100 p-4 text-gray-600">
           <div>
@@ -148,7 +135,7 @@ export default function Deals() {
       </div>
 
       <div className="mt-2 grid grid-cols-1 xl:grid-cols-2 xl:gap-x-16 xl:gap-y-4">
-        {loading || !deals
+        {loading || !currentDeals
           ? Array.from({ length: 6 }).map((_, index) => (
               <div className="flex h-[120px] items-center" key={index}>
                 <div className="mr-2 flex-1">
@@ -164,7 +151,7 @@ export default function Deals() {
                 </div>
               </div>
             ))
-          : deals.map(
+          : currentDeals.map(
               ({
                 id,
                 source,

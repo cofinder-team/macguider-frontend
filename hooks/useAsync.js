@@ -25,14 +25,13 @@ function reducer(state, action) {
   }
 }
 
-function useAsync(callback, initialCallbackParams = [], deps = [], preventFirstFetch = false) {
+function useAsync(callback, callbackParams = [], deps = [], preventFirstFetch = false) {
   const [state, dispatch] = useReducer(reducer, {
     loading: false,
     data: null,
     error: false,
   })
 
-  const [callbackParams, setCallbackParams] = useState(initialCallbackParams)
   const [isInitialMount, setIsInitialMount] = useState(preventFirstFetch)
 
   const fetchData = async (callbackParams = []) => {
@@ -45,8 +44,8 @@ function useAsync(callback, initialCallbackParams = [], deps = [], preventFirstF
     }
   }
 
-  const refetchData = () => {
-    fetchData(callbackParams)
+  const refetchData = async (newCallbackParams) => {
+    await fetchData(newCallbackParams)
   }
 
   useEffect(() => {
@@ -58,9 +57,9 @@ function useAsync(callback, initialCallbackParams = [], deps = [], preventFirstF
     fetchData(callbackParams)
     // eslint 설정을 다음 줄에서만 비활성화
     // eslint-disable-next-line
-  }, [callbackParams, ...deps])
+  }, deps)
 
-  return [state, refetchData, setCallbackParams]
+  return [state, refetchData]
 }
 
 export default useAsync

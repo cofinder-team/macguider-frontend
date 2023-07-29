@@ -34,6 +34,11 @@ export async function getDealRaw(id) {
   return response.data
 }
 
+export async function getDeal(id) {
+  const response = await axiosInstanceV2.get(`/deal/${id}`)
+  return response.data
+}
+
 export async function getItems() {
   const response = await axiosInstanceV2.get(`/item`)
   return response.data
@@ -41,6 +46,11 @@ export async function getItems() {
 
 export async function convertDealFromRaw(id, payload) {
   const response = await axiosInstanceV2.put(`/deal/raw/${id}`, payload)
+  return response.data
+}
+
+export async function reportDeal(id, payload) {
+  const response = await axiosInstanceV2.put(`/deal/${id}`, payload)
   return response.data
 }
 

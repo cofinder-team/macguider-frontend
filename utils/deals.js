@@ -23,12 +23,6 @@ export async function getDeals(
   return deals
 }
 
-export async function getDeal(dealId) {
-  let { data: deal } = await axiosInstanceV2.get(`/deal/${dealId}`)
-
-  return deal
-}
-
 export async function getDealRaw(id) {
   const response = await axiosInstanceV2.get(`/deal/raw/${id}`)
   return response.data

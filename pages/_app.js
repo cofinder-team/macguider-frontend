@@ -12,23 +12,29 @@ import { ClientReload } from '@/components/ClientReload'
 import { config } from '@fortawesome/fontawesome-svg-core'
 import '@fortawesome/fontawesome-svg-core/styles.css'
 import Analytics from '@/components/analytics'
+import { QueryClient, QueryClientProvider } from 'react-query'
+import { ReactQueryDevtools } from 'react-query/devtools'
 
 config.autoAddCss = false
 
 const isDevelopment = process.env.NODE_ENV === 'development'
 const isSocket = process.env.SOCKET
+const queryClient = new QueryClient()
 
 export default function App({ Component, pageProps }) {
   return (
-    <ThemeProvider attribute="class" defaultTheme={siteMetadata.theme} forcedTheme="light">
-      <Head>
-        <meta content="width=device-width, initial-scale=1" name="viewport" />
-      </Head>
-      {isDevelopment && isSocket && <ClientReload />}
-      <Analytics />
-      <LayoutWrapper>
-        <Component {...pageProps} />
-      </LayoutWrapper>
-    </ThemeProvider>
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider attribute="class" defaultTheme={siteMetadata.theme} forcedTheme="light">
+        <Head>
+          <meta content="width=device-width, initial-scale=1" name="viewport" />
+        </Head>
+        {isDevelopment && isSocket && <ClientReload />}
+        <Analytics />
+        <LayoutWrapper>
+          <Component {...pageProps} />
+        </LayoutWrapper>
+      </ThemeProvider>
+      <ReactQueryDevtools initialIsOpen />
+    </QueryClientProvider>
   )
 }

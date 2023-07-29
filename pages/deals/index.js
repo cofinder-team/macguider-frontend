@@ -5,12 +5,11 @@ import { getDeals } from 'utils/deals'
 import Banner from '@/components/Banner'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faRotateRight } from '@fortawesome/free-solid-svg-icons'
-import useAsync from 'hooks/useAsync'
 import Skeleton from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
 import Link from '@/components/Link'
 import { Fragment } from 'react'
-import { Disclosure, Menu, Transition, Dialog } from '@headlessui/react'
+import { Transition, Dialog } from '@headlessui/react'
 import { ChevronDownIcon, FunnelIcon } from '@heroicons/react/20/solid'
 import optionsMac from '@/data/options/mac'
 import optionsIpad from '@/data/options/ipad'
@@ -18,6 +17,9 @@ import { PlusIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import useIntersect from 'hooks/useIntersect'
 import React from 'react'
 import { classNames } from 'utils/basic'
+import { useInfiniteQuery } from 'react-query'
+
+const maxPage = 10
 
 const filters = [
   {
@@ -43,17 +45,17 @@ const filters = [
     name: '제품',
     options: [
       {
-        value: 'default',
+        value: [],
         label: '전체',
       },
       ...optionsMac
         .map((option) => ({
-          value: option.id,
+          value: ['M', option.id],
           label: option.model,
         }))
         .concat(
           optionsIpad.map((option) => ({
-            value: option.id,
+            value: ['P', option.id],
             label: option.model,
           }))
         ),
@@ -69,56 +71,46 @@ const initialFilters = filters.map((filter) => ({
 
 export default function Deals() {
   const [currentFilters, setCurrentFilters] = useState(initialFilters)
-
-  const [lastUpdatedTime, setLastUpdatedTime] = useState(new Date())
-  const [visibleLastUpdatedTime, setVisibleLastUpdatedTime] = useState()
+  const sortOption = currentFilters.find((filter) => filter.id === 'sort').options[0].value
+  const [modelId, itemId] = currentFilters.find((filter) => filter.id === 'model').options[0].value
 
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false)
-  const [loadedPage, setLoadedPage] = useState(1)
-  const [currentDeals, setCurrentDeals] = useState([])
 
-  const [state, refetch] = useAsync(getDeals, [], [])
-  const { loading, data: deals, error } = state
+  const {
+    status,
+    data,
+    error,
+    isFetching,
+    isFetchingNextPage,
+    isFetchingPreviousPage,
+    fetchNextPage,
+    hasNextPage,
+    refetch,
+  } = useInfiniteQuery(
+    'deals',
+    async ({ pageParam = 1 }) => {
+      return await getDeals(pageParam, 10, sortOption, 'desc', modelId, itemId)
+    },
+    {
+      getNextPageParam: (lastPage, pages) =>
+        lastPage.length < maxPage ? undefined : pages.length + 1,
+      refetchOnMount: false,
+    }
+  )
 
   if (error) {
     alert('데이터를 불러오는데 실패했습니다. 잠시 후 다시 시도해주세요.')
   }
 
-  useEffect(() => {
-    if (deals) {
-      setCurrentDeals([...currentDeals, ...deals])
-    }
-  }, [deals])
-
   const [_, setRef] = useIntersect(async (entry, observer) => {
     observer.unobserve(entry.target)
-
-    setLoadedPage((prev) => prev + 1)
-    await refetch([loadedPage + 1, 10])
-
+    fetchNextPage()
     observer.observe(entry.target)
   }, {})
 
   useEffect(() => {
     amplitudeTrack('enter_page_deals')
   }, [])
-
-  useEffect(() => {
-    setVisibleLastUpdatedTime('방금 전')
-
-    const interval = setInterval(() => {
-      // 1시간 이후 부터
-      if (new Date() - lastUpdatedTime > 3600000) {
-        setVisibleLastUpdatedTime('업데이트 필요')
-      }
-      // 1분 이후 부터
-      else if (new Date() - lastUpdatedTime > 60000) {
-        setVisibleLastUpdatedTime(`${Math.floor((new Date() - lastUpdatedTime) / 60000)}분 전`)
-      }
-    }, 3000)
-
-    return () => clearInterval(interval)
-  }, [lastUpdatedTime])
 
   const onClickMobilePill = useCallback((type) => {
     amplitudeTrack('click_pill', {
@@ -127,17 +119,25 @@ export default function Deals() {
     setMobileFiltersOpen(true)
   }, [])
 
-  const sortBy = useCallback(
-    (value) => {
-      amplitudeTrack('click_sort_deals_by', {
-        sortOption: value,
-        sortDirection: 'desc',
-      })
+  // const sortBy = useCallback(
+  //   (value) => {
+  //     amplitudeTrack('click_sort_deals_by', {
+  //       sortOption: value,
+  //       sortDirection: 'desc',
+  //     })
 
-      refetch([loadedPage, 10, value, 'desc'])
-    },
-    [loadedPage, refetch]
-  )
+  //     refetch()
+  //   },
+  //   [refetch]
+  // )
+
+  useEffect(() => {
+    refetch()
+  }, [currentFilters])
+
+  useEffect(() => {
+    console.log(currentFilters)
+  }, [currentFilters])
 
   const onChangeFilter = useCallback(
     (sectionId, value) => {
@@ -146,9 +146,10 @@ export default function Deals() {
           alert('준비 중입니다. 이메일을 등록해주시면 가장 먼저 알려드릴게요!')
           return
         }
-      } else if (sectionId === 'sort') {
-        sortBy(value)
       }
+      // else if (sectionId === 'sort') {
+      //   sortBy(value)
+      // }
 
       setCurrentFilters(
         currentFilters.map((filter) => {
@@ -176,20 +177,16 @@ export default function Deals() {
     })
   }, [])
 
-  const fetchDeals = useCallback(() => {
-    refetch()
-    setLastUpdatedTime(new Date())
-  }, [refetch])
-
   const onClickHandleReload = useCallback(async () => {
     amplitudeTrack('click_reload_deals')
 
     try {
-      fetchDeals()
+      // fetchDeals()
+      refetch()
     } catch (error) {
       console.error('Error fetching deals:', error)
     }
-  }, [fetchDeals])
+  }, [refetch])
 
   const getDiscountPercentage = useCallback((price, avgPrice) => {
     return Math.round((1 - price / avgPrice) * 100)
@@ -223,7 +220,7 @@ export default function Deals() {
 
           <div className="flex cursor-pointer items-center " onClick={onClickHandleReload}>
             <FontAwesomeIcon icon={faRotateRight} />
-            <span className="inlin-block ml-1">{visibleLastUpdatedTime}</span>
+            <span className="inlin-block ml-1">새로고침</span>
           </div>
         </div>
       </div>
@@ -308,7 +305,7 @@ export default function Deals() {
         {/* 핫딜 제품들 */}
         <div className="md:mt-6 lg:col-span-2 lg:mt-0 xl:col-span-3">
           <div className="mt-2 grid grid-cols-1 lg:mt-0 xl:grid-cols-2 xl:gap-x-16 xl:gap-y-4">
-            {loading && currentDeals.length === 0
+            {isFetching && !isFetchingNextPage
               ? Array.from({ length: 6 }).map((_, index) => (
                   <div className="flex h-[120px] items-center" key={index}>
                     <div className="mr-2 flex-1">
@@ -324,116 +321,108 @@ export default function Deals() {
                     </div>
                   </div>
                 ))
-              : currentDeals.map(({ id, source, price, sold, unused, url, item, average }) => (
-                  <Link
-                    href={`/deals/${id}`}
-                    onClick={() => {
-                      onClickDealCard(id)
-                    }}
-                    className="flex h-[120px] w-full cursor-pointer items-center overflow-hidden  bg-white"
-                    key={id}
-                  >
-                    <div className="mr-2 flex-1 truncate">
-                      <div className="mt-1 truncate  text-base  font-medium tracking-tight text-gray-600">
-                        <span className="mr-1 inline-block font-semibold">
-                          {unused ? (
-                            <span className="text-blue-500">미개봉</span>
-                          ) : (
-                            <span className="text-green-500">S급</span>
-                          )}
-                        </span>
-                        {item.type === 'M'
-                          ? `${item.model.name} ${item.details.chip}`
-                          : `${item.model.name} ${item.details.gen}세대`}
-                      </div>
-                      <div className="truncate text-xs font-normal text-gray-500">
-                        <span className="mr-1 inline-block  font-semibold text-gray-700">
-                          {source}
-                        </span>
-                        {item.type === 'M'
-                          ? `CPU ${item.details.cpu} GPU ${item.details.gpu}, RAM ${item.details.ram}GB, SSD ${item.details.ssd}`
-                          : `${item.details.cellular ? 'Wi-Fi + Cellular' : 'Wi-Fi'} (${
-                              item.details.storage
-                            })`}
-                      </div>
+              : data.pages.map((page, index) => (
+                  <React.Fragment key={index}>
+                    {page.map(({ id, unused, item, source, price, average, sold }) => (
+                      <Link
+                        href={`/deals/${id}`}
+                        onClick={() => {
+                          onClickDealCard(id)
+                        }}
+                        className="flex h-[120px] w-full cursor-pointer items-center overflow-hidden  bg-white"
+                        key={id}
+                      >
+                        <div className="mr-2 flex-1 truncate">
+                          <div className="mt-1 truncate  text-base  font-medium tracking-tight text-gray-600">
+                            <span className="mr-1 inline-block font-semibold">
+                              {unused ? (
+                                <span className="text-blue-500">미개봉</span>
+                              ) : (
+                                <span className="text-green-500">S급</span>
+                              )}
+                            </span>
+                            {item.type === 'M'
+                              ? `${item.model.name} ${item.details.chip}`
+                              : `${item.model.name} ${item.details.gen}세대`}
+                          </div>
+                          <div className="truncate text-xs font-normal text-gray-500">
+                            <span className="mr-1 inline-block  font-semibold text-gray-700">
+                              {source}
+                            </span>
+                            {item.type === 'M'
+                              ? `CPU ${item.details.cpu} GPU ${item.details.gpu}, RAM ${item.details.ram}GB, SSD ${item.details.ssd}`
+                              : `${item.details.cellular ? 'Wi-Fi + Cellular' : 'Wi-Fi'} (${
+                                  item.details.storage
+                                })`}
+                          </div>
 
-                      <div className=" flex items-center text-lg">
-                        <div className="font-bold text-gray-900">{price?.toLocaleString()}원</div>
-                      </div>
-
-                      {average && (
-                        <div className="text-xs  text-gray-500">
-                          <span className="font-semibold text-blue-500">
-                            {getDiscountPercentage(price, average)}%&nbsp;
-                          </span>
-                          <span>평균&nbsp;</span>
-                          {average?.toLocaleString()}원
-                        </div>
-                      )}
-                    </div>
-
-                    <div className="flex h-full w-1/4 max-w-[100px] items-center">
-                      <div className="relative aspect-1 overflow-hidden rounded-md">
-                        <img
-                          src={`${process.env.NEXT_PUBLIC_API_URL_V2}/deal/${id}/image`}
-                          alt={`${item.model.name} 썸네일`}
-                          className="h-full w-full object-cover object-center"
-                        />
-
-                        {sold && (
-                          <div className="absolute top-0  left-0 flex h-full w-full items-center justify-center text-sm font-bold text-white ">
-                            <div className="absolute top-0 left-0 h-full w-full bg-black opacity-40" />
-                            <div className="absolute top-0 left-0 flex h-full w-full items-center justify-center">
-                              판매완료
+                          <div className=" flex items-center text-lg">
+                            <div className="font-bold text-gray-900">
+                              {price?.toLocaleString()}원
                             </div>
                           </div>
-                        )}
-                      </div>
-                    </div>
-                  </Link>
+
+                          {average && (
+                            <div className="text-xs  text-gray-500">
+                              <span className="font-semibold text-blue-500">
+                                {getDiscountPercentage(price, average)}%&nbsp;
+                              </span>
+                              <span>평균&nbsp;</span>
+                              {average?.toLocaleString()}원
+                            </div>
+                          )}
+                        </div>
+
+                        <div className="flex h-full w-1/4 max-w-[100px] items-center">
+                          <div className="relative aspect-1 overflow-hidden rounded-md">
+                            <img
+                              src={`${process.env.NEXT_PUBLIC_API_URL_V2}/deal/${id}/image`}
+                              alt={`${item.model.name} 썸네일`}
+                              className="h-full w-full object-cover object-center"
+                            />
+
+                            {sold && (
+                              <div className="absolute top-0  left-0 flex h-full w-full items-center justify-center text-sm font-bold text-white ">
+                                <div className="absolute top-0 left-0 h-full w-full bg-black opacity-40" />
+                                <div className="absolute top-0 left-0 flex h-full w-full items-center justify-center">
+                                  판매완료
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </Link>
+                    ))}
+                  </React.Fragment>
                 ))}
           </div>
+
+          {isFetchingNextPage && (
+            <div role="status" className="mt-5 flex justify-center">
+              <svg
+                aria-hidden="true"
+                className="mr-2 inline h-8 w-8 animate-spin fill-gray-600 text-gray-200 dark:fill-gray-300 dark:text-gray-600"
+                viewBox="0 0 100 101"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+                  fill="currentColor"
+                />
+                <path
+                  d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+                  fill="currentFill"
+                />
+              </svg>
+              <span className="sr-only">Loading...</span>
+            </div>
+          )}
         </div>
       </div>
-      {!loading && currentDeals.length > 0 && (
-        // <div className="md:mt-6 lg:col-span-2 lg:mt-0 xl:col-span-3" re4f>
-        //   <div className="mt-2 grid grid-cols-1 lg:mt-0 xl:grid-cols-2 xl:gap-x-16 xl:gap-y-4">
-        //     {Array.from({ length: 4 }).map((_, index) => (
-        //       <div className="flex h-[120px] items-center" key={index}>
-        //         <div className="mr-2 flex-1">
-        //           <h3>
-        //             <Skeleton />
-        //           </h3>
-        //           <p className="mb-0">
-        //             <Skeleton count={2} />
-        //           </p>
-        //         </div>
-        //         <div className="aspect-1 w-1/4 max-w-[100px] ">
-        //           <Skeleton height="100%" />
-        //         </div>
-        //       </div>
-        //     ))}
-        //   </div>
-        // </div>
-        <div role="status" className="mt-5 flex justify-center" ref={setRef}>
-          <svg
-            aria-hidden="true"
-            className="mr-2 inline h-8 w-8 animate-spin fill-gray-600 text-gray-200 dark:fill-gray-300 dark:text-gray-600"
-            viewBox="0 0 100 101"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
-              fill="currentColor"
-            />
-            <path
-              d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
-              fill="currentFill"
-            />
-          </svg>
-          <span className="sr-only">Loading...</span>
-        </div>
+
+      {hasNextPage && !isFetching && (
+        <div role="status" className="mt-5 flex h-[20px] justify-center lg:mt-8" ref={setRef}></div>
       )}
       <Banner />
       {/* Mobile 모달 */}

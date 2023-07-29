@@ -9,7 +9,7 @@ import { getPrices } from 'utils/price'
 import { useRouter } from 'next/router'
 import { useScreenSize } from 'hooks/useScreenSize'
 import { ArrowUpRightIcon, XMarkIcon } from '@heroicons/react/24/outline'
-import { getDeals } from 'utils/deals'
+import { getDeal, getDeals } from 'utils/deals'
 import optionsMac from '@/data/options/mac'
 import optionsIpad from '@/data/options/ipad'
 import { pastTime } from '@/lib/utils/pastTime'
@@ -19,6 +19,16 @@ import 'react-loading-skeleton/dist/skeleton.css'
 import useAsync from 'hooks/useAsync'
 
 const rightColumnOffsetY = 112
+
+const getPriceInfo = async (currentDeal) => {
+  if (!currentDeal) return
+
+  const { item, unused } = currentDeal
+  const itemId = item.model.id
+  const optionId = item.option
+  const priceInfo = await getPrices(itemId, optionId, unused)
+  return priceInfo
+}
 
 const sampleDevices = optionsMac
   .sort(() => Math.random() - Math.random())
@@ -33,40 +43,35 @@ export default function Deal({ dealId }) {
   const rightColumn = useRef(null)
   const container = useRef(null)
 
-  const [currentDeal, setCurrentDeal] = useState()
-
-  const getPriceInfo = async () => {
-    if (!currentDeal) return
-
-    const { model, unused } = currentDeal
-    const { itemId, optionId } = model
-    const priceInfo = await getPrices(itemId, optionId, unused)
-    return priceInfo
-  }
-
-  // 현재 제품 시세 관리
-  const [fetchedPriceInfo, refetchPriceInfo] = useAsync(getPriceInfo, [], [currentDeal])
-  const { loading: loadingPriceInfo, data: priceInfo, error: errorPriceInfo } = fetchedPriceInfo
+  // 현재 deal 조회
+  const [fetchedDeal, refetchDeal] = useAsync(getDeal, [dealId], [])
+  const { loading: loadingDeal, data: currentDeal, error: errorDeal } = fetchedDeal
 
   // 전체 deals 조회
   const [fetchedDeals, refetchDeals] = useAsync(getDeals, [], [])
   const { loading: loadingDeals, data: entireDeals, error: errorDeals } = fetchedDeals
 
-  // 전체 가격 조회
+  // 현재 deal의 전체 시세 조회
+  const [fetchedPriceInfo, refetchPriceInfo] = useAsync(getPriceInfo, [currentDeal], [currentDeal])
+  const { loading: loadingPriceInfo, data: priceInfo, error: errorPriceInfo } = fetchedPriceInfo
+
+  // 다른 모델들의 전체 시세 조회
   const [state, refetch] = useAsyncAll(
     getPrices,
     sampleDevices.map((device) => [device.id, device.data[0].options[0].id, false]),
     []
   )
-  const { loading: loadingPrices, data: fetchedData, error } = state
+  const { loading: loadingPrices, data: fetchedData, error: errorPriceInfos } = state
 
-  // 가격 데이터 fetch 실패시 alert창 띄우기
-  if (error || errorDeals || errorPriceInfo) {
+  // Fetch 실패시
+  if (errorDeal) {
+    router.push('/deals')
+  } else if (errorDeals || errorPriceInfo || errorPriceInfos) {
     alert('데이터를 불러오는데 실패했습니다. 잠시 후 다시 시도해주세요.')
   }
 
   // 전체 로딩
-  const loading = loadingDeals || loadingPriceInfo || loadingPrices
+  const loading = loadingDeal || loadingDeals || loadingPriceInfo || loadingPrices
 
   useEffect(() => {
     let lastScrollTop = 0
@@ -138,17 +143,6 @@ export default function Deal({ dealId }) {
     })
   }, [dealId])
 
-  useEffect(() => {
-    if (entireDeals) {
-      const deal = entireDeals.find((deal) => deal.id === Number(dealId))
-      if (deal) {
-        setCurrentDeal(deal)
-      } else {
-        router.push('/deals')
-      }
-    }
-  }, [entireDeals, dealId])
-
   const parseUrl = useCallback(() => {
     if (!currentDeal) return
 
@@ -157,17 +151,12 @@ export default function Deal({ dealId }) {
     return url.replace('https://cafe.naver.com', 'https://m.cafe.naver.com')
   }, [currentDeal])
 
-  const getAvgPrice = useCallback(() => {
-    if (!currentDeal) return
-
-    return currentDeal.avgPrice
-  }, [currentDeal])
-
   const onClickPriceDetails = useCallback(() => {
     if (!priceInfo || !currentDeal) return
 
-    const { url, model, unused, type } = currentDeal
-    const { itemId, optionId } = model
+    const { url, item, unused, type } = currentDeal
+    const itemId = item.model.id
+    const optionId = item.option
 
     amplitudeTrack('click_price_details', {
       dealId,
@@ -180,7 +169,7 @@ export default function Deal({ dealId }) {
 
     const convertedUrl = href.replace(/optionId=\d+/, `optionId=${optionId}`)
     window.open(convertedUrl, '_blank')
-  }, [currentDeal, priceInfo, dealId])
+  }, [priceInfo, dealId, currentDeal])
 
   const onClickIframeCover = useCallback(() => {
     setIsCoverRemoved(true)
@@ -275,45 +264,37 @@ export default function Deal({ dealId }) {
             ) : (
               <>
                 <p className="text-base font-semibold text-gray-500">
-                  {currentDeal.type === 'M' ? (
+                  {currentDeal.item.type === 'M' ? (
                     <>
-                      {`${currentDeal.model.name} ${currentDeal.model.chip}`}
+                      {`${currentDeal.item.model.name} ${currentDeal.item.details.chip}`}
                       <br />
-                      {`CPU ${currentDeal.model.cpu}코어, GPU ${currentDeal.model.gpu}코어, RAM ${currentDeal.model.ram}GB, SSD ${currentDeal.model.ssd}`}
+                      {`CPU ${currentDeal.item.details.cpu}코어, GPU ${currentDeal.item.details.gpu}코어, RAM ${currentDeal.item.details.ram}GB, SSD ${currentDeal.item.details.ssd}`}
                     </>
                   ) : (
                     <>
-                      {`${currentDeal.model.name} ${currentDeal.model.gen}세대`}
+                      {`${currentDeal.item.model.name} ${currentDeal.item.details.gen}세대`}
                       <br />
-                      {`${currentDeal.model.cellular ? 'Wi-Fi + Cellular' : 'Wi-Fi'}, ${
-                        currentDeal.model.storage
+                      {`${currentDeal.item.details.cellular ? 'Wi-Fi + Cellular' : 'Wi-Fi'}, ${
+                        currentDeal.item.details.storage
                       }`}
                     </>
                   )}
                 </p>
-                {getAvgPrice() ? (
-                  <>
-                    <div className="flex items-center" onClick={onClickPriceDetails}>
-                      <div className="flex cursor-pointer  items-center border-b-2 border-black hover:bg-gray-200">
-                        <span>중고 시세</span>
-                        <ArrowUpRightIcon className="h-6 w-6" />
-                      </div>
-                      <div className="ml-1">보다</div>
-                    </div>
 
-                    <div>
-                      <span className="text-blue-500 ">
-                        {(getAvgPrice() - currentDeal.price).toLocaleString()}원
-                      </span>
-                      &nbsp;더 저렴해요
-                    </div>
-                  </>
-                ) : (
-                  <div>
-                    아쉽지만 현재 중고 시세를
-                    <br /> 가져올 수 없어요
+                <div className="flex items-center" onClick={onClickPriceDetails}>
+                  <div className="flex cursor-pointer  items-center border-b-2 border-black hover:bg-gray-200">
+                    <span>중고 시세</span>
+                    <ArrowUpRightIcon className="h-6 w-6" />
                   </div>
-                )}
+                  <div className="ml-1">보다</div>
+                </div>
+
+                <div>
+                  <span className="text-blue-500 ">
+                    {(currentDeal.average - currentDeal.price).toLocaleString()}원
+                  </span>
+                  &nbsp;더 저렴해요
+                </div>
               </>
             )}
           </div>
@@ -330,7 +311,7 @@ export default function Deal({ dealId }) {
                     <div className="min-w-0 flex-1">
                       <p className="truncate text-sm text-gray-500 dark:text-gray-400">중고나라</p>
                       <p className="truncate text-base font-bold text-gray-900 dark:text-white">
-                        {getAvgPrice() ? `${getAvgPrice().toLocaleString()}원` : 'N/A'}
+                        {currentDeal.average ? `${currentDeal.average.toLocaleString()}원` : 'N/A'}
                         <span className="ml-2 inline-block text-sm font-normal text-gray-400">
                           {pastTime()}
                         </span>

@@ -10,70 +10,18 @@ import 'react-loading-skeleton/dist/skeleton.css'
 import Link from '@/components/Link'
 import { Fragment } from 'react'
 import { Transition, Dialog } from '@headlessui/react'
-import { ChevronDownIcon, FunnelIcon } from '@heroicons/react/20/solid'
-import optionsMac from '@/data/options/mac'
-import optionsIpad from '@/data/options/ipad'
-import { PlusIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import { ChevronDownIcon } from '@heroicons/react/20/solid'
+import { XMarkIcon } from '@heroicons/react/24/outline'
 import useIntersect from 'hooks/useIntersect'
 import React from 'react'
 import { classNames } from 'utils/basic'
 import { useInfiniteQuery } from 'react-query'
+import useDealsStore, { filters } from 'store/deals'
 
 const maxPage = 10
 
-const filters = [
-  {
-    id: 'sort',
-    name: '정렬',
-    options: [
-      { value: 'date', label: '최신 순' },
-      { value: 'discount', label: '할인 순' },
-    ],
-    type: 'single',
-  },
-  {
-    id: 'source',
-    name: '중고 플랫폼',
-    options: [
-      { value: 'joongonara', label: '중고나라' },
-      { value: 'bunjang', label: '번개장터' },
-    ],
-    type: 'multiple',
-  },
-  {
-    id: 'model',
-    name: '제품',
-    options: [
-      {
-        value: [],
-        label: '전체',
-      },
-      ...optionsMac
-        .map((option) => ({
-          value: ['M', option.id],
-          label: option.model,
-        }))
-        .concat(
-          optionsIpad.map((option) => ({
-            value: ['P', option.id],
-            label: option.model,
-          }))
-        ),
-    ],
-    type: 'single',
-  },
-]
-
-const initialFilters = filters.map((filter) => ({
-  ...filter,
-  options: [filter.options[0]],
-}))
-
 export default function Deals() {
-  const [currentFilters, setCurrentFilters] = useState(initialFilters)
-  const sortOption = currentFilters.find((filter) => filter.id === 'sort').options[0].value
-  const [modelId, itemId] = currentFilters.find((filter) => filter.id === 'model').options[0].value
-
+  const { filters: currentFilters, setFilters: setCurrentFilters } = useDealsStore((state) => state)
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false)
 
   const {
@@ -89,6 +37,10 @@ export default function Deals() {
   } = useInfiniteQuery(
     'deals',
     async ({ pageParam = 1 }) => {
+      const sortOption = currentFilters.find((filter) => filter.id === 'sort').options[0].value
+      const [modelId, itemId] = currentFilters.find((filter) => filter.id === 'model').options[0]
+        .value
+
       return await getDeals(pageParam, 10, sortOption, 'desc', modelId, itemId)
     },
     {
@@ -108,48 +60,39 @@ export default function Deals() {
     observer.observe(entry.target)
   }, {})
 
+  const [isInitialMount, setIsInitialMount] = useState(true)
+
   useEffect(() => {
     amplitudeTrack('enter_page_deals')
+    setIsInitialMount(false)
   }, [])
 
+  useEffect(() => {
+    if (!isInitialMount) {
+      refetch()
+    }
+  }, [currentFilters])
+
   const onClickMobilePill = useCallback((type) => {
-    amplitudeTrack('click_pill', {
+    amplitudeTrack('click_mobile_pill', {
       type,
     })
     setMobileFiltersOpen(true)
   }, [])
 
-  // const sortBy = useCallback(
-  //   (value) => {
-  //     amplitudeTrack('click_sort_deals_by', {
-  //       sortOption: value,
-  //       sortDirection: 'desc',
-  //     })
-
-  //     refetch()
-  //   },
-  //   [refetch]
-  // )
-
-  useEffect(() => {
-    refetch()
-  }, [currentFilters])
-
-  useEffect(() => {
-    console.log(currentFilters)
-  }, [currentFilters])
-
   const onChangeFilter = useCallback(
     (sectionId, value) => {
+      amplitudeTrack('change_filter', {
+        sectionId,
+        value: Array.isArray(value) ? value.join(' ') : value,
+      })
+
       if (sectionId === 'source') {
         if (value !== 'joongonara') {
           alert('준비 중입니다. 이메일을 등록해주시면 가장 먼저 알려드릴게요!')
           return
         }
       }
-      // else if (sectionId === 'sort') {
-      //   sortBy(value)
-      // }
 
       setCurrentFilters(
         currentFilters.map((filter) => {
@@ -283,7 +226,7 @@ export default function Deals() {
                                 )
                                   ? 'font-semibold text-gray-900'
                                   : 'text-gray-500',
-                                'flex items-center text-sm'
+                                'flex cursor-pointer items-center text-sm'
                               )}
                               onClick={() => {
                                 onChangeFilter(section.id, option.value)

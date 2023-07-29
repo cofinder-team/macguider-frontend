@@ -14,10 +14,10 @@ import '@fortawesome/fontawesome-svg-core/styles.css'
 import Analytics from '@/components/analytics'
 import { QueryClient, QueryClientProvider } from 'react-query'
 import { ReactQueryDevtools } from 'react-query/devtools'
+import { isDevelopment } from 'utils/env'
 
 config.autoAddCss = false
 
-const isDevelopment = process.env.NODE_ENV === 'development'
 const isSocket = process.env.SOCKET
 const queryClient = new QueryClient()
 

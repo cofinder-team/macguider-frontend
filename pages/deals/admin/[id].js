@@ -41,19 +41,6 @@ export default function DealAdmin({ id }) {
       .catch()
   }, [dealRaw])
 
-  const models = [
-    { id: 1, model: 'Mac Mini', alias: 'Mini' },
-    { id: 2, model: 'MacBook Air', alias: 'Air' },
-    { id: 3, model: 'MacBook Pro 13', alias: 'Pro13' },
-    { id: 4, model: 'MacBook Pro 14', alias: 'Pro14' },
-    { id: 5, model: 'MacBook Pro 16', alias: 'Pro16' },
-    { id: 6, model: 'iPad Mini', alias: 'Mini' },
-    { id: 7, model: 'iPad Air', alias: 'Air' },
-    { id: 8, model: 'iPad', alias: 'Normal' },
-    { id: 9, model: 'iPad Pro 11', alias: 'Pro11' },
-    { id: 10, model: 'iPad Pro 12.9', alias: 'Pro12.9' },
-  ]
-
   const onClickSelect = useCallback(
     (payload) => {
       convertDealFromRaw(id, payload).then(() => {
@@ -72,7 +59,7 @@ export default function DealAdmin({ id }) {
             <ul className="divide-y divide-gray-200">
               {Object.entries(
                 ((item) => ({
-                  model: models.find((m) => m.id === item?.model)?.model,
+                  model: item?.model?.name,
                   ...item?.details,
                   unused: dealRaw?.unused,
                   price: dealRaw?.price?.toLocaleString(),
@@ -142,7 +129,7 @@ export default function DealAdmin({ id }) {
                   }
                 >
                   {Object.entries({
-                    model: models.find((m) => m.id === item?.model)?.alias,
+                    model: item?.model?.name.replace(/(Mac\w*\s)|(iPad\s)/, ''),
                     ...item.details,
                   }).map(([k, v]) => (
                     <a key={k} className="mx-1 w-16">

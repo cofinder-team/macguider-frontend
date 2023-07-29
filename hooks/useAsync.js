@@ -1,4 +1,4 @@
-import { useReducer, useEffect } from 'react'
+import { useReducer, useEffect, useState } from 'react'
 
 function reducer(state, action) {
   switch (action.type) {
@@ -25,12 +25,14 @@ function reducer(state, action) {
   }
 }
 
-function useAsync(callback, callbackParams = [], deps = []) {
+function useAsync(callback, callbackParams = [], deps = [], preventFirstFetch = false) {
   const [state, dispatch] = useReducer(reducer, {
     loading: false,
     data: null,
     error: false,
   })
+
+  const [isInitialMount, setIsInitialMount] = useState(preventFirstFetch)
 
   const fetchData = async (callbackParams = []) => {
     dispatch({ type: 'LOADING' })
@@ -42,13 +44,22 @@ function useAsync(callback, callbackParams = [], deps = []) {
     }
   }
 
+  const refetchData = async (newCallbackParams) => {
+    await fetchData(newCallbackParams)
+  }
+
   useEffect(() => {
+    if (isInitialMount) {
+      setIsInitialMount(false)
+      return
+    }
+
     fetchData(callbackParams)
     // eslint 설정을 다음 줄에서만 비활성화
     // eslint-disable-next-line
   }, deps)
 
-  return [state, fetchData]
+  return [state, refetchData]
 }
 
 export default useAsync

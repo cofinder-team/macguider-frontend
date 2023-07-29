@@ -1,14 +1,22 @@
 import { axiosInstanceV2 } from '@/lib/axios'
 
-export async function getDeals(page = 1, size = 20) {
+export async function getDeals(page = 1, size = 10, sort = 'date', direction = 'desc') {
   let { data: deals } = await axiosInstanceV2.get(`/deal`, {
     params: {
       page,
       size,
+      sort,
+      direction,
     },
   })
 
   return deals
+}
+
+export async function getDeal(dealId) {
+  let { data: deal } = await axiosInstanceV2.get(`/deal/${dealId}`)
+
+  return deal
 }
 
 export async function getDealRaw(id) {

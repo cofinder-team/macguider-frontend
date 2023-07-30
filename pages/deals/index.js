@@ -20,9 +20,19 @@ import useDealsStore, { filters } from 'store/deals'
 
 const maxPage = 10
 
+const fetchDeals = async ({ pageParam = 1, sortOption, modelId, itemId }) => {
+  return await getDeals(pageParam, 10, sortOption, 'desc', modelId, itemId)
+}
+
 export default function Deals() {
   const { filters: currentFilters, setFilters: setCurrentFilters } = useDealsStore((state) => state)
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false)
+  const sortOption = currentFilters.find((filter) => filter.id === 'sort').options[0].value
+  const [modelId, itemId] = currentFilters.find((filter) => filter.id === 'model').options[0].value
+
+  useEffect(() => {
+    amplitudeTrack('enter_page_deals')
+  }, [])
 
   const {
     status,
@@ -30,22 +40,21 @@ export default function Deals() {
     error,
     isFetching,
     isFetchingNextPage,
-    isFetchingPreviousPage,
     fetchNextPage,
     hasNextPage,
     refetch,
   } = useInfiniteQuery(
-    'deals',
-    async ({ pageParam = 1 }) => {
-      const sortOption = currentFilters.find((filter) => filter.id === 'sort').options[0].value
-      const [modelId, itemId] = currentFilters.find((filter) => filter.id === 'model').options[0]
-        .value
-
-      return await getDeals(pageParam, 10, sortOption, 'desc', modelId, itemId)
-    },
+    ['deals', sortOption, modelId, itemId],
+    (params) =>
+      fetchDeals({
+        ...params,
+        sortOption,
+        modelId,
+        itemId,
+      }),
     {
       getNextPageParam: (lastPage, pages) =>
-        lastPage.length < maxPage ? undefined : pages.length + 1,
+        lastPage?.length < maxPage ? undefined : pages.length + 1,
       refetchOnMount: false,
     }
   )
@@ -59,19 +68,6 @@ export default function Deals() {
     fetchNextPage()
     observer.observe(entry.target)
   }, {})
-
-  const [isInitialMount, setIsInitialMount] = useState(true)
-
-  useEffect(() => {
-    amplitudeTrack('enter_page_deals')
-    setIsInitialMount(false)
-  }, [])
-
-  useEffect(() => {
-    if (!isInitialMount) {
-      refetch()
-    }
-  }, [currentFilters])
 
   const onClickMobilePill = useCallback((type) => {
     amplitudeTrack('click_mobile_pill', {

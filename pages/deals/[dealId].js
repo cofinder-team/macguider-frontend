@@ -2,7 +2,7 @@ import { PageSEO } from '@/components/SEO'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import amplitudeTrack from '@/lib/amplitude/track'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faHandPointUp, faPlus } from '@fortawesome/free-solid-svg-icons'
+import { faHandPointUp, faPlus, faXmark } from '@fortawesome/free-solid-svg-icons'
 import Image from '@/components/Image'
 import Skeleton from 'react-loading-skeleton'
 import { getPrices } from 'utils/price'
@@ -17,6 +17,7 @@ import Banner from '@/components/Banner'
 import 'react-loading-skeleton/dist/skeleton.css'
 import { useQuery, useQueries } from 'react-query'
 import DealCard from '@/components/deals/DealCard'
+import Link from '@/components/Link'
 
 const rightColumnOffsetY = 112
 const numberOfSampleDevices = 6
@@ -525,15 +526,30 @@ export default function Deal({ dealId }) {
                   <iframe src={parseUrl()} className="h-[720px] w-full" />
 
                   {!isCoverRemoved && (
-                    <div
-                      onClick={onClickIframeCover}
-                      className="absolute top-0 left-0 flex h-full w-full flex-col items-center justify-center bg-black text-white opacity-80"
-                    >
-                      <div className="mb-3">
-                        <FontAwesomeIcon icon={faHandPointUp} className="text-4xl" />
-                      </div>
-                      스크롤해서 정보를 확인할 수 있어요
-                    </div>
+                    <>
+                      {deal.source === '중고나라' ? (
+                        <div
+                          onClick={onClickIframeCover}
+                          className="absolute top-0 left-0 flex h-full w-full flex-col items-center justify-center bg-black text-white opacity-80"
+                        >
+                          <div className="mb-3">
+                            <FontAwesomeIcon icon={faHandPointUp} className="text-4xl" />
+                          </div>
+                          스크롤해서 정보를 확인할 수 있어요
+                        </div>
+                      ) : (
+                        <div className="absolute top-0 left-0 flex h-full w-full flex-col items-center justify-center bg-black text-white opacity-90">
+                          <div className="mb-3">
+                            <FontAwesomeIcon icon={faXmark} className="text-4xl" />
+                          </div>
+                          <span className="mb-1 text-sm">PC에서는 iframe을 지원하지 않습니다.</span>
+
+                          <Link href={parseUrl()} className="underline">
+                            {deal.source}에서 확인하기
+                          </Link>
+                        </div>
+                      )}
+                    </>
                   )}
                 </div>
               )}

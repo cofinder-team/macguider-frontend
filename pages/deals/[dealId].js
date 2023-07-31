@@ -48,7 +48,9 @@ export default function Deal({ dealId }) {
     isLoading: loadingDeal,
     error: errorDeal,
     data: deal,
-  } = useQuery(['deal', dealId], () => getDeal(dealId))
+  } = useQuery(['deal', dealId], () => getDeal(dealId), {
+    refetchOnWindowFocus: false,
+  })
 
   const {
     isLoading: loadingDeals,
@@ -59,6 +61,7 @@ export default function Deal({ dealId }) {
     () => getDeals(1, 4, 'date', 'desc', deal?.item.type, deal?.item.model.id),
     {
       enabled: deal && Object.keys(deal).length > 0,
+      refetchOnWindowFocus: false,
     }
   )
 
@@ -68,12 +71,14 @@ export default function Deal({ dealId }) {
     data: priceInfo,
   } = useQuery(['deal', 'price_info', dealId, deal], () => getPriceInfo(deal), {
     enabled: deal && Object.keys(deal).length > 0,
+    refetchOnWindowFocus: false,
   })
 
   const queryResults = useQueries(
     sampleDevices.map((device) => ({
       queryKey: ['deal', 'other_price_info', device.id],
       queryFn: () => getPrices(device.id, device.data[0].options[0].id, false),
+      refetchOnWindowFocus: false,
     }))
   )
 
@@ -171,7 +176,7 @@ export default function Deal({ dealId }) {
   const onClickPriceDetails = useCallback(() => {
     if (!priceInfo || !deal) return
 
-    const { url, item, unused, type } = deal
+    const { url, item, unused } = deal
     const itemId = item.model.id
     const optionId = item.option
 
@@ -180,7 +185,7 @@ export default function Deal({ dealId }) {
     })
 
     const { href } =
-      type === 'M'
+      item.type === 'M'
         ? optionsMac.find((option) => option.id == itemId)
         : optionsIpad.find((option) => option.id == itemId)
 

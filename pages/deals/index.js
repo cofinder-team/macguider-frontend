@@ -37,8 +37,8 @@ const adDeals = [
       },
       details: {
         chip: 'M1',
-        cpu: 7,
-        gpu: 8,
+        cpu: 8,
+        gpu: 7,
         ram: 8,
         ssd: '256GB',
       },

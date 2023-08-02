@@ -7,7 +7,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faRotateRight } from '@fortawesome/free-solid-svg-icons'
 import Skeleton from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
-import Link from '@/components/Link'
 import { Fragment } from 'react'
 import { Transition, Dialog } from '@headlessui/react'
 import { ChevronDownIcon } from '@heroicons/react/20/solid'
@@ -17,12 +16,51 @@ import React from 'react'
 import { classNames } from 'utils/basic'
 import { useInfiniteQuery } from 'react-query'
 import useDealsStore, { filters } from 'store/deals'
+import DealCard from '@/components/deals/DealCard'
+import AdDealCard from '@/components/deals/AdDealCard'
 
 const maxPage = 10
 
+const fetchDeals = async ({ pageParam = 1, sortOption, modelId, itemId }) => {
+  return await getDeals(pageParam, 10, sortOption, 'desc', modelId, itemId)
+}
+
+const adDeals = [
+  {
+    id: 1,
+    item: {
+      type: 'M',
+      model: {
+        id: 2,
+        name: 'MacBook Air 13',
+        option: 1,
+      },
+      details: {
+        chip: 'M1',
+        cpu: 8,
+        gpu: 7,
+        ram: 8,
+        ssd: '256GB',
+      },
+    },
+    price: 750000,
+    sold: false,
+    unused: false,
+    source: '맥가이더',
+    imgSrc: 'https://static.waveon.io/img/apps/18146/398C7B91-E6EC-4662-8CF8-3ADA47ED4122.jpg',
+    average: 1000000,
+    url: 'https://tally.so/r/mK5zoD',
+  },
+]
 export default function Deals() {
   const { filters: currentFilters, setFilters: setCurrentFilters } = useDealsStore((state) => state)
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false)
+  const sortOption = currentFilters.find((filter) => filter.id === 'sort').options[0].value
+  const [modelId, itemId] = currentFilters.find((filter) => filter.id === 'model').options[0].value
+
+  useEffect(() => {
+    amplitudeTrack('enter_page_deals')
+  }, [])
 
   const {
     status,
@@ -30,22 +68,21 @@ export default function Deals() {
     error,
     isFetching,
     isFetchingNextPage,
-    isFetchingPreviousPage,
     fetchNextPage,
     hasNextPage,
     refetch,
   } = useInfiniteQuery(
-    'deals',
-    async ({ pageParam = 1 }) => {
-      const sortOption = currentFilters.find((filter) => filter.id === 'sort').options[0].value
-      const [modelId, itemId] = currentFilters.find((filter) => filter.id === 'model').options[0]
-        .value
-
-      return await getDeals(pageParam, 10, sortOption, 'desc', modelId, itemId)
-    },
+    ['deals', sortOption, modelId, itemId],
+    (params) =>
+      fetchDeals({
+        ...params,
+        sortOption,
+        modelId,
+        itemId,
+      }),
     {
       getNextPageParam: (lastPage, pages) =>
-        lastPage.length < maxPage ? undefined : pages.length + 1,
+        lastPage?.length < maxPage ? undefined : pages.length + 1,
       refetchOnMount: false,
     }
   )
@@ -56,22 +93,12 @@ export default function Deals() {
 
   const [_, setRef] = useIntersect(async (entry, observer) => {
     observer.unobserve(entry.target)
+    amplitudeTrack('scroll_load_more_deals', {
+      page: data?.pages.length + 1,
+    })
     fetchNextPage()
     observer.observe(entry.target)
   }, {})
-
-  const [isInitialMount, setIsInitialMount] = useState(true)
-
-  useEffect(() => {
-    amplitudeTrack('enter_page_deals')
-    setIsInitialMount(false)
-  }, [])
-
-  useEffect(() => {
-    if (!isInitialMount) {
-      refetch()
-    }
-  }, [currentFilters])
 
   const onClickMobilePill = useCallback((type) => {
     amplitudeTrack('click_mobile_pill', {
@@ -114,25 +141,20 @@ export default function Deals() {
     [currentFilters]
   )
 
-  const onClickDealCard = useCallback((dealId) => {
-    amplitudeTrack('click_deal_card', {
-      dealId,
-    })
-  }, [])
-
   const onClickHandleReload = useCallback(async () => {
     amplitudeTrack('click_reload_deals')
 
     try {
-      // fetchDeals()
       refetch()
     } catch (error) {
       console.error('Error fetching deals:', error)
     }
   }, [refetch])
 
-  const getDiscountPercentage = useCallback((price, avgPrice) => {
-    return Math.round((1 - price / avgPrice) * 100)
+  const onClickDealCard = useCallback((dealId) => {
+    amplitudeTrack('click_deal_card', {
+      dealId,
+    })
   }, [])
 
   return (
@@ -248,96 +270,42 @@ export default function Deals() {
         {/* 핫딜 제품들 */}
         <div className="md:mt-6 lg:col-span-2 lg:mt-0 xl:col-span-3">
           <div className="mt-2 grid grid-cols-1 lg:mt-0 xl:grid-cols-2 xl:gap-x-16 xl:gap-y-4">
-            {isFetching && !isFetchingNextPage
-              ? Array.from({ length: 6 }).map((_, index) => (
-                  <div className="flex h-[120px] items-center" key={index}>
-                    <div className="mr-2 flex-1">
-                      <h3>
-                        <Skeleton />
-                      </h3>
-                      <p className="mb-0">
-                        <Skeleton count={2} />
-                      </p>
-                    </div>
-                    <div className="aspect-1 w-1/4 max-w-[100px] ">
-                      <Skeleton height="100%" />
-                    </div>
+            {isFetching && !isFetchingNextPage ? (
+              Array.from({ length: 6 }).map((_, index) => (
+                <div className="flex h-[120px] items-center" key={index}>
+                  <div className="mr-2 flex-1">
+                    <h3>
+                      <Skeleton />
+                    </h3>
+                    <p className="mb-0">
+                      <Skeleton count={2} />
+                    </p>
                   </div>
-                ))
-              : data.pages.map((page, index) => (
+                  <div className="aspect-1 w-1/4 max-w-[100px] ">
+                    <Skeleton height="100%" />
+                  </div>
+                </div>
+              ))
+            ) : (
+              <>
+                {(itemId == 2 || !modelId) &&
+                  adDeals.map((deal) => <AdDealCard key={deal.id} deal={deal} />)}
+
+                {data.pages.map((page, index) => (
                   <React.Fragment key={index}>
-                    {page.map(({ id, unused, item, source, price, average, sold }) => (
-                      <Link
-                        href={`/deals/${id}`}
-                        onClick={() => {
-                          onClickDealCard(id)
+                    {page.map((deal) => (
+                      <DealCard
+                        key={deal.id}
+                        deal={deal}
+                        clickHandler={() => {
+                          onClickDealCard(deal.id)
                         }}
-                        className="flex h-[120px] w-full cursor-pointer items-center overflow-hidden  bg-white"
-                        key={id}
-                      >
-                        <div className="mr-2 flex-1 truncate">
-                          <div className="mt-1 truncate  text-base  font-medium tracking-tight text-gray-600">
-                            <span className="mr-1 inline-block font-semibold">
-                              {unused ? (
-                                <span className="text-blue-500">미개봉</span>
-                              ) : (
-                                <span className="text-green-500">S급</span>
-                              )}
-                            </span>
-                            {item.type === 'M'
-                              ? `${item.model.name} ${item.details.chip}`
-                              : `${item.model.name} ${item.details.gen}세대`}
-                          </div>
-                          <div className="truncate text-xs font-normal text-gray-500">
-                            <span className="mr-1 inline-block  font-semibold text-gray-700">
-                              {source}
-                            </span>
-                            {item.type === 'M'
-                              ? `CPU ${item.details.cpu} GPU ${item.details.gpu}, RAM ${item.details.ram}GB, SSD ${item.details.ssd}`
-                              : `${item.details.cellular ? 'Wi-Fi + Cellular' : 'Wi-Fi'} (${
-                                  item.details.storage
-                                })`}
-                          </div>
-
-                          <div className=" flex items-center text-lg">
-                            <div className="font-bold text-gray-900">
-                              {price?.toLocaleString()}원
-                            </div>
-                          </div>
-
-                          {average && (
-                            <div className="text-xs  text-gray-500">
-                              <span className="font-semibold text-blue-500">
-                                {getDiscountPercentage(price, average)}%&nbsp;
-                              </span>
-                              <span>평균&nbsp;</span>
-                              {average?.toLocaleString()}원
-                            </div>
-                          )}
-                        </div>
-
-                        <div className="flex h-full w-1/4 max-w-[100px] items-center">
-                          <div className="relative aspect-1 overflow-hidden rounded-md">
-                            <img
-                              src={`${process.env.NEXT_PUBLIC_API_URL_V2}/deal/${id}/image`}
-                              alt={`${item.model.name} 썸네일`}
-                              className="h-full w-full object-cover object-center"
-                            />
-
-                            {sold && (
-                              <div className="absolute top-0  left-0 flex h-full w-full items-center justify-center text-sm font-bold text-white ">
-                                <div className="absolute top-0 left-0 h-full w-full bg-black opacity-40" />
-                                <div className="absolute top-0 left-0 flex h-full w-full items-center justify-center">
-                                  판매완료
-                                </div>
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      </Link>
+                      />
                     ))}
                   </React.Fragment>
                 ))}
+              </>
+            )}
           </div>
 
           {isFetchingNextPage && (

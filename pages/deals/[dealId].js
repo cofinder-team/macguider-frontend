@@ -305,7 +305,7 @@ export default function Deal({ dealId }) {
 
                 <div>
                   <span className="text-blue-500 ">
-                    {(deal.average - deal.price).toLocaleString()}원
+                    {(deal.tradePrice.average - deal.price).toLocaleString()}원
                   </span>
                   &nbsp;더 저렴해요
                 </div>
@@ -325,7 +325,9 @@ export default function Deal({ dealId }) {
                     <div className="min-w-0 flex-1">
                       <p className="truncate text-sm text-gray-500 dark:text-gray-400">중고나라</p>
                       <p className="truncate text-base font-bold text-gray-900 dark:text-white">
-                        {deal.average ? `${deal.average.toLocaleString()}원` : 'N/A'}
+                        {deal.tradePrice.average
+                          ? `${deal.tradePrice.average.toLocaleString()}원`
+                          : 'N/A'}
                         <span className="ml-2 inline-block text-sm font-normal text-gray-400">
                           {pastTime()}
                         </span>

@@ -22,16 +22,6 @@ import Link from '@/components/Link'
 const rightColumnOffsetY = 112
 const numberOfSampleDevices = 6
 
-const getPriceInfo = async (deal) => {
-  if (!deal) return
-
-  const { item, unused } = deal
-  const itemId = item.model.id
-  const optionId = item.option
-  const priceInfo = await getPrices(itemId, optionId, unused)
-  return priceInfo
-}
-
 const sampleDevices = optionsMac
   .sort(() => Math.random() - Math.random())
   .slice(0, 3)
@@ -66,15 +56,6 @@ export default function Deal({ dealId }) {
     }
   )
 
-  const {
-    isLoading: loadingPriceInfo,
-    error: errorPriceInfo,
-    data: priceInfo,
-  } = useQuery(['deal', 'price_info', dealId, deal], () => getPriceInfo(deal), {
-    enabled: deal && Object.keys(deal).length > 0,
-    refetchOnWindowFocus: false,
-  })
-
   const queryResults = useQueries(
     sampleDevices.map((device) => ({
       queryKey: ['deal', 'other_price_info', device.id],
@@ -89,12 +70,12 @@ export default function Deal({ dealId }) {
   // Fetch 실패시
   if (errorDeal) {
     router.push('/deals')
-  } else if (errorDeals || errorPriceInfo || errorPriceInfos) {
+  } else if (errorDeals || errorPriceInfos) {
     alert('데이터를 불러오는데 실패했습니다. 잠시 후 다시 시도해주세요.')
   }
 
   // 전체 로딩
-  const loading = loadingDeal || loadingDeals || loadingPriceInfo
+  const loading = loadingDeal || loadingDeals
 
   useEffect(() => {
     let lastScrollTop = 0
@@ -175,7 +156,7 @@ export default function Deal({ dealId }) {
   }, [deal])
 
   const onClickPriceDetails = useCallback(() => {
-    if (!priceInfo || !deal) return
+    if (!deal) return
 
     const { url, item, unused } = deal
     const itemId = item.model.id
@@ -192,7 +173,7 @@ export default function Deal({ dealId }) {
 
     const convertedUrl = href.replace(/optionId=\d+/, `optionId=${optionId}`)
     window.open(convertedUrl, '_blank')
-  }, [priceInfo, dealId, deal])
+  }, [dealId, deal])
 
   const onClickIframeCover = useCallback(() => {
     setIsCoverRemoved(true)
@@ -232,20 +213,15 @@ export default function Deal({ dealId }) {
   }, [dealId, deal])
 
   const getCoupangPrice = useCallback(() => {
-    if (!priceInfo) return
+    if (!deal) return
 
-    const { coupang: coupangPrices } = priceInfo
-    const coupangPrice = coupangPrices.slice(-1)[0]?.price
-
-    return coupangPrice
-  }, [priceInfo])
+    return deal?.coupangPrice?.price
+  }, [deal])
 
   const getCoupangLastUpdatedTime = useCallback(() => {
-    if (!priceInfo) return
+    if (!deal) return
 
-    const { time: coupangLastUpdated } = priceInfo
-
-    const coupangLastUpdatedTime = coupangLastUpdated
+    const coupangLastUpdatedTime = deal?.coupangPrice?.log
 
     if (coupangLastUpdatedTime) {
       const now = new Date()
@@ -264,7 +240,7 @@ export default function Deal({ dealId }) {
 
       return `${diffMinutes}분 전`
     }
-  }, [priceInfo])
+  }, [deal])
 
   return (
     <>
@@ -305,7 +281,7 @@ export default function Deal({ dealId }) {
 
                 <div>
                   <span className="text-blue-500 ">
-                    {(deal.average - deal.price).toLocaleString()}원
+                    {(deal.tradePrice.average - deal.price).toLocaleString()}원
                   </span>
                   &nbsp;더 저렴해요
                 </div>
@@ -325,7 +301,9 @@ export default function Deal({ dealId }) {
                     <div className="min-w-0 flex-1">
                       <p className="truncate text-sm text-gray-500 dark:text-gray-400">중고나라</p>
                       <p className="truncate text-base font-bold text-gray-900 dark:text-white">
-                        {deal.average ? `${deal.average.toLocaleString()}원` : 'N/A'}
+                        {deal.tradePrice.average
+                          ? `${deal.tradePrice.average.toLocaleString()}원`
+                          : 'N/A'}
                         <span className="ml-2 inline-block text-sm font-normal text-gray-400">
                           {pastTime()}
                         </span>
@@ -342,7 +320,7 @@ export default function Deal({ dealId }) {
                 )}
               </li>
               <li className="pt-3 pb-0 sm:pt-4">
-                {loading || !priceInfo ? (
+                {loading ? (
                   <Skeleton height="2rem" />
                 ) : (
                   <div className="flex items-center space-x-4">

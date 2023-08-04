@@ -67,7 +67,7 @@ export default function CurationLayout({ children }) {
           height: 'calc(100vh - ' + headerHeight + 'px)',
         }}
       >
-        <main className="h-full">{children}</main>
+        <main className="mx-auto h-full max-w-md">{children}</main>
       </div>
     </>
   )

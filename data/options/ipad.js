@@ -16,6 +16,7 @@ const optionsIpad = [
         isDeprecated: false, // 단종 여부
         releasedDate: '2020-11-10',
         colors: ['스페이스 그레이', '핑크', '퍼플', '스타라이트'],
+        size: 8.3,
         specs: {
           year: '2020',
           cpu: 'A15 Bionic',
@@ -67,6 +68,7 @@ const optionsIpad = [
         isDeprecated: true, // 단종 여부
         releasedDate: '2020-09-14',
         colors: ['스페이스 그레이', '실버', '로즈 골드', '스카이 블루', '그린'],
+        size: 10.9,
         specs: {
           year: '2020',
           cpu: 'A14 Bionic',
@@ -103,6 +105,7 @@ const optionsIpad = [
         isDeprecated: false, // 단종 여부
         releasedDate: '2022-03-08',
         colors: ['스페이스 그레이', '블루', '핑크', '퍼플', '스타라이트'],
+        size: 10.9,
         specs: {
           year: '2022',
           cpu: 'M1',
@@ -154,6 +157,7 @@ const optionsIpad = [
         isDeprecated: true, // 단종 여부
         releasedDate: '2020-09-14',
         colors: ['스페이스 그레이', '실버'],
+        size: 10.2,
         specs: {
           year: '2020',
           cpu: 'A12 Bionic',
@@ -190,6 +194,7 @@ const optionsIpad = [
         isDeprecated: false, // 단종 여부
         releasedDate: '2021-09-13',
         colors: ['스페이스 그레이', '실버'],
+        size: 10.2,
         specs: {
           year: '2021',
           cpu: 'A13 Bionic',
@@ -230,6 +235,7 @@ const optionsIpad = [
         isDeprecated: false, // 단종 여부
         releasedDate: '2022-10-17',
         colors: ['스페이스 그레이', '실버'],
+        size: 10.9,
         specs: {
           year: '2022',
           cpu: 'A14 Bionic',
@@ -281,6 +287,7 @@ const optionsIpad = [
         isDeprecated: true, // 단종 여부
         releasedDate: '2020-03-17',
         colors: ['스페이스 그레이', '실버'],
+        size: 11,
         specs: {
           year: '2020',
           cpu: 'A12Z Bionic',
@@ -337,6 +344,7 @@ const optionsIpad = [
         isDeprecated: true, // 단종 여부
         releasedDate: '2021-04-19',
         colors: ['스페이스 그레이', '실버'],
+        size: 11,
         specs: {
           year: '2021',
           cpu: 'M1',
@@ -393,6 +401,7 @@ const optionsIpad = [
         isDeprecated: false, // 단종 여부
         releasedDate: '2022-10-17',
         colors: ['스페이스 그레이', '실버'],
+        size: 11,
         specs: {
           year: '2022',
           cpu: 'M2',
@@ -468,6 +477,7 @@ const optionsIpad = [
         isDeprecated: true, // 단종 여부
         releasedDate: '2020-03-17',
         colors: ['스페이스 그레이', '실버'],
+        size: 12.9,
         specs: {
           year: '2020',
           cpu: 'A12Z Bionic',
@@ -524,6 +534,7 @@ const optionsIpad = [
         isDeprecated: true, // 단종 여부
         releasedDate: '2021-04-19',
         colors: ['스페이스 그레이', '실버'],
+        size: 12.9,
         specs: {
           year: '2021',
           cpu: 'M1',
@@ -580,10 +591,11 @@ const optionsIpad = [
         isDeprecated: false, // 단종 여부
         releasedDate: '2022-10-17',
         colors: ['스페이스 그레이', '실버'],
+        size: 12.9,
         specs: {
           year: '2022',
           cpu: 'M2',
-          gen: 4,
+          gen: 6,
         },
         options: [
           {

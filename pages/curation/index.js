@@ -5,6 +5,7 @@ import ProgressBar from '@/components/curation/ProgressBar'
 import SingleSelectForm from '@/components/curation/SingleSelectForm'
 import CurationLayoutWrapper from '@/components/layouts/CurationLayout'
 import optionsIpad from '@/data/options/ipad'
+import { useRouter } from 'next/router'
 import React, { useCallback, useEffect, useState } from 'react'
 
 const questions = [
@@ -133,7 +134,6 @@ const questions = [
         text: '셀룰러 데이터 사용',
         desc: 'Wi-Fi 또는 핫스팟 연결 없이도 인터넷을 사용할 수 있어요.',
         score: '005500550055005500550055000055550000555500005555000055550000555500005555',
-        importance: 2,
         penalty: -2, // 해당 옵션을 선택하지 않으면 점수를 깎음
       },
       {
@@ -141,15 +141,13 @@ const questions = [
         text: 'Face ID',
         desc: '지문 없이 얼굴로 잠금을 해제할 수 있어요.',
         score: '000000000000000000000000555555555555555555555555555555555555555555555555',
-        importance: 2,
         penalty: 0,
       },
       {
         id: 19,
         text: '2세대 Apple Pencil과 호환',
-        desc: '2세대 Apple Pencil은 자석으로 아이패드에 착 달라붙여 충전할 수 있어요.',
+        desc: 'Apple Pencil을 아이패드에 착 달라붙여 충전할 수 있어요.',
         score: '555555555555000000000000555555555555555555555555555555555555555555555555',
-        importance: 2,
         penalty: 0,
       },
     ],
@@ -175,22 +173,71 @@ const initialCandidates = optionsIpad.flatMap((model) =>
   )
 )
 
+const totalSteps = [
+  {
+    type: 'cover',
+  },
+  ...questions.map((question) => ({
+    type: 'question',
+    qId: question.id,
+  })),
+  {
+    type: 'loading',
+  },
+]
+
 export default function Curation() {
-  const [currentStep, setCurrentStep] = useState(-1)
-  const currentQuestion = questions[currentStep] || null
+  const [currentStepIndex, setCurrentStepIndex] = useState(0)
+  const currentStep = totalSteps[currentStepIndex]
+  const currentQuestion =
+    currentStep.type === 'question' && questions.find((q) => q.id === currentStep.qId)
 
   const [candiates, setCandidates] = useState(initialCandidates)
+  const router = useRouter()
 
   useEffect(() => {
     console.log(candiates)
   }, [candiates])
 
+  useEffect(() => {
+    if (currentStep.type === 'loading') {
+      const timeout = Math.floor(Math.random() * 2000) + 1500
+      const selectedCandidates = candiates
+        .sort((a, b) => {
+          const aScore = Object.values(a.scores).reduce((acc, cur) => acc + cur, 0)
+          const bScore = Object.values(b.scores).reduce((acc, cur) => acc + cur, 0)
+
+          if (aScore === bScore) {
+            if (a.modelId === b.modelId) {
+              // 최신 모델 순으로 정렬
+              return b.itemId - a.itemId
+            }
+          }
+
+          return bScore - aScore
+        })
+        .slice(0, 5)
+
+      setTimeout(() => {
+        // route to result page
+        router.push({
+          pathname: '/curation/result',
+          query: {
+            selected: selectedCandidates
+              .map((candidate) => `${candidate.modelId},${candidate.itemId}`)
+              .join(','),
+          },
+        })
+      }, timeout)
+    }
+  }, [currentStep])
+
   const moveNextStep = useCallback(() => {
-    setCurrentStep((prev) => prev + 1)
+    setCurrentStepIndex((prev) => prev + 1)
   }, [])
 
   const movePrevStep = useCallback(() => {
-    setCurrentStep((prev) => prev - 1)
+    setCurrentStepIndex((prev) => prev - 1)
   }, [])
 
   return (
@@ -201,10 +248,10 @@ export default function Curation() {
       />
 
       <CurationLayoutWrapper>
-        {currentStep === -1 && (
+        {currentStep.type === 'cover' && (
           <div className="flex h-full flex-col items-center justify-between py-32">
             <h1 className="text-3xl font-bold text-gray-800">
-              나에게 딱 맞는 <br /> 애플제품 찾기
+              나에게 딱 맞는 <br /> 아이패드는?
             </h1>
 
             <div
@@ -220,7 +267,7 @@ export default function Curation() {
           <div className="relative h-full pt-[40px]">
             <ProgressBar
               totalSteps={questions.length}
-              currentStep={currentStep}
+              currentStepIndex={currentStepIndex}
               movePrevStep={movePrevStep}
             />
 
@@ -240,7 +287,7 @@ export default function Curation() {
           </div>
         )}
 
-        {currentStep === questions.length && <Loading />}
+        {currentStep.type === 'loading' && <Loading />}
       </CurationLayoutWrapper>
     </>
   )

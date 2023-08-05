@@ -6,9 +6,14 @@ export async function getDeals(
   sort = 'date',
   direction = 'desc',
   type,
-  model
+  model,
+  source
 ) {
   const optionalParams = type && model ? { type, model } : {}
+
+  if (source) {
+    optionalParams.source = source
+  }
 
   let { data: deals } = await axiosInstanceV2.get(`/deal`, {
     params: {

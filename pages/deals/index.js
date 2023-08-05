@@ -21,8 +21,8 @@ import AdDealCard from '@/components/deals/AdDealCard'
 
 const maxPage = 10
 
-const fetchDeals = async ({ pageParam = 1, sortOption, modelId, itemId }) => {
-  return await getDeals(pageParam, 10, sortOption, 'desc', modelId, itemId)
+const fetchDeals = async ({ pageParam = 1, sortOption, modelId, itemId, source }) => {
+  return await getDeals(pageParam, 10, sortOption, 'desc', modelId, itemId, source)
 }
 
 const adDeals = [
@@ -57,6 +57,7 @@ export default function Deals() {
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false)
   const sortOption = currentFilters.find((filter) => filter.id === 'sort').options[0].value
   const [modelId, itemId] = currentFilters.find((filter) => filter.id === 'model').options[0].value
+  const source = currentFilters.find((filter) => filter.id === 'source').options[0].value
 
   useEffect(() => {
     amplitudeTrack('enter_page_deals')
@@ -72,13 +73,14 @@ export default function Deals() {
     hasNextPage,
     refetch,
   } = useInfiniteQuery(
-    ['deals', sortOption, modelId, itemId],
+    ['deals', sortOption, modelId, itemId, source],
     (params) =>
       fetchDeals({
         ...params,
         sortOption,
         modelId,
         itemId,
+        source,
       }),
     {
       getNextPageParam: (lastPage, pages) =>
@@ -113,13 +115,6 @@ export default function Deals() {
         sectionId,
         value: Array.isArray(value) ? value.join(' ') : value,
       })
-
-      if (sectionId === 'source') {
-        if (value !== 'joongonara') {
-          alert('준비 중입니다. 이메일을 등록해주시면 가장 먼저 알려드릴게요!')
-          return
-        }
-      }
 
       setCurrentFilters(
         currentFilters.map((filter) => {
@@ -204,61 +199,34 @@ export default function Deals() {
                       {section.name}
                     </legend>
                     <div className="space-y-3 pt-6">
-                      {section.type === 'multiple' ? (
-                        section.options.map((option, optionIdx) => (
-                          <div key={option.value} className="flex items-center">
-                            <input
-                              id={`${section.id}-${optionIdx}`}
-                              name={`${section.id}[]`}
-                              type="checkbox"
-                              className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                              onChange={() => {
-                                onChangeFilter(section.id, option.value)
-                              }}
-                              checked={
-                                currentFilters.find(
-                                  (filter) =>
-                                    filter.id === section.id &&
-                                    filter.options.find(
-                                      (currentOption) => currentOption.value === option.value
-                                    )
-                                ) || false
-                              }
-                            />
-                            <label
-                              htmlFor={`${section.id}-${optionIdx}`}
-                              className="ml-3 text-sm text-gray-600"
-                            >
-                              {option.label}
-                            </label>
-                          </div>
-                        ))
-                      ) : (
-                        <ul className="space-y-4 px-3">
-                          {section.options.map((option, optionIdx) => (
-                            <li
-                              key={option.value}
-                              className={classNames(
-                                currentFilters.find(
-                                  (filter) =>
-                                    filter.id === section.id &&
-                                    filter.options.find(
-                                      (currentOption) => currentOption.value === option.value
-                                    )
-                                )
-                                  ? 'font-semibold text-gray-900'
-                                  : 'text-gray-500',
-                                'flex cursor-pointer items-center text-sm'
-                              )}
-                              onClick={() => {
-                                onChangeFilter(section.id, option.value)
-                              }}
-                            >
-                              {option.label}
-                            </li>
-                          ))}
-                        </ul>
-                      )}
+                      {section.options.map((option, optionIdx) => (
+                        <div key={option.value} className="flex items-center">
+                          <input
+                            id={`${section.id}-${optionIdx}`}
+                            name={`${section.id}[]`}
+                            type="radio"
+                            className="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600"
+                            onChange={() => {
+                              onChangeFilter(section.id, option.value)
+                            }}
+                            checked={
+                              currentFilters.find(
+                                (filter) =>
+                                  filter.id === section.id &&
+                                  filter.options.find(
+                                    (currentOption) => currentOption.value === option.value
+                                  )
+                              ) || false
+                            }
+                          />
+                          <label
+                            htmlFor={`${section.id}-${optionIdx}`}
+                            className="ml-3 text-sm text-gray-600"
+                          >
+                            {option.label}
+                          </label>
+                        </div>
+                      ))}
                     </div>
                   </fieldset>
                 </div>
@@ -386,63 +354,36 @@ export default function Deals() {
                           </div>
                         </legend>
                         <div className="px-4 pb-2 pt-4">
-                          {section.type === 'multiple' ? (
-                            <div className="space-y-6">
-                              {section.options.map((option, optionIdx) => (
-                                <div key={option.value} className="flex items-center">
-                                  <input
-                                    id={`${section.id}-${optionIdx}-mobile`}
-                                    name={`${section.id}[]`}
-                                    checked={
-                                      currentFilters.find(
-                                        (filter) =>
-                                          filter.id === section.id &&
-                                          filter.options.find(
-                                            (currentOption) => currentOption.value === option.value
-                                          )
-                                      ) || false
-                                    }
-                                    onChange={() => {
-                                      onChangeFilter(section.id, option.value)
-                                    }}
-                                    type="checkbox"
-                                    className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                                  />
-                                  <label
-                                    htmlFor={`${section.id}-${optionIdx}-mobile`}
-                                    className="ml-3 text-sm text-gray-500"
-                                  >
-                                    {option.label}
-                                  </label>
-                                </div>
-                              ))}
-                            </div>
-                          ) : (
-                            <ul className="space-y-4 px-3">
-                              {section.options.map((option, optionIdx) => (
-                                <li
-                                  key={option.value}
-                                  className={classNames(
+                          <div className="space-y-6">
+                            {section.options.map((option, optionIdx) => (
+                              <div key={option.value} className="flex items-center">
+                                <input
+                                  id={`${section.id}-${optionIdx}-mobile`}
+                                  name={`${section.id}[]`}
+                                  checked={
                                     currentFilters.find(
                                       (filter) =>
                                         filter.id === section.id &&
                                         filter.options.find(
                                           (currentOption) => currentOption.value === option.value
                                         )
-                                    )
-                                      ? 'font-semibold text-gray-900'
-                                      : 'text-gray-500',
-                                    'flex items-center text-sm'
-                                  )}
-                                  onClick={() => {
+                                    ) || false
+                                  }
+                                  onChange={() => {
                                     onChangeFilter(section.id, option.value)
                                   }}
+                                  type="radio"
+                                  className="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600"
+                                />
+                                <label
+                                  htmlFor={`${section.id}-${optionIdx}-mobile`}
+                                  className="ml-3 text-sm text-gray-500"
                                 >
                                   {option.label}
-                                </li>
-                              ))}
-                            </ul>
-                          )}
+                                </label>
+                              </div>
+                            ))}
+                          </div>
                         </div>
                       </fieldset>
                     </div>

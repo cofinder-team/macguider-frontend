@@ -13,11 +13,11 @@ import { ChevronDownIcon } from '@heroicons/react/20/solid'
 import { XMarkIcon } from '@heroicons/react/24/outline'
 import useIntersect from 'hooks/useIntersect'
 import React from 'react'
-import { classNames } from 'utils/basic'
 import { useInfiniteQuery } from 'react-query'
-import useDealsStore, { filters } from 'store/deals'
+import { filters } from 'store/deals'
 import DealCard from '@/components/deals/DealCard'
 import AdDealCard from '@/components/deals/AdDealCard'
+import { useRouter } from 'next/router'
 
 const maxPage = 10
 
@@ -52,12 +52,26 @@ const adDeals = [
     url: 'https://tally.so/r/mK5zoD',
   },
 ]
-export default function Deals() {
-  const { filters: currentFilters, setFilters: setCurrentFilters } = useDealsStore((state) => state)
+
+export default function Deals({ model, source: sourceOption, sort }) {
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false)
-  const sortOption = currentFilters.find((filter) => filter.id === 'sort').options[0].value
-  const [modelId, itemId] = currentFilters.find((filter) => filter.id === 'model').options[0].value
-  const source = currentFilters.find((filter) => filter.id === 'source').options[0].value
+  const sortOption = sort || 'date'
+  const [modelId, itemId] = model?.split(',') || [null, null]
+  const source = sourceOption || null
+
+  const currentFilters = filters.map((filter) => ({
+    ...filter,
+    options:
+      filter.id === 'sort'
+        ? [filter.options.find((option) => option.value === sortOption) || filter.options[0]]
+        : filter.id === 'model'
+        ? [filter.options.find((option) => option.value[1] === itemId) || filter.options[0]]
+        : filter.id === 'source'
+        ? [filter.options.find((option) => option.value === (source || '')) || filter.options[0]]
+        : [filter.options[0]],
+  }))
+
+  const router = useRouter()
 
   useEffect(() => {
     amplitudeTrack('enter_page_deals')
@@ -116,24 +130,22 @@ export default function Deals() {
         value: Array.isArray(value) ? value.join(' ') : value,
       })
 
-      setCurrentFilters(
-        currentFilters.map((filter) => {
-          if (filter.id === sectionId) {
-            return {
-              ...filter,
-              options: [
-                filters
-                  .find((f) => f.id === sectionId)
-                  .options.find((option) => option.value === value),
-              ],
-            }
-          } else {
-            return filter
-          }
-        })
-      )
+      const newQuery = {
+        ...router.query,
+        [sectionId]: Array.isArray(value) ? value.join(',') : value,
+      }
+
+      if ((sectionId === 'source' && !value) || (sectionId === 'model' && value.length === 0)) {
+        delete newQuery[sectionId]
+      }
+
+      router.push({
+        pathname: '/deals',
+        query: newQuery,
+        shallow: true,
+      })
     },
-    [currentFilters]
+    [router]
   )
 
   const onClickHandleReload = useCallback(async () => {
@@ -396,4 +408,16 @@ export default function Deals() {
       </Transition.Root>
     </>
   )
+}
+
+export async function getServerSideProps(context) {
+  const { model = null, source = null, sort = null } = context.query
+
+  return {
+    props: {
+      model,
+      source,
+      sort,
+    },
+  }
 }

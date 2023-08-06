@@ -19,7 +19,11 @@ export default function SingleSelectForm({ moveNextStep, question, setCandidates
         })
         return newCandidates
       })
-      moveNextStep()
+      moveNextStep({
+        type: 'single',
+        quesitonId: questionId,
+        answerId: optionId,
+      })
     },
     [options, setCandidates, moveNextStep, questionId, importance]
   )

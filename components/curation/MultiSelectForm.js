@@ -39,7 +39,11 @@ export default function MultiSelectForm({ moveNextStep, question, setCandidates 
       })
       return newCandidates
     })
-    moveNextStep()
+    moveNextStep({
+      type: 'multiple',
+      quesitonId: questionId,
+      answerIds: selectedOptions,
+    })
   }, [options, selectedOptions, setCandidates, moveNextStep, questionId, importance])
 
   return (

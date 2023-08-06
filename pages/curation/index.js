@@ -5,6 +5,7 @@ import ProgressBar from '@/components/curation/ProgressBar'
 import SingleSelectForm from '@/components/curation/SingleSelectForm'
 import CurationLayoutWrapper from '@/components/layouts/CurationLayout'
 import optionsIpad from '@/data/options/ipad'
+import amplitudeTrack from '@/lib/amplitude/track'
 import { useRouter } from 'next/router'
 import React, { useCallback, useEffect, useState } from 'react'
 
@@ -196,12 +197,12 @@ export default function Curation() {
   const router = useRouter()
 
   useEffect(() => {
-    console.log(candiates)
-  }, [candiates])
+    amplitudeTrack('enter_curation_main')
+  }, [])
 
   useEffect(() => {
     if (currentStep.type === 'loading') {
-      const timeout = Math.floor(Math.random() * 2000) + 1500
+      const timeout = Math.floor(Math.random() * 1000) + 1500
       const selectedCandidates = candiates
         .sort((a, b) => {
           const aScore = Object.values(a.scores).reduce((acc, cur) => acc + cur, 0)
@@ -232,13 +233,23 @@ export default function Curation() {
     }
   }, [currentStep])
 
-  const moveNextStep = useCallback(() => {
-    setCurrentStepIndex((prev) => prev + 1)
-  }, [])
+  const moveNextStep = useCallback(
+    (info) => {
+      setCurrentStepIndex((prev) => prev + 1)
+      amplitudeTrack('move_next_step', {
+        currentStep: currentStepIndex,
+        ...info,
+      })
+    },
+    [currentStepIndex]
+  )
 
   const movePrevStep = useCallback(() => {
     setCurrentStepIndex((prev) => prev - 1)
-  }, [])
+    amplitudeTrack('move_prev_step', {
+      currentStep: currentStepIndex,
+    })
+  }, [currentStepIndex])
 
   return (
     <>
@@ -256,7 +267,11 @@ export default function Curation() {
 
             <div
               className="w-full cursor-pointer  rounded-full bg-black p-3 text-center font-bold text-white"
-              onClick={moveNextStep}
+              onClick={() => {
+                moveNextStep({
+                  type: 'start',
+                })
+              }}
             >
               시작하기
             </div>

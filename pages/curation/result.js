@@ -10,8 +10,19 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React, { useCallback, useEffect, useState } from 'react'
 import Link from '@/components/Link'
 import { classNames } from 'utils/basic'
+import amplitudeTrack from '@/lib/amplitude/track'
 
 export default function Curation({ selected }) {
+  useEffect(() => {
+    const { Kakao } = window
+
+    if (!Kakao.isInitialized()) {
+      Kakao.init(process.env.NEXT_PUBLIC_KAKAO_API_KEY)
+    }
+
+    amplitudeTrack('enter_curation_result')
+  }, [])
+
   const convertToPairs = useCallback((arr) => {
     const result = []
     for (let i = 0; i < arr.length - 1; i += 2) {
@@ -83,7 +94,19 @@ export default function Curation({ selected }) {
     ]
   })
 
-  const onClickShowDetails = useCallback(
+  const onClickShareBtn = useCallback((modelId, itemId) => {
+    const { Kakao } = window
+    Kakao.Link.sendScrap({
+      requestUrl: 'https://macguider.io/curation',
+      templateId: 96897,
+    })
+    amplitudeTrack('click_share_curation_result', {
+      modelId,
+      itemId,
+    })
+  }, [])
+
+  const onClickToggleDetails = useCallback(
     (index) => {
       setOpenDetails(
         openDetails.map((openDetail, i) => {
@@ -94,9 +117,28 @@ export default function Curation({ selected }) {
           }
         })
       )
+
+      amplitudeTrack('click_toggle_curation_result_details', {
+        modelId: results[index].modelId,
+        itemId: results[index].itemId,
+      })
     },
     [openDetails]
   )
+
+  const onClickBuyBtn = useCallback((modelId, itemId) => {
+    amplitudeTrack('click_buy_curation_result', {
+      modelId,
+      itemId,
+    })
+  }, [])
+
+  const onClickRouteItemDetails = useCallback((modelId, itemId) => {
+    amplitudeTrack('click_route_item_details', {
+      modelId,
+      itemId,
+    })
+  }, [])
 
   return (
     <>
@@ -127,7 +169,13 @@ export default function Curation({ selected }) {
 
                   <div className="flex-1">
                     <div className="font-bold text-blue-500">{index + 1}위</div>
-                    <Link className="cursor-pointer font-semibold text-gray-800" href={item.href}>
+                    <Link
+                      className="cursor-pointer font-semibold text-gray-800"
+                      href={item.href}
+                      onClick={() => {
+                        onClickRouteItemDetails(modelId, itemId)
+                      }}
+                    >
                       {`${item.title} ${item.specs.year} (${item.specs.gen}세대)`}
                     </Link>
                     <div className="mt-2 flex flex-wrap items-center">
@@ -144,14 +192,12 @@ export default function Curation({ selected }) {
                   <div className="font-semibold">MacGuider 두줄평</div>
 
                   <ul className="mt-2 space-y-2">
-                    <li className="space-x-2">
-                      <FontAwesomeIcon icon={faCircleCheck} className="text-green-500" />
-                      <span>최고의 성능, 최고의 가격</span>
-                    </li>
-                    <li className="space-x-2">
-                      <FontAwesomeIcon icon={faCircleCheck} className="text-green-500" />
-                      <span>아이패드로 하는 작업으로 돈을 번다면 추천</span>
-                    </li>
+                    {item.summaries.map((summary, index) => (
+                      <li className="space-x-2" key={index}>
+                        <FontAwesomeIcon icon={faCircleCheck} className="text-green-500" />
+                        <span>{summary}</span>
+                      </li>
+                    ))}
                   </ul>
                 </div>
 
@@ -186,7 +232,7 @@ export default function Curation({ selected }) {
                       <span
                         className="relative cursor-pointer text-center text-base text-black"
                         onClick={() => {
-                          onClickShowDetails(index)
+                          onClickToggleDetails(index)
                         }}
                       >
                         {openDetails[index] ? '상세정보 접기' : '상세정보 더보기'}
@@ -199,12 +245,23 @@ export default function Curation({ selected }) {
                   </div>
                 </div>
                 <div className="mt-3 flex items-center space-x-3 text-center">
-                  <div className="w-1/4 cursor-pointer rounded-lg border border-black bg-white p-4">
+                  <div
+                    className="w-1/4 cursor-pointer rounded-lg border border-black bg-white p-4"
+                    onClick={() => {
+                      onClickShareBtn(modelId, itemId)
+                    }}
+                  >
                     공유
                   </div>
-                  <div className="flex-1 cursor-pointer rounded-lg bg-black p-4 font-bold text-white">
-                    중고 120,000원 부터~
-                  </div>
+                  <Link
+                    className="flex-1 cursor-pointer rounded-lg bg-black p-4 font-bold text-white"
+                    href={`/deals?model=P,${modelId}`}
+                    onClick={() => {
+                      onClickBuyBtn(modelId, itemId)
+                    }}
+                  >
+                    새것같은 중고 구매하기
+                  </Link>
                 </div>
               </div>
             )

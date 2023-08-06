@@ -11,7 +11,7 @@ const ContentSecurityPolicy = `
   media-src 'none';
   connect-src *;
   font-src 'self';
-  frame-src giscus.app https://tally.so https://m.cafe.naver.com https://m.bunjang.co.kr
+  frame-src giscus.app https://tally.so https://m.cafe.naver.com https://m.bunjang.co.kr  https://*.kakao.com
 `
 
 const securityHeaders = [

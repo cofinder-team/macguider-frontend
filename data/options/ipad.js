@@ -75,7 +75,10 @@ const optionsIpad = [
           cpu: 'A14 Bionic',
           gen: 4,
         },
-        summaries: ['M1 아니어도 충분히 빨라요.', 'iPad와  iPad Air 중에 고민하고 있다면 이걸로'],
+        summaries: [
+          'M1칩이 아니어도 충분히 빨라요.',
+          '최신 iPad와  iPad Air 중에 고민하고 있다면 이걸로',
+        ],
         options: [
           {
             id: 1,

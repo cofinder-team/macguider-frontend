@@ -22,7 +22,10 @@ export default function ProgressBar({ currentStepIndex, totalSteps, movePrevStep
         <div className="h-4 w-full rounded-full bg-gray-200 ">
           <div
             className="h-full rounded-full bg-gray-600"
-            style={{ width: `${(currentStepIndex / totalSteps) * 100}%` }}
+            style={{
+              width: `${((currentStepIndex - 1) / totalSteps) * 100}%`,
+              transition: 'width 0.5s ease-in-out',
+            }}
           ></div>
         </div>
       </div>

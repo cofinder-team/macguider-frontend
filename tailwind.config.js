@@ -162,6 +162,15 @@ module.exports = {
           },
         },
       }),
+      keyframes: {
+        'slide-left': {
+          from: { 'margin-left': '100%' },
+          to: { 'margin-left': '0%' },
+        },
+      },
+      animation: {
+        'slide-left': 'slide-left 1s ease-in-out',
+      },
     },
   },
   plugins: [

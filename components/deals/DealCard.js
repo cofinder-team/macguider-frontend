@@ -3,7 +3,8 @@ import Link from '@/components/Link'
 import React from 'react'
 
 export default function DealCard({ deal, clickHandler }) {
-  const { id, item, price, source, sold, unused, average } = deal
+  const { id, item, price, source, sold, unused, tradePrice } = deal
+  const { average } = tradePrice
 
   const getDiscountPercentage = useCallback((price, avgPrice) => {
     return Math.round((1 - price / avgPrice) * 100)

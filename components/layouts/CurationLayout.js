@@ -1,10 +1,10 @@
 import siteMetadata from '@/data/siteMetadata'
-import Link from './Link'
+import Link from '@/components/Link'
 import Logo from '@/data/logo.svg'
 import { useEffect, useRef, useState } from 'react'
-import Navigation from './Navigation'
+import Navigation from '../Navigation'
 
-export default function SectionContainer({ children }) {
+export default function CurationLayout({ children }) {
   const headerRef = useRef(null)
   const [headerHeight, setHeaderHeight] = useState(0)
 
@@ -41,12 +41,13 @@ export default function SectionContainer({ children }) {
         </div>
       </header>
       <div
-        className="mx-auto  max-w-3xl px-4 sm:px-6 xl:max-w-6xl xl:px-0"
+        className="mx-auto  max-w-3xl  px-4 sm:px-6 xl:max-w-6xl xl:px-0"
         style={{
           marginTop: headerHeight + 'px',
+          height: 'calc(100vh - ' + headerHeight + 'px)',
         }}
       >
-        {children}
+        <main className="mx-auto h-full max-w-md">{children}</main>
       </div>
     </>
   )

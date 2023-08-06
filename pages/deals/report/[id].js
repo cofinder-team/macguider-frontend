@@ -56,7 +56,7 @@ export default function DealReport({ id }) {
                 unused: deal?.unused,
                 sold: deal?.sold,
                 price: deal?.price?.toLocaleString(),
-                average: deal?.average?.toLocaleString(),
+                average: deal?.tradePrice?.average?.toLocaleString(),
               }).map(([k, v]) => (
                 <li className="py-1" key={k}>
                   <div className="flex content-center justify-between">

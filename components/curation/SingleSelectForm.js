@@ -32,7 +32,7 @@ export default function SingleSelectForm({ moveNextStep, question, setCandidates
     <div className="absolute top-0 right-0 left-0 flex h-full flex-col justify-evenly pt-[100px]">
       <div className="text-center">
         <h3 className=" text-xl font-semibold text-gray-800">{q}</h3>
-        {desc && <p className="mt-2 text-base text-gray-500">사용가능한 예산을 선택해주세요.</p>}
+        {desc && <p className="mt-2 text-base text-gray-500">{desc}</p>}
       </div>
 
       <div className="w-full space-y-10 py-6">

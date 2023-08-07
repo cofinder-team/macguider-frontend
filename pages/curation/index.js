@@ -32,7 +32,7 @@ const questions = [
       },
       {
         id: 4,
-        text: 'MacGuider가 추천해주세요',
+        text: '유동적이에요.',
         score: '555555555555111111113333550055005500550055005000000000000000000000000000',
       },
     ],
@@ -70,7 +70,7 @@ const questions = [
     id: 'q3',
     type: 'single',
     question: '필기감은 얼마나 중요하신가요?',
-    desc: '선이 펜을 빨리 따라오면 필기감이 좋다는 의견이 많습니다.',
+    desc: '선이 펜을 빨리 따라오면 필기감이 좋은 편이에요',
     options: [
       {
         id: 9,
@@ -89,7 +89,7 @@ const questions = [
       },
       {
         id: 12,
-        text: 'MacGuider가 추천해주세요',
+        text: '잘 모르겠어요',
         score: '444455555555444444444444333333333333333333333333333333333333333333333333',
       },
     ],
@@ -99,7 +99,7 @@ const questions = [
     id: 'q4',
     type: 'single',
     question: '저장 공간은 어느 정도 필요하신가요?',
-    desc: '현재 사용하고 계신 핸드폰의 저장 용량을 참고하면 좋아요.',
+    desc: '현재 사용 중인 핸드폰의 저장 용량을 참고하면 좋아요.',
     options: [
       {
         id: 13,
@@ -261,8 +261,10 @@ export default function Curation() {
       <CurationLayoutWrapper>
         {currentStep.type === 'cover' && (
           <div className="flex h-full flex-col items-center justify-between py-32">
-            <h1 className="text-3xl font-bold text-gray-800">
-              나에게 딱 맞는 <br /> 아이패드는?
+            <h1 className="mt-16 text-4xl font-bold leading-11 text-gray-800">
+              나에게 딱 맞는 <br /> <strong className="bg-[lime]">iPad</strong>
+              <br />
+              추천 받기.
             </h1>
 
             <div

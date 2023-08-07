@@ -103,8 +103,8 @@ const questions = [
   {
     id: 'q4',
     type: 'single',
-    question: '<strong style="background: lime">저장공간</strong>은 어느 정도 필요하신가요?',
-    desc: '현재 사용 중인 핸드폰의 저장 용량을 참고하면 좋아요.',
+    question: '<strong style="background: lime">저장공간</strong>은 얼마나 필요하신가요?',
+    desc: '쓰고 있는 핸드폰의 저장 용량을 참고하면 좋아요.',
     options: [
       {
         id: 13,
@@ -274,7 +274,7 @@ export default function Curation() {
               <img src="/static/images/ipads/ipad-air-2022.jpeg" className="-ml-36" width={240} />
 
               <h1 className="text-4xl font-bold leading-11 text-gray-800">
-                내게 딱 맞는 <br /> <strong className="bg-[lime]">iPad 찾기.</strong>
+                내게 딱 맞는 <br /> <span className="bg-[lime]">iPad 찾기.</span>
                 <br />
               </h1>
             </div>

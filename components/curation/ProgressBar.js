@@ -8,7 +8,7 @@ export default function ProgressBar({ currentStepIndex, totalSteps, movePrevStep
   }, [movePrevStep])
 
   return (
-    <div className="relative z-10 px-6">
+    <div className="relative z-10">
       <div className="mt-2 flex items-center space-x-2 text-gray-600">
         <div className="cursor-pointer" onClick={onClickBtn}>
           <FontAwesomeIcon icon={faChevronLeft} />

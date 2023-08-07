@@ -205,7 +205,9 @@ export default function Curation({ selected }) {
                         {details[index].map((detail, index) => (
                           <li className="border-b border-gray-100 " key={index}>
                             <div className="font-base text-sm text-gray-400">{detail.title}</div>
-                            <div className="text-lg font-bold">{detail.value}</div>
+                            <div className="text-lg font-semibold text-gray-700">
+                              {detail.value}
+                            </div>
 
                             <p className="mt-1 text-sm text-gray-700">{detail.desc}</p>
                           </li>

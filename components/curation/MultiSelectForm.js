@@ -52,10 +52,10 @@ export default function MultiSelectForm({ moveNextStep, question, setCandidates 
         <h3 className=" text-xl font-extrabold text-gray-800">
           마지막이에요! <br /> <strong className="bg-[lime]">추가 기능</strong>을 선택해주세요
         </h3>
-        <p className="mt-2">최대한 반영해볼게요</p>
+        <p className="mt-2 font-semibold">최대한 반영해볼게요</p>
       </div>
 
-      <div className="w-full space-y-10 py-6">
+      <div className="w-full space-y-3 py-6">
         {options.map((option, index) => (
           <div
             className={classNames(

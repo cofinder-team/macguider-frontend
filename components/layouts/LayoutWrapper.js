@@ -1,5 +1,5 @@
-import SectionContainer from './SectionContainer'
-import Footer from './Footer'
+import SectionContainer from '../SectionContainer'
+import Footer from '../Footer'
 
 const LayoutWrapper = ({ children }) => {
   return (

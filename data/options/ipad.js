@@ -16,11 +16,13 @@ const optionsIpad = [
         isDeprecated: false, // 단종 여부
         releasedDate: '2020-11-10',
         colors: ['스페이스 그레이', '핑크', '퍼플', '스타라이트'],
+        size: 8.3,
         specs: {
           year: '2020',
           cpu: 'A15 Bionic',
           gen: 6,
         },
+        summaries: ['휴대용 태블릿 끝판왕', '누워서 보기에 최적화된 사이즈와 무게'],
         options: [
           {
             id: 1,
@@ -67,11 +69,16 @@ const optionsIpad = [
         isDeprecated: true, // 단종 여부
         releasedDate: '2020-09-14',
         colors: ['스페이스 그레이', '실버', '로즈 골드', '스카이 블루', '그린'],
+        size: 10.9,
         specs: {
           year: '2020',
           cpu: 'A14 Bionic',
           gen: 4,
         },
+        summaries: [
+          'M1칩이 아니어도 충분히 빨라요.',
+          '최신 iPad와  iPad Air 중에 고민하고 있다면 이걸로',
+        ],
         options: [
           {
             id: 1,
@@ -103,11 +110,16 @@ const optionsIpad = [
         isDeprecated: false, // 단종 여부
         releasedDate: '2022-03-08',
         colors: ['스페이스 그레이', '블루', '핑크', '퍼플', '스타라이트'],
+        size: 10.9,
         specs: {
           year: '2022',
           cpu: 'M1',
           gen: 5,
         },
+        summaries: [
+          '대부분의 사람들에게 합리적인 선택',
+          '뛰어난 성능과 휴대성을 모두 챙기고 싶다면',
+        ],
         options: [
           {
             id: 5,
@@ -154,11 +166,13 @@ const optionsIpad = [
         isDeprecated: true, // 단종 여부
         releasedDate: '2020-09-14',
         colors: ['스페이스 그레이', '실버'],
+        size: 10.2,
         specs: {
           year: '2020',
           cpu: 'A12 Bionic',
           gen: 8,
         },
+        summaries: ['부담없이 입문하기 좋아요.', '영상시청과 웹서핑에 최적화되어 있어요.'],
         options: [
           {
             id: 1,
@@ -190,11 +204,13 @@ const optionsIpad = [
         isDeprecated: false, // 단종 여부
         releasedDate: '2021-09-13',
         colors: ['스페이스 그레이', '실버'],
+        size: 10.2,
         specs: {
           year: '2021',
           cpu: 'A13 Bionic',
           gen: 9,
         },
+        summaries: ['부담없이 입문하기 좋아요.', '영상시청과 웹서핑에 최적화되어 있어요.'],
         options: [
           {
             id: 5,
@@ -230,11 +246,13 @@ const optionsIpad = [
         isDeprecated: false, // 단종 여부
         releasedDate: '2022-10-17',
         colors: ['스페이스 그레이', '실버'],
+        size: 10.9,
         specs: {
           year: '2022',
           cpu: 'A14 Bionic',
           gen: 10,
         },
+        summaries: ['포지션도 가격도 에매한 제품', '여전히 Apple Pencil 1세대만 지원해요'],
         options: [
           {
             id: 9,
@@ -281,11 +299,13 @@ const optionsIpad = [
         isDeprecated: true, // 단종 여부
         releasedDate: '2020-03-17',
         colors: ['스페이스 그레이', '실버'],
+        size: 11,
         specs: {
           year: '2020',
           cpu: 'A12Z Bionic',
           gen: 2,
         },
+        summaries: ['3년이 지난 지금도 여전히 현역', '가성비 있게 iPad Pro에 입문하고 싶다면'],
         options: [
           {
             id: 1,
@@ -337,11 +357,13 @@ const optionsIpad = [
         isDeprecated: true, // 단종 여부
         releasedDate: '2021-04-19',
         colors: ['스페이스 그레이', '실버'],
+        size: 11,
         specs: {
           year: '2021',
           cpu: 'M1',
           gen: 3,
         },
+        summaries: ['아직도 한참 현역', '여전히 차고 넘치는 성능'],
         options: [
           {
             id: 9,
@@ -393,11 +415,13 @@ const optionsIpad = [
         isDeprecated: false, // 단종 여부
         releasedDate: '2022-10-17',
         colors: ['스페이스 그레이', '실버'],
+        size: 11,
         specs: {
           year: '2022',
           cpu: 'M2',
           gen: 4,
         },
+        summaries: ['아이패드로 돈을 번다면 이걸로', '한치의 버벅임을 용납할 수 없다면'],
         options: [
           {
             id: 17,
@@ -468,11 +492,13 @@ const optionsIpad = [
         isDeprecated: true, // 단종 여부
         releasedDate: '2020-03-17',
         colors: ['스페이스 그레이', '실버'],
+        size: 12.9,
         specs: {
           year: '2020',
           cpu: 'A12Z Bionic',
           gen: 4,
         },
+        summaries: ['3년이 지난 지금도 여전히 현역', '가성비 있게 iPad Pro에 입문하고 싶다면'],
         options: [
           {
             id: 1,
@@ -524,11 +550,13 @@ const optionsIpad = [
         isDeprecated: true, // 단종 여부
         releasedDate: '2021-04-19',
         colors: ['스페이스 그레이', '실버'],
+        size: 12.9,
         specs: {
           year: '2021',
           cpu: 'M1',
           gen: 5,
         },
+        summaries: ['여전히 차고 넘치는 성능', '미니 LED 디스플레이가 눈을 사로잡아요'],
         options: [
           {
             id: 9,
@@ -580,11 +608,13 @@ const optionsIpad = [
         isDeprecated: false, // 단종 여부
         releasedDate: '2022-10-17',
         colors: ['스페이스 그레이', '실버'],
+        size: 12.9,
         specs: {
           year: '2022',
           cpu: 'M2',
-          gen: 4,
+          gen: 6,
         },
+        summaries: ['아이패드로 돈을 번다면 이걸로', '미니 LED 디스플레이가 눈을 사로잡아요'],
         options: [
           {
             id: 17,

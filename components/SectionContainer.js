@@ -1,13 +1,10 @@
 import siteMetadata from '@/data/siteMetadata'
 import Link from './Link'
-import headerNavLinks from '@/data/headerNavLinks'
 import Logo from '@/data/logo.svg'
-import { useRouter } from 'next/router'
-import MobileNav from './MobileNav'
 import { useEffect, useRef, useState } from 'react'
+import Navigation from './Navigation'
 
 export default function SectionContainer({ children }) {
-  const router = useRouter()
   const headerRef = useRef(null)
   const [headerHeight, setHeaderHeight] = useState(0)
 
@@ -40,24 +37,7 @@ export default function SectionContainer({ children }) {
               </div>
             </Link>
           </div>
-          <div className="flex items-center text-base leading-5">
-            <div className="hidden sm:block">
-              {headerNavLinks.map((link) => (
-                <Link
-                  key={link.title}
-                  href={link.href}
-                  className={`p-1 font-semibold ${
-                    router.pathname.startsWith(link.href)
-                      ? 'text-blue-700'
-                      : 'text-gray-900 dark:text-gray-100'
-                  } sm:p-4`}
-                >
-                  {link.title}
-                </Link>
-              ))}
-            </div>
-            <MobileNav />
-          </div>
+          <Navigation />
         </div>
       </header>
       <div

@@ -17,10 +17,11 @@ export const filters = [
     id: 'source',
     name: '중고 플랫폼',
     options: [
-      { value: 'joongonara', label: '중고나라' },
-      { value: 'bunjang', label: '번개장터' },
+      { value: '', label: '전체' },
+      { value: '중고나라', label: '중고나라' },
+      { value: '번개장터', label: '번개장터' },
     ],
-    type: 'multiple',
+    type: 'single',
   },
   {
     id: 'model',

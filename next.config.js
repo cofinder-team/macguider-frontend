@@ -5,13 +5,13 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
 // You might need to insert additional domains in script-src if you are using external services
 const ContentSecurityPolicy = `
   default-src 'self';
-  script-src 'self' 'unsafe-eval' 'unsafe-inline' giscus.app https://tally.so;
+  script-src 'self' 'unsafe-eval' 'unsafe-inline' giscus.app https://tally.so https://*.kakao.com https://*.kakaocdn.net;
   style-src 'self' 'unsafe-inline';
   img-src * blob: data:;
   media-src 'none';
   connect-src *;
   font-src 'self';
-  frame-src giscus.app https://tally.so https://m.cafe.naver.com https://m.bunjang.co.kr
+  frame-src giscus.app https://tally.so https://m.cafe.naver.com https://m.bunjang.co.kr  https://*.kakao.com
 `
 
 const securityHeaders = [

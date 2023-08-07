@@ -2,12 +2,15 @@ import { useState } from 'react'
 import Link from './Link'
 import headerNavLinks from '@/data/headerNavLinks'
 import { useRouter } from 'next/router'
+import amplitudeTrack from '@/lib/amplitude/track'
 
 const MobileNav = () => {
   const router = useRouter()
   const [navShow, setNavShow] = useState(false)
 
   const onToggleNav = () => {
+    amplitudeTrack('toggle_mobile_nav')
+
     setNavShow((status) => {
       if (status) {
         document.body.style.overflow = 'auto'
@@ -20,7 +23,7 @@ const MobileNav = () => {
   }
 
   return (
-    <div className="sm:hidden">
+    <div className="xl:hidden">
       <button
         type="button"
         className="ml-1 mr-1 h-8 w-8 rounded py-1"

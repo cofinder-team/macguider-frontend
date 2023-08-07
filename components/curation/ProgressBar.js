@@ -1,4 +1,4 @@
-import { faCircleChevronLeft } from '@fortawesome/free-solid-svg-icons'
+import { faChevronLeft, faCircleChevronLeft } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useCallback } from 'react'
 
@@ -9,24 +9,24 @@ export default function ProgressBar({ currentStepIndex, totalSteps, movePrevStep
 
   return (
     <div className="relative z-10 px-6">
-      <div className="flex items-center justify-between">
-        <span className="ml-auto text-xs text-gray-400">
-          {currentStepIndex}/{totalSteps}
-        </span>
-      </div>
-      <div className="mt-2 flex items-center space-x-2 text-gray-400">
+      <div className="mt-2 flex items-center space-x-2 text-gray-600">
         <div className="cursor-pointer" onClick={onClickBtn}>
-          <FontAwesomeIcon icon={faCircleChevronLeft} />
+          <FontAwesomeIcon icon={faChevronLeft} />
         </div>
 
-        <div className="h-4 w-full rounded-full bg-gray-200 ">
-          <div
-            className="h-full rounded-full bg-gray-600"
-            style={{
-              width: `${((currentStepIndex - 1) / totalSteps) * 100}%`,
-              transition: 'width 0.5s ease-in-out',
-            }}
-          ></div>
+        <div className="flex h-4 w-full items-center space-x-1 px-12">
+          {Array.from({ length: totalSteps }).map((step, index) => {
+            return (
+              <div
+                className="h-[3px] rounded-full"
+                key={index}
+                style={{
+                  width: (1 / totalSteps) * 100 + '%',
+                  backgroundColor: index < currentStepIndex ? '#00FF00' : '#8F8F94',
+                }}
+              ></div>
+            )
+          })}
         </div>
       </div>
     </div>

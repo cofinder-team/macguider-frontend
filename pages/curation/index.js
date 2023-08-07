@@ -13,7 +13,7 @@ const questions = [
   {
     id: 'q1',
     type: 'single',
-    question: '예산은 어느 정도로 생각하시나요?',
+    question: '<strong style="background: lime">예산</strong>은 얼마인가요?',
     options: [
       {
         id: 1,
@@ -32,7 +32,7 @@ const questions = [
       },
       {
         id: 4,
-        text: '유동적이에요.',
+        text: '유동적이에요',
         score: '555555555555111111113333550055005500550055005000000000000000000000000000',
       },
     ],
@@ -41,27 +41,32 @@ const questions = [
   {
     id: 'q2',
     type: 'single',
-    question: '주로 어떤 용도로 사용하실 건가요?',
+    question: '어떤 <strong style="background: lime">용도</strong>로 사용하실 건가요?',
+    desc: '주로 사용하실 용도를 골라주세요',
     options: [
       {
         id: 5,
         text: '유튜브, 넷플릭스 등 컨텐츠 감상',
         score: '333333333333333333333333333333333333333333333333333333333333333333333333',
+        icon: '🎬',
       },
       {
         id: 6,
         text: '다이어리, 필기, 인강',
         score: '333355555555111111111111555555555555555555555555555555555555555555555555',
+        icon: '📝',
       },
       {
         id: 7,
         text: '드로잉, 사진 및 영상 편집',
         score: '111133333333000000000000555555555555555555555555555555555555555555555555',
+        icon: '🎨',
       },
       {
         id: 8,
         text: '모바일 게임',
         score: '555555555555222222223333555555555555555555555555222222222222222222222222',
+        icon: '🎮',
       },
     ],
     importance: 1, // 가중치
@@ -69,7 +74,7 @@ const questions = [
   {
     id: 'q3',
     type: 'single',
-    question: '필기감은 얼마나 중요하신가요?',
+    question: '<strong style="background: lime">필기감</strong>은 얼마나 중요하신가요?',
     desc: '선이 펜을 빨리 따라오면 필기감이 좋은 편이에요',
     options: [
       {
@@ -98,28 +103,32 @@ const questions = [
   {
     id: 'q4',
     type: 'single',
-    question: '저장 공간은 어느 정도 필요하신가요?',
+    question: '<strong style="background: lime">저장공간</strong>은 어느 정도 필요하신가요?',
     desc: '현재 사용 중인 핸드폰의 저장 용량을 참고하면 좋아요.',
     options: [
       {
         id: 13,
         text: '64GB 이하',
         score: '505050505050010150505050500050005000500050005000500050005000500050005000',
+        desc: '일상적인 작업에는 전혀 문제 없어요.',
       },
       {
         id: 14,
         text: '128GB 이하',
         score: '050505050505050505050505510051005100510051005100510051005100510051005100',
+        desc: '일상적인 작업에는 전혀 문제 없어요.',
       },
       {
         id: 15,
         text: '256GB 이하',
         score: '050505050505050505050505051005100510051005100510051005100510051005100510',
+        desc: '4K 초고화질 영화 25편, 고사양 게임 5개 정도',
       },
       {
         id: 16,
         text: '512GB 이상',
         score: '010101010101010101010101005300530053005300530053005300530053005300530053',
+        desc: '4K 초고화질 영화 50편, 고사양 게임 10개 정도',
       },
     ],
     importance: 2, // 가중치
@@ -133,21 +142,21 @@ const questions = [
       {
         id: 17,
         text: '셀룰러 데이터 사용',
-        desc: 'Wi-Fi 또는 핫스팟 연결 없이도 인터넷을 사용할 수 있어요.',
+        desc: 'Wi-Fi 또는 핫스팟 없이도 인터넷을 사용할 수 있어요.',
         score: '005500550055005500550055000055550000555500005555000055550000555500005555',
         penalty: -2, // 해당 옵션을 선택하지 않으면 점수를 깎음
       },
       {
         id: 18,
         text: 'Face ID',
-        desc: '지문 없이 얼굴로 잠금을 해제할 수 있어요.',
+        desc: '지문 없이 얼굴로 잠금을 해제할 수 있어요',
         score: '000000000000000000000000555555555555555555555555555555555555555555555555',
         penalty: 0,
       },
       {
         id: 19,
         text: '2세대 Apple Pencil과 호환',
-        desc: 'Apple Pencil을 아이패드에 착 달라붙여 충전할 수 있어요.',
+        desc: '아이패드에 착 달라붙여 충전할 수 있어요',
         score: '555555555555000000000000555555555555555555555555555555555555555555555555',
         penalty: 0,
       },
@@ -258,17 +267,20 @@ export default function Curation() {
         description={'나에게 딱맞는 애플 제품을 추천해드립니다.'}
       />
 
-      <CurationLayoutWrapper>
+      <CurationLayoutWrapper bgColor={currentStep.type === 'cover' ? '#fff' : '#F5F5F7'}>
         {currentStep.type === 'cover' && (
-          <div className="flex h-full flex-col items-center justify-between py-32">
-            <h1 className="mt-16 text-4xl font-bold leading-11 text-gray-800">
-              나에게 딱 맞는 <br /> <strong className="bg-[lime]">iPad</strong>
-              <br />
-              추천 받기.
-            </h1>
+          <div className="flex h-full flex-col items-center justify-center py-10">
+            <div className="flex items-center">
+              <img src="/static/images/ipads/ipad-air-2022.jpeg" className="-ml-36" width={240} />
+
+              <h1 className="text-4xl font-bold leading-11 text-gray-800">
+                내게 딱 맞는 <br /> <strong className="bg-[lime]">iPad 찾기.</strong>
+                <br />
+              </h1>
+            </div>
 
             <div
-              className="w-full cursor-pointer  rounded-full bg-black p-3 text-center font-bold text-white"
+              className="mt-40 w-full cursor-pointer rounded-md bg-black p-3 text-center font-bold text-white"
               onClick={() => {
                 moveNextStep({
                   type: 'start',

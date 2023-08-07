@@ -1,11 +1,6 @@
 import { PageSEO } from '@/components/SEO'
 import optionsIpad from '@/data/options/ipad'
-import {
-  faChevronDown,
-  faChevronUp,
-  faCircleCheck,
-  faCircleChevronLeft,
-} from '@fortawesome/free-solid-svg-icons'
+import { faCheck, faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React, { useCallback, useEffect, useState } from 'react'
 import Link from '@/components/Link'
@@ -36,7 +31,7 @@ export default function Curation({ selected }) {
     itemId: itemId,
   }))
 
-  const [openDetails, setOpenDetails] = useState(results.map(() => false))
+  const [openDetails, setOpenDetails] = useState(results.map((_, i) => (i === 0 ? true : false)))
 
   const findItem = useCallback((modelId, itemId) => {
     const model = optionsIpad.find((m) => m.id === modelId)
@@ -149,7 +144,7 @@ export default function Curation({ selected }) {
 
       <section className="mt-md-6 mx-auto mt-3 max-w-md pb-6">
         <h1 className="text-2xl font-bold leading-9 tracking-tight text-gray-900 dark:text-gray-100  sm:leading-10">
-          나에게 가장 적합한 아이패드는...
+          내가 제일 잘 쓸 아이패드는...
         </h1>
 
         <div className="space-y-8 divide-y-[1px] divide-gray-200">
@@ -159,7 +154,7 @@ export default function Curation({ selected }) {
             return (
               <div className="pt-8" key={`${modelId} ${itemId}`}>
                 <div className="flex space-x-3">
-                  <div className="w-[120px]">
+                  <div className="w-[100px]">
                     <img
                       className="aspect-1 object-contain object-center"
                       src={item.imgSrc}
@@ -168,9 +163,9 @@ export default function Curation({ selected }) {
                   </div>
 
                   <div className="flex-1">
-                    <div className="font-bold text-blue-500">{index + 1}위</div>
+                    <div className="font-bold">{index + 1}위</div>
                     <Link
-                      className="cursor-pointer font-semibold text-gray-800"
+                      className="cursor-pointer bg-[lime] text-lg font-semibold text-gray-800"
                       href={item.href}
                       onClick={() => {
                         onClickRouteItemDetails(modelId, itemId)
@@ -179,74 +174,62 @@ export default function Curation({ selected }) {
                       {`${item.title} ${item.specs.year} (${item.specs.gen}세대)`}
                     </Link>
                     <div className="mt-2 flex flex-wrap items-center">
-                      <span className="mr-2 rounded bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-800 dark:bg-gray-700 dark:text-gray-300">
+                      <span className="mr-2 rounded bg-gray-100 px-2.5 py-1 text-xs font-medium text-gray-800 dark:bg-gray-700 dark:text-gray-300">
                         {option.ssd}
                       </span>
-                      <span className="mr-2 rounded bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-800 dark:bg-gray-700 dark:text-gray-300">
+                      <span className="mr-2 rounded bg-gray-100 px-2.5 py-1 text-xs font-medium text-gray-800 dark:bg-gray-700 dark:text-gray-300">
                         {option.connectivity === 'wifi' ? 'Wi-Fi' : 'Wi-Fi + Cellular'}
                       </span>
                     </div>
                   </div>
                 </div>
-                <div className="mt-2 rounded-md bg-gray-100 p-3 text-sm">
+                <div className="mt-3 rounded-lg bg-green-50 px-4 py-3 text-base">
                   <div className="font-semibold">MacGuider 두줄평</div>
 
-                  <ul className="mt-2 space-y-2">
+                  <ul className="mt-2 space-y-1">
                     {item.summaries.map((summary, index) => (
                       <li className="space-x-2" key={index}>
-                        <FontAwesomeIcon icon={faCircleCheck} className="text-green-500" />
+                        <FontAwesomeIcon icon={faCheck} className="text-green-500" />
                         <span>{summary}</span>
                       </li>
                     ))}
                   </ul>
                 </div>
 
-                <div className="mt-3">
-                  <div className="text-sm font-semibold text-gray-900">상세정보</div>
+                <div className="mt-3 rounded-lg bg-gray-100 px-4 py-3">
+                  {openDetails[index] && (
+                    <>
+                      <div className="text-base font-bold text-gray-900">상세정보</div>
 
-                  <div className="relative overflow-hidden">
-                    <ul className="mt-2 space-y-2">
-                      {details[index]
-                        .slice(0, openDetails[index] ? details.length : 2)
-                        .map((detail, index) => (
-                          <li className="border-b border-gray-100 px-2 pb-2 text-sm" key={index}>
-                            <div className="flex items-center justify-between text-gray-900">
-                              <div>{detail.title}</div>
-                              <div className="font-normal">{detail.value}</div>
-                            </div>
+                      <ul className="mt-2 space-y-4">
+                        {details[index].map((detail, index) => (
+                          <li className="border-b border-gray-100 " key={index}>
+                            <div className="font-base text-sm text-gray-400">{detail.title}</div>
+                            <div className="text-lg font-bold">{detail.value}</div>
 
-                            <p className="mt-1 text-base text-gray-500">{detail.desc}</p>
+                            <p className="mt-1 text-sm text-gray-700">{detail.desc}</p>
                           </li>
                         ))}
-                    </ul>
+                      </ul>
+                    </>
+                  )}
 
-                    <div
-                      aria-hidden="true"
-                      className={classNames(
-                        'flex h-2/3 items-center justify-center',
-                        openDetails[index]
-                          ? 'mt-3'
-                          : 'absolute inset-x-0 bottom-0 bg-gradient-to-t from-white opacity-90'
-                      )}
-                    >
-                      <span
-                        className="relative cursor-pointer text-center text-base text-black"
-                        onClick={() => {
-                          onClickToggleDetails(index)
-                        }}
-                      >
-                        {openDetails[index] ? '상세정보 접기' : '상세정보 더보기'}
-                        <FontAwesomeIcon
-                          icon={openDetails[index] ? faChevronUp : faChevronDown}
-                          className="ml-2"
-                        />
-                      </span>
-                    </div>
+                  <div
+                    className="relative cursor-pointer text-center text-base font-semibold text-gray-600"
+                    onClick={() => {
+                      onClickToggleDetails(index)
+                    }}
+                  >
+                    {openDetails[index] ? '접기' : '펼치기'}
+                    <FontAwesomeIcon
+                      icon={openDetails[index] ? faChevronUp : faChevronDown}
+                      className="ml-2"
+                    />
                   </div>
                 </div>
                 <div className="mt-3 flex items-center space-x-3 text-center">
                   <div
-                    className="w-1/4 cursor-pointer rounded-lg border border-black bg-white p-4"
+                    className="w-1/4 cursor-pointer rounded-lg bg-gray-100 p-4 font-bold"
                     onClick={() => {
                       onClickShareBtn(modelId, itemId)
                     }}

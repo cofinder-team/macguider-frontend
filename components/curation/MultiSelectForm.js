@@ -49,10 +49,10 @@ export default function MultiSelectForm({ moveNextStep, question, setCandidates 
   return (
     <div className="absolute top-0 right-0 left-0 flex h-full flex-col justify-evenly pt-[100px]">
       <div className="text-center">
-        <h3 className=" text-xl font-semibold text-gray-800">
-          마지막이에요! <br /> 꼭 들어갔으면 하는 기능을 선택해주세요
+        <h3 className=" text-xl font-extrabold text-gray-800">
+          마지막이에요! <br /> <strong className="bg-[lime]">추가 기능</strong>을 선택해주세요
         </h3>
-        <p className="mt-2 text-base text-gray-500">최대한 반영해볼게요</p>
+        <p className="mt-2">최대한 반영해볼게요</p>
       </div>
 
       <div className="w-full space-y-10 py-6">
@@ -60,7 +60,7 @@ export default function MultiSelectForm({ moveNextStep, question, setCandidates 
           <div
             className={classNames(
               selectedOptions.includes(option.id) ? 'bg-black text-white' : ' bg-white text-black',
-              'w-full cursor-pointer rounded-md border border-gray-600 py-2  px-4  font-bold'
+              'w-full cursor-pointer rounded-md py-6 px-4 text-center font-bold'
             )}
             onClick={() => {
               onClickOption(option.id)
@@ -74,7 +74,7 @@ export default function MultiSelectForm({ moveNextStep, question, setCandidates 
       </div>
 
       <div
-        className="w-full cursor-pointer  rounded-full bg-black p-3 text-center font-bold text-white"
+        className="w-full cursor-pointer  rounded-md bg-black p-3 text-center font-bold text-white"
         onClick={onClickNextStep}
       >
         {selectedOptions.length > 0 ? `${selectedOptions.length}개 선택완료` : '딱히 필요 없어요'}

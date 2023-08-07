@@ -29,7 +29,7 @@ export default function SingleSelectForm({ moveNextStep, question, setCandidates
   )
 
   return (
-    <div className="pt-[100px]">
+    <div className="pt-10">
       <div>
         <h3
           className="text-xl font-extrabold text-gray-800"

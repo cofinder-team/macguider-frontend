@@ -29,7 +29,7 @@ export default function SingleSelectForm({ moveNextStep, question, setCandidates
   )
 
   return (
-    <div className="absolute top-0 right-0 left-0 flex h-full flex-col justify-evenly pt-[100px]">
+    <div className="pt-[100px]">
       <div>
         <h3
           className="text-xl font-extrabold text-gray-800"
@@ -41,9 +41,7 @@ export default function SingleSelectForm({ moveNextStep, question, setCandidates
       <div className="w-full space-y-3 py-6">
         {options.map((option, index) => (
           <div
-            className="w-full cursor-pointer rounded-md  bg-white py-6 px-4 text-center font-semibold
-            hover:bg-black hover:text-white
-            "
+            className="w-full cursor-pointer rounded-md  bg-white py-6 px-4 text-center font-semibold"
             onClick={() => onClickOption(option.id)}
             key={option.id}
           >

@@ -10,7 +10,7 @@ export default function ProgressBar({ currentStepIndex, totalSteps, movePrevStep
   return (
     <div className="relative z-10">
       <div className="mt-2 flex items-center space-x-2 text-gray-600">
-        <div className="cursor-pointer" onClick={onClickBtn}>
+        <div className="cursor-pointer p-3" onClick={onClickBtn}>
           <FontAwesomeIcon icon={faChevronLeft} />
         </div>
 

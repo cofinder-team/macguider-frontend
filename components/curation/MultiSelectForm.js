@@ -47,8 +47,8 @@ export default function MultiSelectForm({ moveNextStep, question, setCandidates 
   }, [options, selectedOptions, setCandidates, moveNextStep, questionId, importance])
 
   return (
-    <div className="absolute top-0 right-0 left-0 flex h-full flex-col justify-evenly pt-[100px]">
-      <div className="text-center">
+    <div className="pt-[100px]">
+      <div>
         <h3 className=" text-xl font-extrabold text-gray-800">
           마지막이에요! <br /> <strong className="bg-[lime]">추가 기능</strong>을 선택해주세요
         </h3>

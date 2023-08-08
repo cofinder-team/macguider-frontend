@@ -21,7 +21,7 @@ config.autoAddCss = false
 
 const isSocket = process.env.SOCKET
 const queryClient = new QueryClient()
-const pathsToPreventWrap = ['/curation']
+const pathsToPreventWrap = ['/curation', '/login', '/signup']
 
 export default function App({ Component, pageProps }) {
   const router = useRouter()

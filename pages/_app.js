@@ -16,6 +16,7 @@ import { QueryClient, QueryClientProvider } from 'react-query'
 import { ReactQueryDevtools } from 'react-query/devtools'
 import { isDevelopment } from 'utils/env'
 import { useRouter } from 'next/router'
+import Auth from '@/components/Auth'
 
 config.autoAddCss = false
 
@@ -35,6 +36,7 @@ export default function App({ Component, pageProps }) {
         </Head>
         {isDevelopment && isSocket && <ClientReload />}
         <Analytics />
+        <Auth />
         {isPreventWrap ? (
           <Component {...pageProps} />
         ) : (

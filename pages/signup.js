@@ -2,20 +2,54 @@ import Logo from '@/data/logo.svg'
 import siteMetadata from '@/data/siteMetadata'
 import Link from '@/components/Link'
 import { register } from 'utils/auth'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import AuthLayout from '@/components/layouts/AuthLayout'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faCircleCheck } from '@fortawesome/free-solid-svg-icons'
+import { classNames } from 'utils/basic'
+import Cookies from 'universal-cookie'
+import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons'
+import { useRouter } from 'next/router'
+
+const passwordRules = ['최소 8자', '특수문자를 포함하세요', '숫자를 포함하세요']
 
 export default function SignUp() {
   const [values, setValues] = useState({
     email: '',
     password: '',
   })
-  const [isEmailSent, setIsEmailSent] = useState(false) // 인증 이메일 발송 여부
-  const [errorMessage, setErrorMessage] = useState('') // 에러 메세지
+  const router = useRouter()
   const { email, password } = values
+
+  const [showPassword, setShowPassword] = useState(false)
+  const [isPasswordInputFocused, setIsPasswordInputFocused] = useState(false)
+
+  const [isEmailSent, setIsEmailSent] = useState(false) // 인증 이메일 발송 여부
+  const [errorMessages, setErrorMessages] = useState({
+    client: null,
+    server: null,
+  }) // 에러 메세지
+
+  const [passwordStatus, setPasswordStatus] = useState(passwordRules.map(() => false))
+
+  useEffect(() => {
+    // 이미 로그인 되어있는 경우
+    const cookies = new Cookies()
+    const refreshToken = cookies.get('refreshToken')
+
+    if (refreshToken) {
+      router.push('/')
+    }
+  }, [])
+
+  const isSignUpReady = useCallback(() => {
+    return passwordStatus.every((status) => status) && !errorMessages.client
+  }, [passwordStatus, errorMessages])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+
+    if (!isSignUpReady()) return
 
     try {
       // 이메일 유무 확인
@@ -27,15 +61,58 @@ export default function SignUp() {
     } catch (error) {
       const { message } = error.response?.data
 
-      setErrorMessage(message)
+      setErrorMessages((prev) => ({
+        ...prev,
+        general: message,
+      }))
     }
   }
 
-  const handleChange = (e) => {
+  const handleFocus = useCallback((e) => {
+    e.preventDefault()
+    setIsPasswordInputFocused(true)
+  }, [])
+
+  const handleBlur = useCallback((e) => {
+    e.preventDefault()
+    setIsPasswordInputFocused(false)
+  }, [])
+
+  const handleChange = useCallback((e) => {
     e.preventDefault()
     const { name, value } = e.target
-    setValues({ ...values, [name]: value })
-  }
+
+    if (name === 'email') {
+      const emailRegex = /\S+@\S+\.\S+/
+      const isValidEmail = emailRegex.test(value)
+
+      if (!isValidEmail) {
+        setErrorMessages((prev) => ({ ...prev, client: '이메일 형식이 올바르지 않습니다.' }))
+      } else {
+        setErrorMessages((prev) => ({ ...prev, client: null }))
+      }
+    }
+
+    if (name === 'password') {
+      const status = passwordRules.map((rule) => {
+        if (rule === '최소 8자') {
+          return value.length >= 8
+        } else if (rule === '특수문자를 포함하세요') {
+          return /[~!@#$%^&*()_+|<>?:{}]/.test(value)
+        } else if (rule === '숫자를 포함하세요') {
+          return /[0-9]/.test(value)
+        }
+      })
+
+      setPasswordStatus(status)
+    }
+
+    setValues((prev) => ({ ...prev, [name]: value }))
+  }, [])
+
+  const toggleShowPassword = useCallback(() => {
+    setShowPassword((prev) => !prev)
+  }, [])
 
   return (
     <AuthLayout>
@@ -119,6 +196,9 @@ export default function SignUp() {
                       onChange={handleChange}
                     />
                   </div>
+                  {errorMessages.client && (
+                    <div className="mt-2 text-sm text-red-500">{errorMessages.client}</div>
+                  )}
                 </div>
 
                 <div>
@@ -135,23 +215,50 @@ export default function SignUp() {
                   </a>
                 </div> */}
                   </div>
-                  <div className="mt-2">
+                  <div className="relative mt-2">
                     <input
                       id="password"
                       name="password"
-                      type="password"
+                      type={showPassword ? 'text' : 'password'}
                       autoComplete="current-password"
                       required
                       className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                       onChange={handleChange}
+                      onFocus={handleFocus}
+                      onBlur={handleBlur}
                     />
+                    {isPasswordInputFocused && (
+                      <div
+                        className="absolute top-0 right-2 flex h-full cursor-pointer items-center justify-center p-1 text-gray-500"
+                        onClick={toggleShowPassword}
+                      >
+                        <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
+                      </div>
+                    )}
                   </div>
+                  <ul className="mt-3 max-w-md list-inside space-y-1 text-sm text-gray-500 dark:text-gray-400">
+                    {passwordStatus.map((status, index) => (
+                      <li className="flex items-center" key={index}>
+                        <FontAwesomeIcon
+                          icon={faCircleCheck}
+                          className={classNames(
+                            'mr-2 ',
+                            status ? 'text-green-500 dark:text-green-400' : 'text-gray-300'
+                          )}
+                        />
+                        {passwordRules[index]}
+                      </li>
+                    ))}
+                  </ul>
                 </div>
 
                 <div>
                   <button
                     type="submit"
-                    className="flex w-full justify-center rounded-md border-[1px] border-black bg-black px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-white hover:text-black focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                    className={classNames(
+                      ' flex w-full justify-center rounded-md border-[1px] border-black bg-black px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm  focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600',
+                      !isSignUpReady() && 'cursor-not-allowed opacity-10'
+                    )}
                     onClick={handleSubmit}
                   >
                     회원가입
@@ -159,13 +266,13 @@ export default function SignUp() {
                 </div>
               </form>
 
-              {errorMessage && (
-                <div className="mt-4 text-center text-sm text-red-500">{errorMessage}</div>
+              {errorMessages.server && (
+                <div className="mt-4  text-sm text-red-500">{errorMessages.server}</div>
               )}
 
               <p className="mt-10 text-center text-sm text-gray-500">
                 이미 계정이 있으신가요?{' '}
-                <Link href="/login" className="font-semibold leading-6 text-black hover:underline">
+                <Link href="/login" className="font-semibold leading-6 text-black underline">
                   로그인
                 </Link>
               </p>

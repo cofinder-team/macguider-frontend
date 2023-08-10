@@ -7,13 +7,16 @@ import AuthLayout from '@/components/layouts/AuthLayout'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCircleCheck } from '@fortawesome/free-solid-svg-icons'
 import { classNames } from 'utils/basic'
-import Cookies from 'universal-cookie'
+import { useCookies } from 'react-cookie'
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons'
 import { useRouter } from 'next/router'
 
 const passwordRules = ['최소 8자', '특수문자를 포함하세요', '숫자를 포함하세요']
 
 export default function SignUp() {
+  const [cookies, setCookie, removeCookie] = useCookies(['refreshToken'])
+  const refreshToken = cookies['refreshToken']
+
   const [values, setValues] = useState({
     email: '',
     password: '',
@@ -34,8 +37,6 @@ export default function SignUp() {
 
   useEffect(() => {
     // 이미 로그인 되어있는 경우
-    const cookies = new Cookies()
-    const refreshToken = cookies.get('refreshToken')
 
     if (refreshToken) {
       router.push('/')
@@ -63,7 +64,7 @@ export default function SignUp() {
 
       setErrorMessages((prev) => ({
         ...prev,
-        general: message,
+        server: message,
       }))
     }
   }

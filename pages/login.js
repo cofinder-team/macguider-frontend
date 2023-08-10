@@ -1,18 +1,16 @@
 import Logo from '@/data/logo.svg'
 import siteMetadata from '@/data/siteMetadata'
 import Link from '@/components/Link'
-import { login, refresh } from 'utils/auth'
+import { login } from 'utils/auth'
 import { useCallback, useEffect, useState } from 'react'
 import AuthLayout from '@/components/layouts/AuthLayout'
 import { useRouter } from 'next/router'
-import Cookies from 'universal-cookie'
 import { useMutation, useQueryClient } from 'react-query'
+import { useCookies } from 'react-cookie'
 
 export default function Login() {
-  const [check, setCheck] = useState({
-    user: true,
-    login: true,
-  })
+  const [cookies, setCookie, removeCookie] = useCookies(['refreshToken'])
+  const refreshToken = cookies['refreshToken']
   const [values, setValues] = useState({
     email: '',
     password: '',
@@ -27,16 +25,18 @@ export default function Login() {
     },
   })
 
-  const onLoginSuccess = ({ accessToken, refreshToken }) => {
-    // api요청할 때마다 accessToken을 헤더에 담아서 전송
-    // axios.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`
+  useEffect(() => {
+    // 이미 로그인 되어있는 경우
+    if (refreshToken) {
+      router.push('/')
+    }
+  }, [])
 
+  const onLoginSuccess = useCallback(({ accessToken, refreshToken }) => {
     // Set access token to queryClient
     queryClient.setQueryData('accessToken', accessToken)
 
-    // Set refresh token to cookie
-    const cookies = new Cookies()
-    cookies.set('refreshToken', refreshToken, {
+    setCookie('refreshToken', refreshToken, {
       path: '/',
       maxAge: 3600 * 24 * 7, // 7 days
       sameSite: 'strict',
@@ -45,7 +45,7 @@ export default function Login() {
 
     // Redirect to home page
     router.push('/')
-  }
+  }, [])
 
   const onLoginError = useCallback((error) => {
     console.log('loginFail', error)
@@ -58,20 +58,20 @@ export default function Login() {
 
   // 일반로그인 시 email, password 입력
   // true: 토큰 발급, false: 로그인 실패 알림(email,password) => 잘못된 이메일, 잘못된 비밀번호 확인
-  const handleSubmit = async (e) => {
+  const handleSubmit = useCallback(async (e) => {
     e.preventDefault()
     try {
       loginMutation.mutate()
     } catch (e) {
       console.log(e.response)
     }
-  }
+  }, [])
 
-  const handleChange = (e) => {
+  const handleChange = useCallback((e) => {
     e.preventDefault()
     const { name, value } = e.target
-    setValues({ ...values, [name]: value })
-  }
+    setValues((prev) => ({ ...prev, [name]: value }))
+  }, [])
 
   return (
     <AuthLayout>
@@ -132,14 +132,14 @@ export default function Login() {
                   </a>
                 </div> */}
               </div>
-              <div className="mt-2">
+              <div className="relative mt-2">
                 <input
                   id="password"
                   name="password"
                   type="password"
                   autoComplete="current-password"
                   required
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  className="block w-full rounded-md border-0 py-1.5 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   onChange={handleChange}
                 />
               </div>
@@ -148,7 +148,7 @@ export default function Login() {
             <div>
               <button
                 type="submit"
-                className="flex w-full justify-center rounded-md border-[1px] border-black bg-black px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-white hover:text-black focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                className="flex w-full justify-center rounded-md border-[1px] border-black bg-black px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm  focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                 onClick={handleSubmit}
               >
                 로그인
@@ -158,7 +158,7 @@ export default function Login() {
 
           <p className="mt-10 text-center text-sm text-gray-500">
             아직 계정이 없으신가요?{' '}
-            <Link href="/signup" className="font-semibold leading-6 text-black hover:underline">
+            <Link href="/signup" className="font-semibold leading-6 text-black underline">
               회원가입
             </Link>
           </p>

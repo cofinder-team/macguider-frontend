@@ -37,9 +37,8 @@ export default function SignUp() {
 
   useEffect(() => {
     // 이미 로그인 되어있는 경우
-
     if (refreshToken) {
-      router.push('/')
+      router.replace('/')
     }
   }, [])
 

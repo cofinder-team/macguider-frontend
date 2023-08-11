@@ -1,11 +1,11 @@
 import Logo from '@/data/logo.svg'
 import siteMetadata from '@/data/siteMetadata'
 import Link from '@/components/Link'
-import { register } from 'utils/auth'
+import { register, resendEmail } from 'utils/auth'
 import { useState, useEffect, useCallback } from 'react'
 import AuthLayout from '@/components/layouts/AuthLayout'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCircleCheck } from '@fortawesome/free-solid-svg-icons'
+import { faCircleCheck, faRotateRight } from '@fortawesome/free-solid-svg-icons'
 import { classNames } from 'utils/basic'
 import { useCookies } from 'react-cookie'
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons'
@@ -25,9 +25,8 @@ export default function SignUp() {
   const { email, password } = values
 
   const [showPassword, setShowPassword] = useState(false)
-  const [isPasswordInputFocused, setIsPasswordInputFocused] = useState(false)
 
-  const [isEmailSent, setIsEmailSent] = useState(false) // 인증 이메일 발송 여부
+  const [currentStep, setCurrentStep] = useState(0)
   const [errorMessages, setErrorMessages] = useState({
     client: null,
     server: null,
@@ -56,7 +55,7 @@ export default function SignUp() {
       const data = await register(email, password)
 
       if (data.email) {
-        setIsEmailSent(true)
+        setCurrentStep(1)
       }
     } catch (error) {
       const { message } = error.response?.data
@@ -67,16 +66,6 @@ export default function SignUp() {
       }))
     }
   }
-
-  const handleFocus = useCallback((e) => {
-    e.preventDefault()
-    setIsPasswordInputFocused(true)
-  }, [])
-
-  const handleBlur = useCallback((e) => {
-    e.preventDefault()
-    setIsPasswordInputFocused(false)
-  }, [])
 
   const handleChange = useCallback((e) => {
     e.preventDefault()
@@ -114,10 +103,23 @@ export default function SignUp() {
     setShowPassword((prev) => !prev)
   }, [])
 
+  const onClickResendEmail = useCallback(async () => {
+    await resendEmail(email)
+  }, [email])
+
+  const onClickMovePrevStep = useCallback(() => {
+    setCurrentStep(0)
+    // initialize values
+    setValues({
+      email: '',
+      password: '',
+    })
+  }, [])
+
   return (
     <AuthLayout>
       <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
-        {isEmailSent ? (
+        {currentStep === 1 ? (
           <div className="sm:mx-auto sm:w-full sm:max-w-[300px]">
             <Link href="/" aria-label={siteMetadata.headerTitle} className="mx-auto h-10 w-auto">
               <div className="flex items-center justify-center">
@@ -141,14 +143,30 @@ export default function SignUp() {
             </h2>
 
             <div className="mt-9">
-              인증 메일을
-              <br />
-              <span className="font-semibold">{email}</span>
-              으로 보냈어요. <br />
-              혹시 이메일이 오지 않았나요?
-              <br />
-              스팸함을 확인하거나 다시 받아보세요
-              <br />
+              <div>
+                인증 메일을
+                <br />
+                <span className="font-semibold">{email}</span>
+                으로 보냈어요. <br />
+                혹시 이메일이 오지 않았나요?
+                <br />
+                스팸함을 확인하거나 다시 받아보세요
+                <br />
+              </div>
+
+              <div
+                onClick={onClickResendEmail}
+                className="mx-auto mt-8 w-fit cursor-pointer rounded-md border-[1px] border-gray-300 py-2 px-3 text-center font-bold text-gray-500"
+              >
+                <FontAwesomeIcon icon={faRotateRight} className="mr-3" />
+                이메일 다시 보내기
+              </div>
+              <div
+                className="mt-3 cursor-pointer text-center font-bold text-gray-500"
+                onClick={onClickMovePrevStep}
+              >
+                뒤로가기
+              </div>
             </div>
           </div>
         ) : (
@@ -224,17 +242,14 @@ export default function SignUp() {
                       required
                       className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                       onChange={handleChange}
-                      onFocus={handleFocus}
-                      onBlur={handleBlur}
                     />
-                    {isPasswordInputFocused && (
-                      <div
-                        className="absolute top-0 right-2 flex h-full cursor-pointer items-center justify-center p-1 text-gray-500"
-                        onClick={toggleShowPassword}
-                      >
-                        <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
-                      </div>
-                    )}
+
+                    <div
+                      className="absolute top-0 right-2 flex h-full cursor-pointer items-center justify-center p-1 text-gray-500"
+                      onClick={toggleShowPassword}
+                    >
+                      <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
+                    </div>
                   </div>
                   <ul className="mt-3 max-w-md list-inside space-y-1 text-sm text-gray-500 dark:text-gray-400">
                     {passwordStatus.map((status, index) => (

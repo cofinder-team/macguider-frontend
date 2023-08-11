@@ -17,6 +17,7 @@ export default function Login() {
   })
   const { email, password } = values
   const router = useRouter()
+  const [errorMessage, setErrorMessage] = useState('')
   const queryClient = useQueryClient({
     defaultOptions: {
       queries: {
@@ -48,7 +49,7 @@ export default function Login() {
   }, [])
 
   const onLoginError = useCallback((error) => {
-    console.log('loginFail', error)
+    setErrorMessage(error.response.data.message)
   }, [])
 
   const loginMutation = useMutation(() => login(email, password), {
@@ -155,6 +156,7 @@ export default function Login() {
               </button>
             </div>
           </form>
+          {errorMessage && <div className="mt-4  text-sm text-red-500">{errorMessage}</div>}
 
           <p className="mt-10 text-center text-sm text-gray-500">
             아직 계정이 없으신가요?{' '}

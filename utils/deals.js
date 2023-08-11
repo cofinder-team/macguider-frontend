@@ -54,6 +54,8 @@ export async function reportDeal(id, payload) {
 }
 
 export async function getItemPrice(type, itemId, unused) {
-  const response = await axiosInstanceV2.get(`/price/deal/${type}/${itemId}?unused=${unused}`)
+  const response = await axiosInstanceV2.get(
+    `/price/trade/${type}/${itemId}/recent?unused=${unused}`
+  )
   return response.data
 }

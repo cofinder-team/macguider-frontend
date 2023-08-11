@@ -1,14 +1,15 @@
 import Logo from '@/data/logo.svg'
 import siteMetadata from '@/data/siteMetadata'
 import Link from '@/components/Link'
-import { login } from 'utils/auth'
+import { certificate, login } from 'utils/auth'
 import { useCallback, useEffect, useState } from 'react'
 import AuthLayout from '@/components/layouts/AuthLayout'
 import { useRouter } from 'next/router'
 import { useMutation, useQueryClient } from 'react-query'
 import { useCookies } from 'react-cookie'
+import { CheckCircleIcon } from '@heroicons/react/24/outline'
 
-export default function Login() {
+export default function Login({ certified }) {
   const [cookies, setCookie, removeCookie] = useCookies(['refreshToken'])
   const refreshToken = cookies['refreshToken']
   const [values, setValues] = useState({
@@ -101,6 +102,21 @@ export default function Login() {
         </div>
 
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+          {certified && (
+            <div className="pointer-events-auto mb-5 w-full max-w-sm overflow-hidden rounded-lg bg-white shadow-lg ring-1 ring-black ring-opacity-5">
+              <div className="p-4">
+                <div className="flex items-center">
+                  <div className="flex-shrink-0">
+                    <CheckCircleIcon className="h-7 w-7 text-green-500" aria-hidden="true" />
+                  </div>
+                  <div className="ml-3 w-0 flex-1 pt-0.5">
+                    <p className="text-sm font-bold text-gray-900">이메일 인증 완료</p>
+                    <p className="mt-1 text-sm text-gray-500">이제 거의 다 왔어요!</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
           <form className="space-y-6" action="#" method="POST">
             <div>
               <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">
@@ -168,4 +184,30 @@ export default function Login() {
       </div>
     </AuthLayout>
   )
+}
+
+export const getServerSideProps = async (context) => {
+  const { uuid = null } = context.query
+
+  if (uuid) {
+    try {
+      await certificate(uuid)
+
+      return {
+        props: {
+          certified: true,
+        },
+      }
+    } catch {
+      return {
+        props: {
+          certified: false,
+        },
+      }
+    }
+  }
+
+  return {
+    props: {},
+  }
 }

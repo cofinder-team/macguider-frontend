@@ -12,7 +12,7 @@ export async function getServerSideProps(context) {
 
     return {
       redirect: {
-        destination: '/login',
+        destination: `/login?uuid=${uuid}`,
         permanent: false,
       },
     }

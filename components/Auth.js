@@ -9,13 +9,7 @@ const Auth = () => {
   const JWT_EXPIRY_TIME = 1000 * 60 * 3 // 3 minutes
   const [cookies, setCookie, removeCookie] = useCookies(['refreshToken'])
   const refreshToken = cookies['refreshToken']
-  const queryClient = useQueryClient({
-    defaultOptions: {
-      queries: {
-        staleTime: Infinity, // Prevent automatic refetching
-      },
-    },
-  })
+  const queryClient = useQueryClient()
 
   const onRefreshSuccess = useCallback(({ accessToken, refreshToken }) => {
     // api요청할 때마다 accessToken을 헤더에 담아서 전송
@@ -37,7 +31,6 @@ const Auth = () => {
 
   useEffect(() => {
     if (refreshToken) {
-      console.log('there is refresh token')
       // silent refresh
       refreshMutation.mutate()
 

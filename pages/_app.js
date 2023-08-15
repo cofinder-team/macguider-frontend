@@ -21,7 +21,13 @@ import Auth from '@/components/Auth'
 config.autoAddCss = false
 
 const isSocket = process.env.SOCKET
-const queryClient = new QueryClient()
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: Infinity,
+    },
+  },
+})
 const pathsToPreventWrap = ['/curation', '/login', '/signup']
 
 export default function App({ Component, pageProps }) {

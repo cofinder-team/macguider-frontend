@@ -26,3 +26,11 @@ export async function certificate(uuid) {
   })
   return response.data
 }
+
+export async function resendEmail(email) {
+  const response = await axiosInstanceV2.post(`/auth/resend`, {
+    email,
+  })
+
+  return response.data
+}

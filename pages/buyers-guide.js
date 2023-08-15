@@ -49,6 +49,14 @@ export default function BuyersGuide() {
         description={'지금 사도 괜찮을까? 애플 제품의 적절한 구매시기를 알려드립니다.'}
       />
 
+      <Promo
+        title="나에게 딱 맞는 iPad 찾기"
+        desc="예산과 용도에 맞는 iPad를 추천해드립니다."
+        href="/curation"
+        imgSrc="https://static.waveon.io/img/apps/18146/아이패드-큐레이션-광고_복사본-_1_-001.jpg"
+        cta="추천받기"
+      />
+
       <section className="mt-md-6 mt-3 pb-6">
         <div className="space-y-2 pb-2 pt-6">
           <h1 className="text-3xl font-extrabold leading-9 tracking-tight text-gray-900 dark:text-gray-100  sm:leading-10">
@@ -133,14 +141,6 @@ export default function BuyersGuide() {
           </table>
         </div>
       </section>
-
-      <Promo
-        title="오늘의 데스크"
-        desc="애플 제품과 가장 잘 어울리는 조합"
-        href="/desk"
-        imgSrc="https://static.waveon.io/img/apps/18146/christopher-gower-v4rLEeIaoBo-unsplash (1).jpg"
-        cta="구경하기"
-      />
 
       <div className="mt-12 flex items-center justify-center">
         <NewsletterForm />

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef } from 'react'
 import { axiosInstanceV2 } from '@/lib/axios'
-import { useQuery, useQueryClient } from 'react-query'
+import { useQuery } from 'react-query'
 import { useRouter } from 'next/router'
 import { useCookies } from 'react-cookie'
 import amplitudeTrack from '@/lib/amplitude/track'
@@ -13,11 +13,6 @@ import { logout } from 'utils/auth'
 import { Base64 } from 'js-base64'
 import { deleteAlert, getAlert } from 'utils/alert'
 import HotdealAlert from '@/components/modal/HotdealAlert'
-
-async function test() {
-  const response = await axiosInstanceV2.get('/alert')
-  console.log(response)
-}
 
 const ads = [
   {

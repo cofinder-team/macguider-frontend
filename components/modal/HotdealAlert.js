@@ -16,6 +16,21 @@ import { classNames, deepEqual, removeDuplicates } from 'utils/basic'
 import { createAlert } from 'utils/alert'
 import amplitudeTrack from '@/lib/amplitude/track'
 
+const unusedOptions = [
+  {
+    label: '미개봉',
+    value: 'new',
+  },
+  {
+    label: 'S급',
+    value: 's',
+  },
+  // {
+  //   label: '둘다',
+  //   value: 'both',
+  // },
+]
+
 function reducer(state, action) {
   switch (action.type) {
     case 'SET_OPTIONS':
@@ -53,8 +68,10 @@ function HotdealAlert({ modelId, modelType, onApply = async () => {} }, ref) {
     type: null,
     id: null,
   })
-  // 현재 선택된 옵션들
+  // 현재 선택된 아이템 옵션들
   const [currentOptions, dispatch] = useReducer(reducer, {})
+  // 미개봉/중고 옵션
+  const [unusedOption, setUnusedOption] = useState(unusedOptions[0])
 
   useEffect(() => {
     // 해당 모델의 가장 기본형으로 옵션을 초기화
@@ -291,7 +308,7 @@ function HotdealAlert({ modelId, modelType, onApply = async () => {} }, ref) {
     setCurrentStep((prev) => prev - 1)
   }, [])
 
-  const handleOptionChange = useCallback(
+  const handleModelOptionChange = useCallback(
     (key, value) => {
       amplitudeTrack('click_select_alert_option', {
         type: selectedModel.type,
@@ -322,6 +339,19 @@ function HotdealAlert({ modelId, modelType, onApply = async () => {} }, ref) {
     [dispatch, selectedModel]
   )
 
+  const handleUnusedOptionChange = useCallback(
+    (option) => {
+      amplitudeTrack('click_select_alert_unused_option', {
+        type: selectedModel.type,
+        id: selectedModel.id,
+        unused: option.value,
+      })
+
+      setUnusedOption(option)
+    },
+    [setUnusedOption, selectedModel]
+  )
+
   const initializeOptions = useCallback(() => {
     setCurrentStep(startStep)
   }, [startStep])
@@ -337,13 +367,14 @@ function HotdealAlert({ modelId, modelType, onApply = async () => {} }, ref) {
       amplitudeTrack('click_apply_alert', {
         type: selectedModel.type,
         id: selectedModel.id,
-        unused: false,
+        unused: unusedOption.value,
       })
 
+      setCurrentStep(startStep)
       setOpen(false)
 
       try {
-        await createAlert(selectedModel.type, isValidItem.id, false)
+        await createAlert(selectedModel.type, isValidItem.id, unusedOption.value === 'new')
       } catch (error) {
         alert(error.response?.data?.message)
         return
@@ -351,7 +382,7 @@ function HotdealAlert({ modelId, modelType, onApply = async () => {} }, ref) {
 
       await onApply()
     }
-  }, [isValidItem])
+  }, [isValidItem, selectedModel, unusedOption, onApply])
 
   const closeModal = useCallback(() => {
     amplitudeTrack('click_close_alert_modal')
@@ -440,7 +471,7 @@ function HotdealAlert({ modelId, modelType, onApply = async () => {} }, ref) {
                                   key={candidateIndex}
                                   className="w-fit pb-2 pr-1"
                                   onClick={() => {
-                                    handleOptionChange(option.key, candidate.value)
+                                    handleModelOptionChange(option.key, candidate.value)
                                   }}
                                 >
                                   <button
@@ -464,6 +495,30 @@ function HotdealAlert({ modelId, modelType, onApply = async () => {} }, ref) {
                             </ul>
                           </div>
                         ))}
+                        <div className="mt-3">
+                          <p className="text-md  text-gray-900 ">상태</p>
+                          <ul className="mt-1 flex flex-wrap items-center">
+                            {unusedOptions.map((option) => (
+                              <li
+                                key={option.value}
+                                className="w-fit pb-2 pr-1"
+                                onClick={() => {
+                                  handleUnusedOptionChange(option)
+                                }}
+                              >
+                                <button
+                                  type="button"
+                                  className={`rounded-md bg-white px-3.5 py-2.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 ${
+                                    option.value === unusedOption.value &&
+                                    `bg-black text-white ring-black hover:bg-black hover:text-white hover:ring-black`
+                                  }`}
+                                >
+                                  {option.label}
+                                </button>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
                       </div>
 
                       <div className="mt-4 flex items-center space-x-2 sm:mt-6">

@@ -165,8 +165,19 @@ export default function MyPage() {
                     className="flex cursor-pointer items-center justify-between py-3"
                   >
                     <div>
-                      <div className="font-medium">{alert.item.model.name}</div>
-                      <div className="text-xs">{alert.unused ? '미개봉' : '개봉'}</div>
+                      <div className="mb-2 flex items-center font-medium">
+                        <span className="mr-1 inline-flex items-center rounded-full bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">
+                          {alert.unused ? '미개봉' : 'S급'}
+                        </span>
+                        {alert.item.model.name}
+                      </div>
+                      <div className="text-sm text-gray-600">
+                        {alert.item.type === 'M'
+                          ? `${alert.item.details.chip}(${alert.item.details.cpu},${alert.item.details.gpu}) / RAM ${alert.item.details.ram}GB / SSD ${alert.item.details.ssd}`
+                          : `${alert.item.details.chip} / ${
+                              alert.item.details.cellular ? 'Wi-Fi + Cellular' : 'Wi-Fi'
+                            } / ${alert.item.details.storage}`}
+                      </div>
                     </div>
                     <div className="p-2" onClick={() => onClickDeleteAlert(alert.id)}>
                       <FontAwesomeIcon icon={faXmark} />

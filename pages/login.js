@@ -5,9 +5,10 @@ import { certificate, login } from 'utils/auth'
 import { useCallback, useEffect, useState } from 'react'
 import AuthLayout from '@/components/layouts/AuthLayout'
 import { useRouter } from 'next/router'
-import { useMutation, useQueryClient } from 'react-query'
+import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { useCookies } from 'react-cookie'
 import { CheckCircleIcon } from '@heroicons/react/24/outline'
+import amplitudeTrack from '@/lib/amplitude/track'
 
 export default function Login({ certified }) {
   const [cookies, setCookie, removeCookie] = useCookies(['refreshToken'])
@@ -20,13 +21,19 @@ export default function Login({ certified }) {
   const router = useRouter()
   const [errorMessage, setErrorMessage] = useState('')
   const queryClient = useQueryClient()
+  const { data: accessToken } = useQuery('accessToken', () => {})
+  const isUserLoggedIn = !!(refreshToken && accessToken)
+
+  useEffect(() => {
+    amplitudeTrack('enter_page_login')
+  }, [])
 
   useEffect(() => {
     // 이미 로그인 되어있는 경우
-    if (refreshToken) {
-      router.push('/')
+    if (isUserLoggedIn) {
+      router.replace('/')
     }
-  }, [])
+  }, [isUserLoggedIn])
 
   const onLoginSuccess = useCallback(({ accessToken, refreshToken }) => {
     // Set access token to queryClient
@@ -56,6 +63,7 @@ export default function Login({ certified }) {
   // true: 토큰 발급, false: 로그인 실패 알림(email,password) => 잘못된 이메일, 잘못된 비밀번호 확인
   const handleSubmit = useCallback(async (e) => {
     e.preventDefault()
+    amplitudeTrack('click_login')
     try {
       loginMutation.mutate()
     } catch (e) {

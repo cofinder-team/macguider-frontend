@@ -9,11 +9,12 @@ import {
   useState,
 } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
-import { CheckIcon, ChevronUpDownIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import { XMarkIcon } from '@heroicons/react/24/outline'
 import { useQuery } from 'react-query'
 import { getItem } from 'utils/item'
 import { classNames, deepEqual, removeDuplicates } from 'utils/basic'
 import { createAlert } from 'utils/alert'
+import amplitudeTrack from '@/lib/amplitude/track'
 
 function reducer(state, action) {
   switch (action.type) {
@@ -270,6 +271,11 @@ function HotdealAlert({ modelId, modelType, onApply = async () => {} }, ref) {
   // 모델 선택
   const handleModelChange = useCallback(
     (model) => {
+      amplitudeTrack('click_select_alert_model', {
+        type: model.type,
+        id: model.id,
+      })
+
       setSelectedModel({
         type: model.type,
         id: model.id,
@@ -281,11 +287,19 @@ function HotdealAlert({ modelId, modelType, onApply = async () => {} }, ref) {
   )
 
   const onClickPrevStep = useCallback(() => {
+    amplitudeTrack('click_prev_alert_step')
     setCurrentStep((prev) => prev - 1)
   }, [])
 
   const handleOptionChange = useCallback(
     (key, value) => {
+      amplitudeTrack('click_select_alert_option', {
+        type: selectedModel.type,
+        id: selectedModel.id,
+        option: key,
+        value,
+      })
+
       if (key === 'chip,cpu') {
         const [chip, cpu] = value.split(' ')
 
@@ -305,7 +319,7 @@ function HotdealAlert({ modelId, modelType, onApply = async () => {} }, ref) {
         })
       }
     },
-    [dispatch]
+    [dispatch, selectedModel]
   )
 
   const initializeOptions = useCallback(() => {
@@ -320,14 +334,28 @@ function HotdealAlert({ modelId, modelType, onApply = async () => {} }, ref) {
 
   const onClickApply = useCallback(async () => {
     if (isValidItem) {
+      amplitudeTrack('click_apply_alert', {
+        type: selectedModel.type,
+        id: selectedModel.id,
+        unused: false,
+      })
+
       setOpen(false)
 
-      await createAlert(selectedModel.type, isValidItem.id, false)
+      try {
+        await createAlert(selectedModel.type, isValidItem.id, false)
+      } catch (error) {
+        alert(error.response?.data?.message)
+        return
+      }
+
       await onApply()
     }
   }, [isValidItem])
 
   const closeModal = useCallback(() => {
+    amplitudeTrack('click_close_alert_modal')
+
     initializeOptions()
 
     setOpen(false)

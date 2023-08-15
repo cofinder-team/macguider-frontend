@@ -10,13 +10,14 @@ import { classNames } from 'utils/basic'
 import { useCookies } from 'react-cookie'
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons'
 import { useRouter } from 'next/router'
+import { useQuery } from 'react-query'
+import amplitudeTrack from '@/lib/amplitude/track'
 
 const passwordRules = ['최소 8자', '특수문자를 포함하세요', '숫자를 포함하세요']
 
 export default function SignUp() {
   const [cookies, setCookie, removeCookie] = useCookies(['refreshToken'])
   const refreshToken = cookies['refreshToken']
-
   const [values, setValues] = useState({
     email: '',
     password: '',
@@ -30,16 +31,22 @@ export default function SignUp() {
   const [errorMessages, setErrorMessages] = useState({
     client: null,
     server: null,
-  }) // 에러 메세지
-
+  })
+  const { data: accessToken } = useQuery('accessToken', () => {})
   const [passwordStatus, setPasswordStatus] = useState(passwordRules.map(() => false))
+
+  const isUserLoggedIn = !!(refreshToken && accessToken)
+
+  useEffect(() => {
+    amplitudeTrack('enter_page_signup')
+  }, [])
 
   useEffect(() => {
     // 이미 로그인 되어있는 경우
-    if (refreshToken) {
+    if (isUserLoggedIn) {
       router.replace('/')
     }
-  }, [])
+  }, [isUserLoggedIn])
 
   const isSignUpReady = useCallback(() => {
     return passwordStatus.every((status) => status) && !errorMessages.client
@@ -49,7 +56,7 @@ export default function SignUp() {
     e.preventDefault()
 
     if (!isSignUpReady()) return
-
+    amplitudeTrack('click_signup')
     try {
       // 이메일 유무 확인
       const data = await register(email, password)
@@ -100,16 +107,19 @@ export default function SignUp() {
   }, [])
 
   const toggleShowPassword = useCallback(() => {
+    amplitudeTrack('toggle_show_password')
     setShowPassword((prev) => !prev)
   }, [])
 
   const onClickResendEmail = useCallback(async () => {
+    amplitudeTrack('click_resend_email')
     await resendEmail(email)
   }, [email])
 
   const onClickMovePrevStep = useCallback(() => {
     setCurrentStep(0)
     // initialize values
+    amplitudeTrack('click_signup_move_prev_step')
     setValues({
       email: '',
       password: '',

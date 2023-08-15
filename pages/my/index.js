@@ -47,7 +47,7 @@ export default function MyPage() {
     data: alertData = [],
     refetch: refetchAlert,
   } = useQuery('alert', () => getAlert(), {
-    staleTime: 30000,
+    staleTime: 0,
     enabled: isUserLoggedIn,
   })
 
@@ -79,7 +79,7 @@ export default function MyPage() {
   }, [])
 
   const onClickAddAlert = useCallback(() => {
-    amplitudeTrack('click_add_alert')
+    amplitudeTrack('click_add_alert_my_page')
 
     if (modalRef.current) {
       modalRef.current.setOpen(true)
@@ -87,14 +87,14 @@ export default function MyPage() {
   }, [])
 
   const onClickDeleteAlert = useCallback(async (alertId) => {
-    amplitudeTrack('click_delete_alert')
+    amplitudeTrack('click_delete_alert_my_page')
 
     await deleteAlert(alertId)
     await refetchAlert()
   }, [])
 
   const onClickAd = useCallback((ad) => {
-    amplitudeTrack('click_ad', {
+    amplitudeTrack('click_ad_my_page', {
       adId: ad.id,
       adTitle: ad.title,
       adLink: ad.link,

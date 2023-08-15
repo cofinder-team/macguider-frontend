@@ -31,7 +31,6 @@ const Auth = () => {
 
   useEffect(() => {
     if (refreshToken) {
-      console.log('there is refresh token')
       // silent refresh
       refreshMutation.mutate()
 

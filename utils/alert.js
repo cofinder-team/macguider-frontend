@@ -14,3 +14,8 @@ export async function deleteAlert(id) {
   const response = await axiosInstanceV2.delete(`/alert/${id}`)
   return response.data
 }
+
+export async function emailDeleteAlert(uuid) {
+  const response = await axiosInstanceV2.delete(`/alert/code/${uuid}`)
+  return response.data
+}

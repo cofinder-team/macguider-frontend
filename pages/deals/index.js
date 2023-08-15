@@ -2,7 +2,7 @@ import { PageSEO } from '@/components/SEO'
 import { useCallback, useEffect, useState } from 'react'
 import amplitudeTrack from '@/lib/amplitude/track'
 import { getDeals } from 'utils/deals'
-import Banner from '@/components/Banner'
+import HotdealBanner from '@/components/HotdealBanner'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faRotateRight } from '@fortawesome/free-solid-svg-icons'
 import Skeleton from 'react-loading-skeleton'
@@ -315,7 +315,9 @@ export default function Deals({ model, source: sourceOption, sort }) {
       {hasNextPage && !isFetching && (
         <div role="status" className="mt-5 flex h-[20px] justify-center lg:mt-8" ref={setRef}></div>
       )}
-      <Banner />
+      <HotdealBanner
+        currentFilter={currentFilters.find((filter) => filter.id === 'model').options[0]}
+      />
       {/* Mobile 모달 */}
       <Transition.Root show={mobileFiltersOpen} as={Fragment}>
         <Dialog as="div" className="relative z-40 lg:hidden" onClose={setMobileFiltersOpen}>

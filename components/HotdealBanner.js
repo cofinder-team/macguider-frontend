@@ -15,7 +15,6 @@ const HotdealBanner = ({ currentFilter }) => {
 
     if (modalRef.current) {
       modalRef.current.setOpen(true)
-      // modalRef.current.initializeOptions()
     }
   }, [])
 

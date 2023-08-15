@@ -13,6 +13,7 @@ import { CheckIcon, ChevronUpDownIcon, XMarkIcon } from '@heroicons/react/24/out
 import { useQuery } from 'react-query'
 import { getItem } from 'utils/item'
 import { classNames, deepEqual, removeDuplicates } from 'utils/basic'
+import { createAlert } from 'utils/alert'
 
 function reducer(state, action) {
   switch (action.type) {
@@ -32,7 +33,7 @@ function reducer(state, action) {
   }
 }
 
-function HotdealAlert({ modelId, modelType }, ref) {
+function HotdealAlert({ modelId, modelType, onApply = async () => {} }, ref) {
   // 모달 열기/닫기
   const [open, setOpen] = useState(false)
 
@@ -40,15 +41,7 @@ function HotdealAlert({ modelId, modelType }, ref) {
   const startStep = modelId ? 1 : 0
   const [currentStep, setCurrentStep] = useState(startStep)
 
-  const {
-    isLoading,
-    error,
-    data: items = [],
-  } = useQuery('item', () => getItem(), {
-    refetchOnWindowFocus: false,
-    refetchOnMount: false,
-    refetchOnReconnect: false,
-  })
+  const { isLoading, error, data: items = [] } = useQuery('item', () => getItem())
 
   if (error) {
     alert('데이터를 불러오는데 실패했습니다. 잠시 후 다시 시도해주세요.')
@@ -325,10 +318,12 @@ function HotdealAlert({ modelId, modelType }, ref) {
     return selectedItem
   }, [candidateItems, currentOptions])
 
-  const onClickApply = useCallback(() => {
+  const onClickApply = useCallback(async () => {
     if (isValidItem) {
       setOpen(false)
-      console.log(isValidItem)
+
+      await createAlert(selectedModel.type, isValidItem.id, false)
+      await onApply()
     }
   }, [isValidItem])
 

@@ -97,6 +97,7 @@ export default function Deals({ model, source: sourceOption, sort }) {
         source,
       }),
     {
+      staleTime: 30000,
       getNextPageParam: (lastPage, pages) =>
         lastPage?.length < maxPage ? undefined : pages.length + 1,
       refetchOnMount: false,

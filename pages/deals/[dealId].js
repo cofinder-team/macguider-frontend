@@ -40,7 +40,7 @@ export default function Deal({ dealId }) {
     error: errorDeal,
     data: deal,
   } = useQuery(['deal', dealId], () => getDeal(dealId), {
-    refetchOnWindowFocus: false,
+    staleTime: 30000,
   })
 
   const {
@@ -52,7 +52,7 @@ export default function Deal({ dealId }) {
     () => getDeals(1, 4, 'date', 'desc', deal?.item.type, deal?.item.model.id),
     {
       enabled: deal && Object.keys(deal).length > 0,
-      refetchOnWindowFocus: false,
+      staleTime: 30000,
     }
   )
 
@@ -60,7 +60,7 @@ export default function Deal({ dealId }) {
     sampleDevices.map((device) => ({
       queryKey: ['deal', 'other_price_info', device.id],
       queryFn: () => getPrices(device.id, device.data[0].options[0].id, false),
-      refetchOnWindowFocus: false,
+      staleTime: 30000,
     }))
   )
 

@@ -19,13 +19,7 @@ export default function Login({ certified }) {
   const { email, password } = values
   const router = useRouter()
   const [errorMessage, setErrorMessage] = useState('')
-  const queryClient = useQueryClient({
-    defaultOptions: {
-      queries: {
-        staleTime: Infinity, // Prevent automatic refetching
-      },
-    },
-  })
+  const queryClient = useQueryClient()
 
   useEffect(() => {
     // 이미 로그인 되어있는 경우

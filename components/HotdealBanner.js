@@ -10,6 +10,10 @@ const HotdealBanner = ({ currentFilter }) => {
   const { label, value } = currentFilter
   const [modelType, modelId] = value
 
+  const onApply = useCallback(() => {
+    alert('알림이 등록되었습니다. 지금 마이페이지에서 확인해보세요!')
+  }, [])
+
   const onClickGetNotification = useCallback(() => {
     amplitudeTrack('click_get_new_deals_notification')
 
@@ -38,7 +42,12 @@ const HotdealBanner = ({ currentFilter }) => {
         </div>
       </div>
 
-      <HotdealAlert ref={modalRef} modelId={Number(modelId)} modelType={modelType} />
+      <HotdealAlert
+        ref={modalRef}
+        modelId={Number(modelId)}
+        modelType={modelType}
+        onApply={onApply}
+      />
     </>
   )
 }

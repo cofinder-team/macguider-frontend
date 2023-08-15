@@ -67,6 +67,10 @@ export default function MyPage() {
     return email
   }, [accessToken, refreshToken])
 
+  const onApply = useCallback(() => {
+    refetchAlert()
+  }, [])
+
   const onClickLogout = useCallback(async () => {
     amplitudeTrack('click_logout_my_page')
     await logout()
@@ -220,7 +224,7 @@ export default function MyPage() {
         </div>
       </section>
 
-      <HotdealAlert ref={modalRef} onApply={refetchAlert} />
+      <HotdealAlert ref={modalRef} onApply={onApply} />
     </>
   )
 }

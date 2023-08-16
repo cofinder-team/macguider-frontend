@@ -1,11 +1,44 @@
 import { useCallback, useEffect, useState } from 'react'
 import { reportDeal, getDeal, getItems } from 'utils/deals'
+import { getAuthUser } from 'utils/user'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons'
+import { useQuery } from 'react-query'
+import { useCookies } from 'react-cookie'
+import { useRouter } from 'next/router'
 
 export default function DealReport({ id }) {
+  const [cookies, _setCookie, _removeCookie] = useCookies(['refreshToken'])
+  const refreshToken = cookies['refreshToken']
+  const { data: accessToken } = useQuery('accessToken', () => {})
+
+  const router = useRouter()
+  const [user, setUser] = useState()
+
   const [deal, setDeal] = useState()
   const [items, setItems] = useState([])
+
+  useEffect(() => {
+    if (!refreshToken) {
+      router.push('/login')
+    }
+  }, [router, refreshToken])
+
+  useEffect(() => {
+    if (accessToken) {
+      getAuthUser()
+        .then((user) => {
+          if (user.role === 'ADMIN') {
+            setUser(user)
+          } else {
+            router.push('/login')
+          }
+        })
+        .catch(() => {
+          router.push('/login')
+        })
+    }
+  }, [router, accessToken])
 
   useEffect(() => {
     getItems()
@@ -16,18 +49,20 @@ export default function DealReport({ id }) {
   }, [])
 
   useEffect(() => {
-    getDeal(id)
-      .then((data) => {
-        setDeal(data)
-      })
-      .catch((e) => {
-        console.log(e)
-        if (e?.response?.status === 400) {
-          window.alert('접근할 수 없는 정보입니다.')
-          window.open('about:blank', '_self')
-        }
-      })
-  }, [id])
+    if (user) {
+      getDeal(id)
+        .then((data) => {
+          setDeal(data)
+        })
+        .catch((e) => {
+          console.log(e)
+          if (e?.response?.status === 400) {
+            window.alert('접근할 수 없는 정보입니다.')
+            window.open('about:blank', '_self')
+          }
+        })
+    }
+  }, [id, user])
 
   const onClickSelect = useCallback(
     (payload) => {

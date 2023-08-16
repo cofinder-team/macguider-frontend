@@ -1,8 +1,8 @@
 import { PageSEO } from '@/components/SEO'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import amplitudeTrack from '@/lib/amplitude/track'
 import { getDeals } from 'utils/deals'
-import Banner from '@/components/Banner'
+import HotdealBanner from '@/components/HotdealBanner'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faRotateRight } from '@fortawesome/free-solid-svg-icons'
 import Skeleton from 'react-loading-skeleton'
@@ -59,17 +59,24 @@ export default function Deals({ model, source: sourceOption, sort }) {
   const [modelId, itemId] = model?.split(',') || [null, null]
   const source = sourceOption || null
 
-  const currentFilters = filters.map((filter) => ({
-    ...filter,
-    options:
-      filter.id === 'sort'
-        ? [filter.options.find((option) => option.value === sortOption) || filter.options[0]]
-        : filter.id === 'model'
-        ? [filter.options.find((option) => option.value[1] === itemId) || filter.options[0]]
-        : filter.id === 'source'
-        ? [filter.options.find((option) => option.value === (source || '')) || filter.options[0]]
-        : [filter.options[0]],
-  }))
+  const currentFilters = useMemo(
+    () =>
+      filters.map((filter) => ({
+        ...filter,
+        options:
+          filter.id === 'sort'
+            ? [filter.options.find((option) => option.value === sortOption) || filter.options[0]]
+            : filter.id === 'model'
+            ? [filter.options.find((option) => option.value[1] === itemId) || filter.options[0]]
+            : filter.id === 'source'
+            ? [
+                filter.options.find((option) => option.value === (source || '')) ||
+                  filter.options[0],
+              ]
+            : [filter.options[0]],
+      })),
+    [sortOption, itemId, source]
+  )
 
   const router = useRouter()
 
@@ -97,6 +104,7 @@ export default function Deals({ model, source: sourceOption, sort }) {
         source,
       }),
     {
+      staleTime: 30000,
       getNextPageParam: (lastPage, pages) =>
         lastPage?.length < maxPage ? undefined : pages.length + 1,
       refetchOnMount: false,
@@ -315,7 +323,9 @@ export default function Deals({ model, source: sourceOption, sort }) {
       {hasNextPage && !isFetching && (
         <div role="status" className="mt-5 flex h-[20px] justify-center lg:mt-8" ref={setRef}></div>
       )}
-      <Banner />
+      <HotdealBanner
+        currentFilter={currentFilters.find((filter) => filter.id === 'model').options[0]}
+      />
       {/* Mobile 모달 */}
       <Transition.Root show={mobileFiltersOpen} as={Fragment}>
         <Dialog as="div" className="relative z-40 lg:hidden" onClose={setMobileFiltersOpen}>

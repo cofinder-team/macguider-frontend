@@ -3,7 +3,6 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import amplitudeTrack from '@/lib/amplitude/track'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faHandPointUp, faPlus, faXmark } from '@fortawesome/free-solid-svg-icons'
-import Image from '@/components/Image'
 import Skeleton from 'react-loading-skeleton'
 import { getPrices } from 'utils/price'
 import { useRouter } from 'next/router'
@@ -13,7 +12,6 @@ import { getDeal, getDeals } from 'utils/deals'
 import optionsMac from '@/data/options/mac'
 import optionsIpad from '@/data/options/ipad'
 import { pastTime } from '@/lib/utils/pastTime'
-import Banner from '@/components/Banner'
 import 'react-loading-skeleton/dist/skeleton.css'
 import { useQuery, useQueries } from 'react-query'
 import DealCard from '@/components/deals/DealCard'
@@ -40,7 +38,7 @@ export default function Deal({ dealId }) {
     error: errorDeal,
     data: deal,
   } = useQuery(['deal', dealId], () => getDeal(dealId), {
-    refetchOnWindowFocus: false,
+    staleTime: 30000,
   })
 
   const {
@@ -52,7 +50,7 @@ export default function Deal({ dealId }) {
     () => getDeals(1, 4, 'date', 'desc', deal?.item.type, deal?.item.model.id),
     {
       enabled: deal && Object.keys(deal).length > 0,
-      refetchOnWindowFocus: false,
+      staleTime: 30000,
     }
   )
 
@@ -60,7 +58,7 @@ export default function Deal({ dealId }) {
     sampleDevices.map((device) => ({
       queryKey: ['deal', 'other_price_info', device.id],
       queryFn: () => getPrices(device.id, device.data[0].options[0].id, false),
-      refetchOnWindowFocus: false,
+      staleTime: 30000,
     }))
   )
 
@@ -535,8 +533,6 @@ export default function Deal({ dealId }) {
           </div>
         )}
       </div>
-
-      <Banner />
     </>
   )
 }

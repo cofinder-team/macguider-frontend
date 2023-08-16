@@ -1,12 +1,45 @@
 import { useCallback, useEffect, useState } from 'react'
 import { convertDealFromRaw, getDealRaw, getItems, getItemPrice } from 'utils/deals'
+import { getAuthUser } from 'utils/user'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons'
+import { useQuery } from 'react-query'
+import { useCookies } from 'react-cookie'
+import { useRouter } from 'next/router'
 
 export default function DealAdmin({ id }) {
+  const [cookies, _setCookie, _removeCookie] = useCookies(['refreshToken'])
+  const refreshToken = cookies['refreshToken']
+  const { data: accessToken } = useQuery('accessToken', () => {})
+
+  const router = useRouter()
+  const [user, setUser] = useState()
+
   const [dealRaw, setDealRaw] = useState()
   const [itemPrice, setItemPrice] = useState()
   const [items, setItems] = useState([])
+
+  useEffect(() => {
+    if (!refreshToken) {
+      router.push('/login')
+    }
+  }, [router, refreshToken])
+
+  useEffect(() => {
+    if (accessToken) {
+      getAuthUser()
+        .then((user) => {
+          if (user.role === 'ADMIN') {
+            setUser(user)
+          } else {
+            router.push('/login')
+          }
+        })
+        .catch(() => {
+          router.push('/login')
+        })
+    }
+  }, [router, accessToken])
 
   useEffect(() => {
     getItems()
@@ -17,18 +50,20 @@ export default function DealAdmin({ id }) {
   }, [])
 
   useEffect(() => {
-    getDealRaw(id)
-      .then((data) => {
-        setDealRaw(data)
-      })
-      .catch((e) => {
-        console.log(e)
-        if (e?.response?.status === 400) {
-          window.alert('이미 처리되었습니다.')
-          window.open('about:blank', '_self')
-        }
-      })
-  }, [id])
+    if (user) {
+      getDealRaw(id)
+        .then((data) => {
+          setDealRaw(data)
+        })
+        .catch((e) => {
+          console.log(e)
+          if (e?.response?.status === 400) {
+            window.alert('이미 처리되었습니다.')
+            window.open('about:blank', '_self')
+          }
+        })
+    }
+  }, [id, user])
 
   useEffect(() => {
     if (!dealRaw) return
@@ -165,15 +200,6 @@ export default function DealAdmin({ id }) {
 
 export async function getServerSideProps(context) {
   const { id } = context.query
-
-  if (process.env.NEXT_PUBLIC_NODE_ENV === 'prod') {
-    return {
-      redirect: {
-        destination: '/',
-        permanent: false,
-      },
-    }
-  }
 
   return {
     props: {

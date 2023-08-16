@@ -294,22 +294,19 @@ function HotdealAlert({ modelId, modelType, onApply = async () => {} }, ref) {
   ]
 
   // 모델 선택
-  const handleModelChange = useCallback(
-    (model) => {
-      amplitudeTrack('click_select_alert_model', {
-        type: model.type,
-        id: model.id,
-      })
+  const handleModelChange = (model) => {
+    amplitudeTrack('click_select_alert_model', {
+      type: model.type,
+      id: model.id,
+    })
 
-      setSelectedModel({
-        type: model.type,
-        id: model.id,
-      })
+    setSelectedModel({
+      type: model.type,
+      id: model.id,
+    })
 
-      setCurrentStep((prev) => prev + 1)
-    },
-    [setCurrentStep]
-  )
+    setCurrentStep((prev) => prev + 1)
+  }
 
   const onClickPrevStep = useCallback(() => {
     amplitudeTrack('click_prev_alert_step')

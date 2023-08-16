@@ -44,8 +44,10 @@ function reducer(state, action) {
         ...state,
         ...action.payload,
       }
-    case 'RESET_ALL':
-      return {}
+    case 'RESET_OPTIONS':
+      return {
+        ...action.payload,
+      }
     default:
       throw new Error()
   }
@@ -85,6 +87,16 @@ function HotdealAlert({ modelId, modelType, startStep = 0, onApply = async () =>
     const defaultItem = items.find((item) => item.model.id === selectedModel.id)
 
     if (defaultItem) {
+      if (defaultItem.type === 'P') {
+        delete defaultItem.details['gen']
+
+        dispatch({
+          type: 'SET_OPTIONS',
+          options: defaultItem.details,
+        })
+
+        return
+      }
       dispatch({
         type: 'SET_OPTIONS',
         options: defaultItem.details,
@@ -98,10 +110,12 @@ function HotdealAlert({ modelId, modelType, startStep = 0, onApply = async () =>
         type: modelType,
         id: modelId,
       })
-
-      setCurrentStep(startStep)
     }
   }, [modelId, modelType])
+
+  useEffect(() => {
+    setCurrentStep(startStep)
+  }, [startStep])
 
   // 전체 모델 종류
   const modelOptions = useMemo(() => {
@@ -304,6 +318,11 @@ function HotdealAlert({ modelId, modelType, startStep = 0, onApply = async () =>
         id: model.id,
       })
 
+      // 옵션 초기화
+      dispatch({
+        type: 'RESET_OPTIONS',
+      })
+
       setSelectedModel({
         type: model.type,
         id: model.id,
@@ -328,7 +347,6 @@ function HotdealAlert({ modelId, modelType, startStep = 0, onApply = async () =>
 
       if (key === 'chip,cpu') {
         const [chip, cpu] = value.split(' ')
-
         dispatch({
           type: 'SET_OPTION',
           payload: {
@@ -362,7 +380,9 @@ function HotdealAlert({ modelId, modelType, startStep = 0, onApply = async () =>
   )
 
   const isValidItem = useMemo(() => {
-    const selectedItem = candidateItems.find(({ details }) => deepEqual(details, currentOptions))
+    const selectedItem = candidateItems.find(({ details }) =>
+      deepEqual(details, currentOptions, Object.keys(currentOptions))
+    )
 
     return selectedItem
   }, [candidateItems, currentOptions])

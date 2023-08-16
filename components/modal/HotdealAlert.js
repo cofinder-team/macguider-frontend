@@ -51,7 +51,7 @@ function reducer(state, action) {
   }
 }
 
-function HotdealAlert({ modelId, modelType, onApply = async () => {} }, ref) {
+function HotdealAlert({ modelId, modelType, startStep = 0, onApply = async () => {} }, ref) {
   // 모달 열기/닫기
   const [open, setOpen] = useState(false)
 
@@ -62,9 +62,7 @@ function HotdealAlert({ modelId, modelType, onApply = async () => {} }, ref) {
   const isUserLoggedIn = !!(refreshToken && accessToken)
 
   // 현재 단계
-  const startStep = modelId ? 1 : 0
   const [currentStep, setCurrentStep] = useState(startStep)
-
   const { isLoading, error, data: items = [] } = useQuery('item', () => getItem())
 
   if (error) {
@@ -76,6 +74,7 @@ function HotdealAlert({ modelId, modelType, onApply = async () => {} }, ref) {
     type: null,
     id: null,
   })
+
   // 현재 선택된 아이템 옵션들
   const [currentOptions, dispatch] = useReducer(reducer, {})
   // 미개봉/중고 옵션
@@ -94,12 +93,14 @@ function HotdealAlert({ modelId, modelType, onApply = async () => {} }, ref) {
   }, [items, selectedModel.id])
 
   useEffect(() => {
-    setSelectedModel({
-      type: modelType,
-      id: modelId,
-    })
+    if (modelId && modelType) {
+      setSelectedModel({
+        type: modelType,
+        id: modelId,
+      })
 
-    setCurrentStep(startStep)
+      setCurrentStep(startStep)
+    }
   }, [modelId, modelType])
 
   // 전체 모델 종류
@@ -296,6 +297,8 @@ function HotdealAlert({ modelId, modelType, onApply = async () => {} }, ref) {
   // 모델 선택
   const handleModelChange = useCallback(
     (model) => {
+      setCurrentStep((prev) => prev + 1)
+
       amplitudeTrack('click_select_alert_model', {
         type: model.type,
         id: model.id,
@@ -305,15 +308,9 @@ function HotdealAlert({ modelId, modelType, onApply = async () => {} }, ref) {
         type: model.type,
         id: model.id,
       })
-
-      setCurrentStep((prev) => prev + 1)
     },
     [setCurrentStep]
   )
-
-  useEffect(() => {
-    console.log(currentStep)
-  }, [currentStep])
 
   const onClickPrevStep = useCallback(() => {
     amplitudeTrack('click_prev_alert_step')
@@ -364,10 +361,6 @@ function HotdealAlert({ modelId, modelType, onApply = async () => {} }, ref) {
     [setUnusedOption, selectedModel]
   )
 
-  const initializeOptions = useCallback(() => {
-    setCurrentStep(startStep)
-  }, [startStep])
-
   const isValidItem = useMemo(() => {
     const selectedItem = candidateItems.find(({ details }) => deepEqual(details, currentOptions))
 
@@ -399,14 +392,13 @@ function HotdealAlert({ modelId, modelType, onApply = async () => {} }, ref) {
   const closeModal = useCallback(() => {
     amplitudeTrack('click_close_alert_modal')
 
-    initializeOptions()
+    setCurrentStep(startStep)
 
     setOpen(false)
-  }, [initializeOptions])
+  }, [startStep])
 
   useImperativeHandle(ref, () => ({
     setOpen: (isOpen) => setOpen(isOpen),
-    initializeOptions: () => initializeOptions(),
   }))
 
   return (

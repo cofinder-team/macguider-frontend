@@ -47,6 +47,7 @@ const HotdealBanner = ({ currentFilter }) => {
         modelId={Number(modelId)}
         modelType={modelType}
         onApply={onApply}
+        startStep={modelType && modelId ? 1 : 0}
       />
     </>
   )

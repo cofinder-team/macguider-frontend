@@ -1,5 +1,5 @@
 import { PageSEO } from '@/components/SEO'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import amplitudeTrack from '@/lib/amplitude/track'
 import { getDeals } from 'utils/deals'
 import HotdealBanner from '@/components/HotdealBanner'
@@ -59,17 +59,24 @@ export default function Deals({ model, source: sourceOption, sort }) {
   const [modelId, itemId] = model?.split(',') || [null, null]
   const source = sourceOption || null
 
-  const currentFilters = filters.map((filter) => ({
-    ...filter,
-    options:
-      filter.id === 'sort'
-        ? [filter.options.find((option) => option.value === sortOption) || filter.options[0]]
-        : filter.id === 'model'
-        ? [filter.options.find((option) => option.value[1] === itemId) || filter.options[0]]
-        : filter.id === 'source'
-        ? [filter.options.find((option) => option.value === (source || '')) || filter.options[0]]
-        : [filter.options[0]],
-  }))
+  const currentFilters = useMemo(
+    () =>
+      filters.map((filter) => ({
+        ...filter,
+        options:
+          filter.id === 'sort'
+            ? [filter.options.find((option) => option.value === sortOption) || filter.options[0]]
+            : filter.id === 'model'
+            ? [filter.options.find((option) => option.value[1] === itemId) || filter.options[0]]
+            : filter.id === 'source'
+            ? [
+                filter.options.find((option) => option.value === (source || '')) ||
+                  filter.options[0],
+              ]
+            : [filter.options[0]],
+      })),
+    [sortOption, itemId, source]
+  )
 
   const router = useRouter()
 

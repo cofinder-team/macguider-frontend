@@ -306,10 +306,14 @@ function HotdealAlert({ modelId, modelType, onApply = async () => {} }, ref) {
         id: model.id,
       })
 
-      setCurrentStep(1)
+      setCurrentStep((prev) => prev + 1)
     },
     [setCurrentStep]
   )
+
+  useEffect(() => {
+    console.log(currentStep)
+  }, [currentStep])
 
   const onClickPrevStep = useCallback(() => {
     amplitudeTrack('click_prev_alert_step')

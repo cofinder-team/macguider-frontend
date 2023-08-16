@@ -12,17 +12,18 @@ const Amplitude = () => {
   useEffect(() => {
     const isProduction = () => process.env.NODE_ENV === 'production'
     const isBrowser = () => typeof window !== 'undefined'
-    let userId = null
+    let userEmail = null
 
     if (isBrowser()) {
       if (refreshToken && accessToken) {
         const decoded = Base64.decode(refreshToken)
-        const idRegex = /"id":(\d+)/
-        userId = decoded.match(idRegex)[1]
+        const emailRegex = /(?<=email":").*?(?=")/
+        const email = decoded.match(emailRegex)[0]
+        userEmail = email
       }
 
       if (isProduction()) {
-        init(process.env.NEXT_PUBLIC_AMPLITUDE_ID, userId, {
+        init(process.env.NEXT_PUBLIC_AMPLITUDE_ID, userEmail, {
           defaultTracking: { pageViews: false },
           includeFbclid: true,
           includeGclid: true,

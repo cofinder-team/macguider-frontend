@@ -31,6 +31,6 @@
     // ],
     "strictNullChecks": true
   },
-  "include": ["pages/prices/mac/*", "custom.d.ts"],
+  "include": ["pages/prices/mac/*", "custom.d.ts", "data/options/*.ts"],
   "exclude": ["node_modules"]
 }

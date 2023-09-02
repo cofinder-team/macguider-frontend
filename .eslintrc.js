@@ -16,7 +16,7 @@ module.exports = {
   ],
   overrides: [
     {
-      files: ['**/*.ts', '**/*.tsx'], // Specify the TypeScript files you want to target
+      files: ['*.ts', '*.tsx'], // Specify the TypeScript files you want to target
       extends: [
         'eslint:recommended',
         'plugin:@typescript-eslint/eslint-recommended',
@@ -25,6 +25,9 @@ module.exports = {
         'next',
         'next/core-web-vitals',
       ],
+      rules: {
+        '@typescript-eslint/no-explicit-any': 'off',
+      },
     },
   ],
   rules: {

@@ -115,11 +115,22 @@ export default function DealAdmin({ id }) {
                 </li>
               ))}
             </ul>
-            <iframe
-              src={dealRaw.url?.replace('s://c', 's://m.c')}
-              sandbox="allow-scripts allow-same-origin"
-              className="h-[720px] w-full py-2"
-            />
+            <div className="py-2"></div>
+            <div
+              className="flex justify-between px-2 py-2 font-semibold"
+              style={{ backgroundColor: '#eeeeee' }}
+            >
+              <div>{dealRaw?.title}</div>
+              <div style={{ color: 'blue' }}>
+                <a href={dealRaw?.url}>[Link]</a>
+              </div>
+            </div>
+            <div
+              className="px-2 py-2"
+              style={{ whiteSpace: 'break-spaces', backgroundColor: '#eeeeee' }}
+            >
+              {dealRaw?.content}
+            </div>
           </div>
           <div className="w-full md:w-1/2 md:px-2">
             <div className="flex justify-between py-1">

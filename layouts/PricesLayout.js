@@ -13,15 +13,15 @@ import Feedback from '@/components/Feedback'
 
 const leftColumnOffsetY = 150
 
-const PricesLayout = ({ currentItem, currentModel, currentOption, children }, ref) => {
+const PricesLayout = ({ currentModel, currentItem, currentOption, children }, ref) => {
   const container = useRef(null)
   const leftColumn = useRef(null)
   const newsletterRef = useRef(null)
   const [fixedElementWidth, setFixedElementWidth] = useState(0)
   const { sm, md, lg } = useScreenSize()
 
-  const { id: currentItemId } = currentItem
-  const { imgSrc, title, specs } = currentModel
+  const { id: currentItemId } = currentModel
+  const { imgSrc, title, specs } = currentItem
 
   const onClickUploadDesk = useCallback(() => {
     amplitudeTrack('click_upload_desk')

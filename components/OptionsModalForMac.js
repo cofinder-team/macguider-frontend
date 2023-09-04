@@ -2,11 +2,11 @@ import { forwardRef, Fragment, useCallback, useEffect, useImperativeHandle, useS
 import { Dialog, Transition } from '@headlessui/react'
 import { XMarkIcon } from '@heroicons/react/24/outline'
 
-function OptionsModalForMac({ currentItem, currentModel, currentOption, onApply }, ref) {
+function OptionsModalForMac({ currentModel, currentItem, currentOption, onApply }, ref) {
   const [open, setOpen] = useState(false)
 
-  const { id: itemId, data: currentItemData } = currentItem
-  const { title, specs: currentModelSpecs, options: currentModelOptions } = currentModel
+  const { id: itemId, data: currentItemData } = currentModel
+  const { title, specs: currentModelSpecs, options: currentModelOptions } = currentItem
   const { id: optionId, ram: currentOptionRam, ssd: currentOptionSsd } = currentOption
 
   const [currentCpuOption, setCurrentCpuOption] = useState(currentModelSpecs.cpu)

@@ -27,6 +27,7 @@ module.exports = {
       ],
       rules: {
         '@typescript-eslint/no-explicit-any': 'off',
+        '@typescript-eslint/no-unused-vars': 'off',
       },
     },
   ],
@@ -34,7 +35,7 @@ module.exports = {
     'prettier/prettier': 'error',
     'react/react-in-jsx-scope': 'off',
     'react/prop-types': 0,
-    'no-unused-vars': 0,
+    'no-unused-vars': 'off',
     'react/no-unescaped-entities': 0,
   },
 }

@@ -1,5 +1,5 @@
 import {
-  forwardRef,
+  ForwardedRef,
   Fragment,
   useCallback,
   useEffect,
@@ -18,20 +18,12 @@ import amplitudeTrack from '@/lib/amplitude/track'
 import { useCookies } from 'react-cookie'
 import Link from '@/components/Link'
 
-const unusedOptions = [
-  {
-    label: '미개봉',
-    value: 'new',
-  },
-  {
-    label: 'S급',
-    value: 's',
-  },
-  // {
-  //   label: '둘다',
-  //   value: 'both',
-  // },
-]
+interface Props {
+  modelId: string
+  modelType: ModelType
+  itemId: number
+  onApply: () => Promise<void>
+}
 
 function reducer(state, action) {
   switch (action.type) {
@@ -53,18 +45,14 @@ function reducer(state, action) {
   }
 }
 
-function HotdealAlert({ modelId, modelType, startStep = 0, onApply = async () => {} }, ref) {
+function SelectOptionsModal(
+  { modelId, modelType, itemId, onApply = async () => {} }: Props,
+  ref: ForwardedRef<HTMLDivElement>
+) {
   // 모달 열기/닫기
   const [open, setOpen] = useState(false)
 
-  // 로그인 여부
-  const [cookies, setCookie, removeCookie] = useCookies(['refreshToken'])
-  const refreshToken = cookies['refreshToken']
-  const { data: accessToken } = useQuery('accessToken', () => {})
-  const isUserLoggedIn = !!(refreshToken && accessToken)
-
-  // 현재 단계
-  const [currentStep, setCurrentStep] = useState(startStep)
+  // fetch Items
   const { isLoading, error, data: items = [] } = useQuery('item', () => getItems())
 
   if (error) {
@@ -73,14 +61,12 @@ function HotdealAlert({ modelId, modelType, startStep = 0, onApply = async () =>
 
   // 모델 선택
   const [selectedModel, setSelectedModel] = useState({
-    type: null,
-    id: null,
+    type: modelType,
+    id: itemId,
   })
 
   // 현재 선택된 아이템 옵션들
-  const [currentOptions, dispatch] = useReducer(reducer, {})
-  // 미개봉/중고 옵션
-  const [unusedOption, setUnusedOption] = useState(unusedOptions[0])
+  const [currentOptions, dispatch] = useReducer(reducer, {} as MacItemDetailsResponse)
 
   useEffect(() => {
     // 해당 모델의 가장 기본형으로 옵션을 초기화
@@ -88,7 +74,9 @@ function HotdealAlert({ modelId, modelType, startStep = 0, onApply = async () =>
 
     if (defaultItem) {
       if (defaultItem.type === 'P') {
-        delete defaultItem.details['gen']
+        const ipadItem = defaultItem as IpadItemResponse
+
+        // delete ipadItem.details['gen']
 
         dispatch({
           type: 'SET_OPTIONS',
@@ -307,34 +295,6 @@ function HotdealAlert({ modelId, modelType, startStep = 0, onApply = async () =>
       availableOptions: availableConnectivityOptions,
     },
   ]
-
-  // 모델 선택
-  const handleModelChange = useCallback(
-    (model) => {
-      setCurrentStep((prev) => prev + 1)
-
-      amplitudeTrack('click_select_alert_model', {
-        type: model.type,
-        id: model.id,
-      })
-
-      // 옵션 초기화
-      dispatch({
-        type: 'RESET_OPTIONS',
-      })
-
-      setSelectedModel({
-        type: model.type,
-        id: model.id,
-      })
-    },
-    [setCurrentStep]
-  )
-
-  const onClickPrevStep = useCallback(() => {
-    amplitudeTrack('click_prev_alert_step')
-    setCurrentStep((prev) => prev - 1)
-  }, [])
 
   const handleModelOptionChange = useCallback(
     (key, value) => {
@@ -596,4 +556,4 @@ function HotdealAlert({ modelId, modelType, startStep = 0, onApply = async () =>
   )
 }
 
-export default forwardRef(HotdealAlert)
+export default forwardRef(SelectOptionsModal)

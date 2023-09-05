@@ -1,6 +1,5 @@
 import { PageSEO } from '@/components/SEO'
 import React, { ChangeEvent, useCallback, useEffect, useMemo, useRef } from 'react'
-// import { Line } from 'react-chartjs-2'
 import optionsMac from '@/data/options/mac'
 import { useState } from 'react'
 import { useScreenSize } from 'hooks/useScreenSize'
@@ -25,13 +24,18 @@ import Feedback from '@/components/Feedback'
 import PricesLayout from '@/layouts/PricesLayout'
 import { useQuery } from 'react-query'
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons'
+import TradePrices from '@/components/prices/trade'
+import { getItem } from 'utils/item'
+import NewPrices from '@/components/prices/new'
+import PriceGraph from '@/components/prices/graph'
 
 interface PageProps {
   model: string
   optionId: string | null
+  newId: number
 }
 
-const MacModel = ({ model, optionId }: PageProps) => {
+const MacModel = ({ model, optionId, newId }: PageProps) => {
   const modalRef = useRef(null) as any
   const layoutRef = useRef(null) as any
 
@@ -39,8 +43,14 @@ const MacModel = ({ model, optionId }: PageProps) => {
   const router = useRouter()
 
   useEffect(() => {
-    amplitudeTrack('enter_price_detail', { item_class: 'mac', item_detail: model })
+    amplitudeTrack('enter_price_detail', { type: 'M', id: newId })
   }, [])
+
+  const {
+    isLoading: loadingItemInfo,
+    error: errorItemInfo,
+    data: itemInfo,
+  } = useQuery(['Item', 'M', newId], () => getItem('M', newId))
 
   let currentModel: MacModel
 
@@ -87,74 +97,8 @@ const MacModel = ({ model, optionId }: PageProps) => {
     price: currentOptionPrice,
   } = currentOption
 
-  // const [unopened, setUnopened] = useState('false')
   const [unused, setUnused] = useState(false)
   const [source, setSource] = useState<Source>('중고나라')
-
-  // 전체 시세 조회
-  const {
-    isLoading: loadingTotalPrice,
-    error: errorTotalPrice,
-    data: totalPriceData,
-  } = useQuery(['totalPrice', 'M', currentOptionId, currentItem, unused, source], () =>
-    getTotalTradePrice('M', currentOptionId, unused, source)
-  )
-
-  // 현재 쿠팡 가격 조회
-  const {
-    isLoading: loadingRecentCoupangPrice,
-    error: errorRecentCoupangPrice,
-    data: recentCoupangPriceData,
-  } = useQuery(['recentCoupangPrice', currentModel.id, currentOptionId], () =>
-    getRecentCoupangPrice('M', currentOptionId)
-  )
-
-  // 전체 쿠팡 가격 조회
-  const {
-    isLoading: loadingTotalCoupangPrice,
-    error: errorTotalCoupangPrice,
-    data: totalCoupangPriceData,
-  } = useQuery(['totalCoupangPrice', currentModel.id, currentOptionId], () =>
-    getTotalCoupangPrice('M', currentOptionId)
-  )
-
-  // 전체 정가 조회
-  const {
-    isLoading: loadingTotalRegularPrice,
-    error: errorTotalRegularPrice,
-    data: totalRegularPriceData,
-  } = useQuery(['totalRegularPrice', currentModel.id, currentOptionId], () =>
-    getTotalRegularPrice('M', currentOptionId)
-  )
-
-  const loading =
-    loadingTotalPrice ||
-    loadingRecentCoupangPrice ||
-    loadingTotalCoupangPrice ||
-    loadingTotalRegularPrice
-
-  // 가격 데이터 fetch 실패시 alert창 띄우기
-  if (
-    errorTotalPrice ||
-    errorRecentCoupangPrice ||
-    errorTotalCoupangPrice ||
-    errorTotalRegularPrice
-  ) {
-    alert('데이터를 불러오는데 실패했습니다. 잠시 후 다시 시도해주세요.')
-  }
-
-  const getPriceByLevel = useCallback(
-    (level: 'average' | 'price_20' | 'price_80') => {
-      if (totalPriceData) {
-        const price = totalPriceData.filter((data) => data[level]).slice(-1)[0]
-
-        return price[level]
-      } else {
-        return null
-      }
-    },
-    [totalPriceData]
-  )
 
   const onClickOption = useCallback(() => {
     if (modalRef.current) {
@@ -162,11 +106,6 @@ const MacModel = ({ model, optionId }: PageProps) => {
       modalRef.current.initializeOptions()
     }
   }, [])
-
-  const onClickBuyersGuide = useCallback(() => {
-    amplitudeTrack('click_route_buyers_guide', { item_class: 'mac', item_detail: model })
-    router.push('/buyers-guide')
-  }, [model, router])
 
   const changeModelOptions = useCallback(
     (optionId) => {
@@ -195,149 +134,17 @@ const MacModel = ({ model, optionId }: PageProps) => {
     [currentModelData, model]
   )
 
-  const onInputPlatform = useCallback((platform: Source) => {
-    amplitudeTrack('click_change_platform', {
-      platform,
-    })
+  // const daysSinceLastReleaseDate = useMemo(() => {
+  //   const today = new Date()
+  //   const [year, month, date] = releasedDateHistory[0].split('-')
 
-    if (platform === '당근마켓') {
-      alert('준비 중입니다. 이메일을 등록해주시면 가장 먼저 알려드릴게요!')
-      return
-    }
+  //   const daysSinceLastReleaseDate = Math.floor(
+  //     (today.getTime() - new Date(Number(year), Number(month) - 1, Number(date)).getTime()) /
+  //       (1000 * 60 * 60 * 24)
+  //   )
 
-    setSource(platform)
-
-    // scroll to email form
-    if (layoutRef.current) {
-      layoutRef.current.scrollToNewsletterForm()
-    }
-  }, [])
-
-  // 미개봉 상태 변경
-  const onInputOptionUnused = useCallback(
-    (status: boolean) => {
-      setUnused(status)
-
-      // fetchPriceData(currentItemId, currentOptionId, status)
-
-      amplitudeTrack('click_select_option', {
-        item_class: 'mac',
-        item_detail: model,
-        option_type: 'unopened',
-        option_value: status,
-      })
-    },
-    [model]
-  )
-
-  const daysSinceLastReleaseDate = useMemo(() => {
-    const today = new Date()
-    const [year, month, date] = releasedDateHistory[0].split('-')
-
-    const daysSinceLastReleaseDate = Math.floor(
-      (today.getTime() - new Date(Number(year), Number(month) - 1, Number(date)).getTime()) /
-        (1000 * 60 * 60 * 24)
-    )
-
-    return daysSinceLastReleaseDate
-  }, [releasedDateHistory])
-
-  const averageReleaseCycle = useMemo(() => {
-    const releaseCycles: number[] = []
-    for (let i = 0; i < releasedDateHistory.length - 1; i++) {
-      // convert YYYY-MM-DD string to Date object
-      const prev = releasedDateHistory[i].split('-')
-      const next = releasedDateHistory[i + 1].split('-')
-
-      const date1 = new Date(Number(prev[0]), Number(prev[1]) - 1, Number(prev[2]))
-      const date2 = new Date(Number(next[0]), Number(next[1]) - 1, Number(next[2]))
-      const diffTime = Math.abs(date2.getTime() - date1.getTime())
-      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
-      releaseCycles.push(diffDays)
-    }
-
-    const averageReleaseCycle = Math.round(
-      releaseCycles.reduce((a, b) => a + b, 0) / releaseCycles.length
-    )
-
-    return averageReleaseCycle
-  }, [releasedDateHistory])
-
-  const usedPurchaseTiming = useMemo(() => {
-    if (totalPriceData) {
-      const latestUsedPrice = totalPriceData.filter((data) => data.average).slice(-1)[0].average
-
-      if (latestUsedPrice && currentOptionPrice) {
-        const getPriceFitScore = () => (latestUsedPrice / currentOptionPrice) * 100
-        const getReleaseDateFitScore = () =>
-          (1 - daysSinceLastReleaseDate / averageReleaseCycle) * 100
-        const overallFitScore = getPriceFitScore() * 0.6 + getReleaseDateFitScore() * 0.4
-
-        if (overallFitScore >= 61) {
-          return purchaseTiming.good
-        } else if (overallFitScore >= 40) {
-          return purchaseTiming.normal
-        } else {
-          return purchaseTiming.bad
-        }
-      }
-    }
-  }, [totalPriceData, currentOptionPrice, daysSinceLastReleaseDate, averageReleaseCycle])
-
-  const newPurchaseTiming = useMemo(() => {
-    const latestReleaseDate = releasedDateHistory[0]
-
-    const today = new Date()
-    const [year, month, day] = latestReleaseDate.split('-')
-    const date = new Date(Number(year), Number(month) - 1, Number(day))
-    const diffTime = Math.abs(today.getTime() - date.getTime())
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
-
-    if (diffDays > averageReleaseCycle * 0.85) {
-      return purchaseTiming.bad
-    } else if (diffDays > averageReleaseCycle * 0.6) {
-      return purchaseTiming.normal
-    } else {
-      return purchaseTiming.good
-    }
-  }, [releasedDateHistory, averageReleaseCycle])
-
-  const recentCoupangPrice = useMemo(() => {
-    if (totalCoupangPriceData) {
-      const recentData = totalCoupangPriceData.slice(-1)[0]
-
-      if (recentData.price) {
-        return recentData.price
-      } else {
-        return null
-      }
-    } else {
-      return null
-    }
-  }, [totalCoupangPriceData])
-
-  const coupangLastUpdatedTime = useMemo(() => {
-    if (totalCoupangPriceData) {
-      const recentData = totalCoupangPriceData.slice(-1)[0]
-
-      const lastUpdatedTime = recentData.date
-      const now = new Date()
-      const lastUpdated = new Date(lastUpdatedTime)
-      const diffTime = Math.abs(now.getTime() - lastUpdated.getTime())
-      const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24))
-      const diffMinutes = Math.ceil(diffTime / (1000 * 60))
-
-      if (diffDays > 0) {
-        return `${diffDays}일 전`
-      }
-
-      if (diffMinutes > 60) {
-        return `${Math.floor(diffMinutes / 60)}시간 전`
-      }
-
-      return `${diffMinutes}분 전`
-    }
-  }, [totalCoupangPriceData])
+  //   return daysSinceLastReleaseDate
+  // }, [releasedDateHistory])
 
   return (
     <>
@@ -389,325 +196,19 @@ const MacModel = ({ model, optionId }: PageProps) => {
             </div>
           </div>
 
-          <div className="mt-5">
-            <p className="text-md font-bold text-gray-900 dark:text-white">중고 시세</p>
-
-            <ul className="mt-2 max-w-md divide-y divide-gray-200 dark:divide-gray-700">
-              <li className="pb-3 sm:pb-4">
-                <div className="flex items-center space-x-4">
-                  <div className="flex-shrink-0"></div>
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-medium text-gray-900 dark:text-white">
-                      중고거래 플랫폼
-                    </p>
-                  </div>
-                  <div className="inline-flex w-1/3 items-center text-base font-semibold text-gray-900 dark:text-white">
-                    <select
-                      id="cpuOptions"
-                      className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-                      onInput={(e: ChangeEvent<HTMLSelectElement>) => {
-                        const value = e.target.value as Source
-                        onInputPlatform(value)
-                      }}
-                      value="중고나라"
-                    >
-                      <option value="중고나라">중고나라</option>
-                      <option value="번개장터">번개장터</option>
-                      <option value="당근마켓">당근마켓</option>
-                    </select>
-                  </div>
-                </div>
-              </li>
-              <li className="py-3 sm:pb-4">
-                <div className="flex items-center space-x-4">
-                  <div className="flex-shrink-0"></div>
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-medium text-gray-900 dark:text-white">
-                      제품 상태
-                    </p>
-                  </div>
-                  <div className="inline-flex w-1/3 items-center text-base font-semibold text-gray-900 dark:text-white">
-                    <select
-                      id="cpuOptions"
-                      className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-                      onInput={(e: ChangeEvent<HTMLSelectElement>) => {
-                        const value = Boolean(e.target.value)
-                        onInputOptionUnused(value)
-                      }}
-                      value={unused.toString()}
-                    >
-                      <option value="true">미개봉</option>
-                      <option value="false">S급</option>
-                    </select>
-                  </div>
-                </div>
-              </li>
-              <li className="bg-gray-100 py-3 sm:pb-4">
-                <div className="flex items-center space-x-4">
-                  <div className="flex-shrink-0"></div>
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-medium text-gray-900 dark:text-white">
-                      적정가격
-                    </p>
-                  </div>
-                  <div className="pr-2 text-right text-base font-semibold text-gray-900">
-                    {loading ? (
-                      <Skeleton width={md ? '8rem' : '5rem'} borderRadius="0.5rem" />
-                    ) : getPriceByLevel('average') ? (
-                      <>
-                        <span>{getPriceByLevel('average')?.toLocaleString()}</span>
-                        <span className="ml-1 font-normal">원</span>
-
-                        <div className="truncate text-sm text-gray-500 dark:text-gray-400">
-                          <div className="truncate text-xs">
-                            <span className="text-gray-500">마지막 업데이트: &nbsp;</span>
-                            <span className="truncate text-gray-600">{pastTime()}</span>
-                          </div>
-                        </div>
-                      </>
-                    ) : (
-                      <span>N/A</span>
-                    )}
-                  </div>
-                </div>
-              </li>
-
-              <li className="py-3 sm:py-4">
-                <div className="flex items-center space-x-4">
-                  <div className="flex-shrink-0"></div>
-                  <div className="min-w-0 flex-1">
-                    <p className="mb-1 truncate text-sm font-medium text-gray-900 dark:text-white">
-                      최저가격
-                    </p>
-                    <p className="truncate text-sm font-medium text-gray-900 dark:text-white">
-                      최고가격
-                    </p>
-                  </div>
-
-                  <div className="pr-2">
-                    <div className="mb-1 text-right text-sm font-medium text-gray-900 dark:text-white">
-                      {loading ? (
-                        <Skeleton width={md ? '8rem' : '5rem'} borderRadius="0.5rem" />
-                      ) : getPriceByLevel('average') ? (
-                        <>
-                          <span>{getPriceByLevel('average')?.toLocaleString()}</span>
-                          <span className="ml-1 font-normal">원</span>
-                        </>
-                      ) : (
-                        <span>N/A</span>
-                      )}
-                    </div>
-                    <div className="text-right text-sm font-medium text-gray-900 dark:text-white">
-                      {loading ? (
-                        <Skeleton width={md ? '8rem' : '5rem'} borderRadius="0.5rem" />
-                      ) : getPriceByLevel('price_80') ? (
-                        <>
-                          <span>{getPriceByLevel('price_80')?.toLocaleString()}</span>
-                          <span className="ml-1 font-normal">원</span>
-                        </>
-                      ) : (
-                        <span>N/A</span>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </li>
-            </ul>
-
-            {
-              // 현재 애플스토어에 판매 중인 제품에 대해서만 가이드 표시
-              !isDeprecated &&
-                (loading ? (
-                  <Skeleton className="max-w-md" height="4rem" borderRadius="0.5rem" />
-                ) : (
-                  usedPurchaseTiming && (
-                    <div
-                      onClick={onClickBuyersGuide}
-                      className="max-w-md cursor-pointer rounded bg-gray-100  py-3 sm:py-4"
-                    >
-                      <div className="flex items-center space-x-4 pr-2">
-                        <div className="flex-shrink-0"></div>
-                        <div className="min-w-0 flex-1 ">
-                          <p className="truncate text-sm font-semibold text-gray-900 ">
-                            구매시기 가이드
-                          </p>
-                          <p className="truncate text-sm text-gray-500 dark:text-gray-400">
-                            지금 중고로 사도 괜찮을까요?
-                          </p>
-                        </div>
-                        <div
-                          className="inline-flex cursor-pointer items-center rounded-md  px-2 py-0.5 text-xs font-semibold  text-white"
-                          style={{
-                            backgroundColor: usedPurchaseTiming.color,
-                          }}
-                        >
-                          {usedPurchaseTiming.text}
-                          <FontAwesomeIcon className="ml-1" icon={faChevronRight} />
-                        </div>
-                      </div>
-                    </div>
-                  )
-                ))
-            }
-          </div>
-
-          <div className="mt-5">
-            <p className="text-md font-bold text-gray-900 dark:text-white">새제품 가격</p>
-
-            <ul className="mt-2 max-w-md divide-y divide-gray-200 dark:divide-gray-700">
-              <li className="py-3 sm:pb-4">
-                <div className="flex items-center space-x-4">
-                  <div className="flex-shrink-0"></div>
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-medium text-gray-900 dark:text-white">
-                      애플스토어
-                    </p>
-                  </div>
-                  <div className="text-base font-semibold text-gray-900 dark:text-white">
-                    {isDeprecated ? (
-                      '단종'
-                    ) : (
-                      <>
-                        <span>{currentOptionPrice?.toLocaleString()}</span>
-                        <span className="ml-1 font-normal">원</span>
-                      </>
-                    )}
-                  </div>
-                </div>
-              </li>
-
-              <li className="py-3 sm:pb-4">
-                <div className="flex items-center space-x-4">
-                  <div className="flex-shrink-0"></div>
-                  <div className="min-w-0 flex-1">
-                    <p className="w-16 truncate text-sm font-medium text-gray-900 grayscale dark:text-white">
-                      <CoupangLogo />
-                    </p>
-                  </div>
-                  <div className="text-right text-base font-semibold text-gray-900">
-                    {loading ? (
-                      <Skeleton width={md ? '8rem' : '5rem'} borderRadius="0.5rem" />
-                    ) : recentCoupangPrice ? (
-                      <>
-                        <span>{recentCoupangPrice.toLocaleString()}</span>
-                        <span className="ml-1 font-normal">원</span>
-
-                        <div className="truncate text-xs">
-                          <span className="text-gray-500">마지막 업데이트: &nbsp;</span>
-                          <span className="truncate text-gray-600">{coupangLastUpdatedTime}</span>
-                        </div>
-                      </>
-                    ) : (
-                      <span>품절</span>
-                    )}
-                  </div>
-                </div>
-              </li>
-            </ul>
-
-            {
-              // 현재 애플스토어에 판매 중인 제품에 대해서만 가이드 표시
-              !isDeprecated &&
-                (loading ? (
-                  <Skeleton className="max-w-md" height="4rem" borderRadius="0.5rem" />
-                ) : (
-                  purchaseTiming && (
-                    <div
-                      onClick={onClickBuyersGuide}
-                      className="max-w-md cursor-pointer rounded bg-gray-100 py-3 sm:py-4"
-                    >
-                      <div className="flex items-center space-x-4 pr-2">
-                        <div className="flex-shrink-0"></div>
-                        <div className="min-w-0 flex-1 ">
-                          <p className="truncate text-sm font-semibold text-gray-900 dark:text-white">
-                            구매시기 가이드
-                          </p>
-                          <p className="truncate text-sm text-gray-500 dark:text-gray-400">
-                            지금 새제품을 사도 괜찮을까요?
-                          </p>
-                        </div>
-                        <div
-                          className="inline-flex cursor-pointer items-center rounded-md  px-2 py-0.5 text-xs font-semibold  text-white"
-                          style={{
-                            backgroundColor: purchaseTiming.color,
-                          }}
-                        >
-                          {newPurchaseTiming.text}
-                          <FontAwesomeIcon className="ml-1" icon={faChevronRight} />
-                        </div>
-                      </div>
-                    </div>
-                  )
-                ))
-            }
-          </div>
-
-          <div className="mt-5 max-w-md">
-            <p className="text-md font-bold text-gray-900 dark:text-white">제품 정보</p>
-
-            <div className="mt-2 flow-root">
-              <div className="overflow-x-auto ">
-                <div className="inline-block min-w-full align-middle ">
-                  <table className="min-w-full divide-y divide-gray-300">
-                    <thead>
-                      <tr className="divide-x divide-gray-200">
-                        <th
-                          scope="col"
-                          className="w-6 px-4 py-3.5 text-left text-sm font-semibold text-gray-900"
-                        >
-                          출시일
-                        </th>
-                        <th
-                          scope="col"
-                          className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900"
-                        >
-                          색상
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-gray-200 bg-white">
-                      <tr className="divide-x divide-gray-200">
-                        <td className="whitespace-nowrap p-4 text-sm font-medium text-gray-700">
-                          {releasedDate}
-                        </td>
-                        <td className="whitespace-nowrap p-4 text-sm font-medium text-gray-700">
-                          {colors.join(', ')}
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* <div className="mt-5">
-            <p className="text-md font-bold text-gray-900 dark:text-white">가격 그래프</p>
-
-            {loading ? (
-              <Skeleton className="mt-3" height={md ? '15rem' : '8rem'} />
-            ) : (
-              <Line
-                datasetIdKey="id"
-                data={{
-                  labels: fetchedData.data.map((price) =>
-                    // format to MMDD in en-US locale
-                    new Date(price.date).toLocaleDateString('en-US', {
-                      month: '2-digit',
-                      day: '2-digit',
-                    })
-                  ),
-                  datasets: [
-                    {
-                      id: 1,
-                      label: '평균시세',
-                      data: fetchedData.data.map((price, _index) => (price.mid ? price.mid : null)),
-                    },
-                  ],
-                }}
+          {itemInfo && (
+            <>
+              <TradePrices
+                item={itemInfo}
+                unused={unused}
+                setUnused={setUnused}
+                source={'중고나라'}
+                setSource={setSource}
               />
-            )}
-          </div> */}
+              <NewPrices item={itemInfo} />
+              <PriceGraph item={itemInfo} unused={false} source={'중고나라'} />
+            </>
+          )}
 
           {!md && (
             <div className="mt-10 inline-flex w-full items-center justify-center rounded-lg bg-gray-100  p-5 text-base font-medium text-gray-700">
@@ -722,11 +223,41 @@ const MacModel = ({ model, optionId }: PageProps) => {
 
 export async function getServerSideProps(context) {
   const { model, optionId = null } = context.query
+  let newId: number
+
+  if (optionId) {
+    newId = Number(optionId)
+  } else {
+    switch (model) {
+      case 'mac-mini':
+        newId = 1
+        break
+      case 'macbook-air-13':
+        newId = 21
+        break
+      case 'macbook-pro-13':
+        newId = 45
+        break
+      case 'macbook-pro-14':
+        newId = 47
+        break
+      case 'macbook-pro-16':
+        newId = 93
+        break
+      case 'macbook-air-15':
+        newId = 117
+        break
+      default:
+        newId = 1
+        break
+    }
+  }
 
   return {
     props: {
       model,
       optionId,
+      newId,
     },
   }
 }

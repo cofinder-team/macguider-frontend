@@ -1,5 +1,4 @@
 import axiosInstance, { axiosInstanceV2 } from '@/lib/axios'
-import { ModelType } from './model'
 
 export type Source = '중고나라' | '번개장터' | '당근마켓'
 

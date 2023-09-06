@@ -2,30 +2,32 @@ import amplitudeTrack from '@/lib/amplitude/track'
 import { HandThumbUpIcon, HandThumbDownIcon } from '@heroicons/react/24/outline'
 import { useCallback, useState } from 'react'
 
-export default function Feedback({ currentItem, currentOption }) {
+interface Props {
+  item: ItemResponse
+}
+
+export default function Feedback({ item }: Props) {
   const [currentStep, setCurrentStep] = useState(0)
-  const { id: itemId } = currentItem
-  const { id: optionId } = currentOption
 
   const onClickSendFeedback = useCallback(
     (feedback) => {
       amplitudeTrack('click_send_feedback', {
         feedback,
-        itemId,
-        optionId,
+        type: item.type,
+        id: item.id,
       })
 
       setCurrentStep(1)
     },
-    [itemId, optionId]
+    [item]
   )
 
   const onClickSendMoreFeedback = useCallback(() => {
     amplitudeTrack('click_send_more_feedback', {
-      itemId,
-      optionId,
+      type: item.type,
+      id: item.id,
     })
-  }, [itemId, optionId])
+  }, [item])
 
   return (
     <div className="inline-flex items-center justify-center rounded-lg bg-gray-100  text-base font-medium text-gray-700 md:p-5">

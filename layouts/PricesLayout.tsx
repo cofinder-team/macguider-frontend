@@ -13,15 +13,20 @@ import Feedback from '@/components/Feedback'
 
 const leftColumnOffsetY = 150
 
-const PricesLayout = ({ currentModel, currentItem, currentOption, children }, ref) => {
-  const container = useRef(null)
-  const leftColumn = useRef(null)
-  const newsletterRef = useRef(null)
+interface Props {
+  item: ItemResponse
+  children: React.ReactNode
+}
+
+const PricesLayout = ({ item: currentItem, children }: Props, ref: any) => {
+  const container = useRef<HTMLDivElement>(null)
+  const leftColumn = useRef<HTMLDivElement>(null)
+  const newsletterRef = useRef<HTMLDivElement>(null)
   const [fixedElementWidth, setFixedElementWidth] = useState(0)
   const { sm, md, lg } = useScreenSize()
 
-  const { id: currentItemId } = currentModel
-  const { imgSrc, title, specs } = currentItem
+  // const { id: currentItemId } = currentModel
+  // const { imgSrc, title, specs } = currentItem
 
   const onClickUploadDesk = useCallback(() => {
     amplitudeTrack('click_upload_desk')
@@ -50,7 +55,7 @@ const PricesLayout = ({ currentModel, currentItem, currentOption, children }, re
       const isMobile = window.innerWidth <= 768
 
       if (!isMobile && container.current && leftColumn.current) {
-        let st = window.pageYOffset || document.documentElement.scrollTop
+        const st = window.scrollY || document.documentElement.scrollTop
 
         if (st > lastScrollTop) {
           // when scroll down
@@ -87,7 +92,7 @@ const PricesLayout = ({ currentModel, currentItem, currentOption, children }, re
       const isMobile = window.innerWidth <= 768
 
       if (leftColumn.current && leftColumn.current.parentNode) {
-        const parentWidth = leftColumn.current.parentNode.offsetWidth
+        const parentWidth = (leftColumn.current.parentNode as HTMLDivElement).offsetWidth
         if (isMobile) {
           leftColumn.current.style.position = 'static'
           leftColumn.current.style.top = 'auto'
@@ -127,19 +132,19 @@ const PricesLayout = ({ currentModel, currentItem, currentOption, children }, re
             visibility: fixedElementWidth ? 'visible' : 'hidden',
           }}
         >
-          <Image
+          {/* <Image
             alt={`${specs.year} ${title}`}
             src={imgSrc}
             width={576}
             height={306}
-            priority="true"
+            priority={true}
             objectFit="contain"
             objectPosition="center"
-          />
+          /> */}
 
           {md && (
             <div className="mt-2 flex justify-center xl:px-10">
-              <Feedback currentItem={currentItem} currentOption={currentOption} />
+              <Feedback item={currentItem} />
             </div>
           )}
         </div>
@@ -153,7 +158,6 @@ const PricesLayout = ({ currentModel, currentItem, currentOption, children }, re
         <div className="mt-6 grid grid-cols-2 gap-x-6 gap-y-10 lg:grid-cols-4 xl:gap-x-8">
           {optionsMac
             .concat(optionsIpad)
-            .filter((item) => item.id !== currentItemId)
             .slice(0, 8)
             .map((item) => (
               <div key={item.id} className="group relative" onClick={() => onClickOtherItem(item)}>

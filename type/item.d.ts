@@ -18,11 +18,6 @@ interface IphoneItemResponse extends ItemResponse {
   details: IphoneItemDetailsResponse
 }
 
-type ItemDetailsResponse =
-  | MacItemDetailsResponse
-  | IpadItemDetailsResponse
-  | IphoneItemDetailsResponse
-
 interface MacItemDetailsResponse {
   chip: string
   cpu: number

@@ -1,6 +1,7 @@
 import {
   ForwardedRef,
   Fragment,
+  forwardRef,
   useCallback,
   useEffect,
   useImperativeHandle,
@@ -15,14 +16,23 @@ import { getItems } from 'utils/item'
 import { classNames, deepEqual, removeDuplicates } from 'utils/basic'
 import { createAlert } from 'utils/alert'
 import amplitudeTrack from '@/lib/amplitude/track'
-import { useCookies } from 'react-cookie'
 import Link from '@/components/Link'
 
 interface Props {
-  modelId: string
+  modelId: number
   modelType: ModelType
   itemId: number
-  onApply: () => Promise<void>
+  onApply: (item: ItemResponse) => void
+}
+
+interface VisibleOption {
+  label: string
+  key: string
+  value: {
+    value: unknown
+    option: string
+  }[]
+  availableOptions: unknown[]
 }
 
 function reducer(state, action) {
@@ -47,111 +57,85 @@ function reducer(state, action) {
 
 function SelectOptionsModal(
   { modelId, modelType, itemId, onApply = async () => {} }: Props,
-  ref: ForwardedRef<HTMLDivElement>
+  ref: any
 ) {
   // 모달 열기/닫기
   const [open, setOpen] = useState(false)
 
   // fetch Items
-  const { isLoading, error, data: items = [] } = useQuery('item', () => getItems())
+  const {
+    isLoading,
+    error,
+    data: items = [],
+  } = useQuery(['items', modelType, modelId], () => getItems(modelType, modelId))
 
   if (error) {
     alert('데이터를 불러오는데 실패했습니다. 잠시 후 다시 시도해주세요.')
   }
 
-  // 모델 선택
-  const [selectedModel, setSelectedModel] = useState({
-    type: modelType,
-    id: itemId,
-  })
-
   // 현재 선택된 아이템 옵션들
-  const [currentOptions, dispatch] = useReducer(reducer, {} as MacItemDetailsResponse)
+  const [currentOptions, dispatch] = useReducer(reducer, {})
 
   useEffect(() => {
     // 해당 모델의 가장 기본형으로 옵션을 초기화
-    const defaultItem = items.find((item) => item.model.id === selectedModel.id)
+    const defaultItem = items.find((item) => item.model.id === modelId)
 
     if (defaultItem) {
-      if (defaultItem.type === 'P') {
-        const ipadItem = defaultItem as IpadItemResponse
+      // if (defaultItem.type === 'P') {
+      //   const ipadItem = defaultItem as IpadItemResponse
 
-        // delete ipadItem.details['gen']
+      //   // delete ipadItem.details['gen']
 
-        dispatch({
-          type: 'SET_OPTIONS',
-          options: defaultItem.details,
-        })
+      //   dispatch({
+      //     type: 'SET_OPTIONS',
+      //     options: defaultItem.details,
+      //   })
 
-        return
-      }
+      //   return
+      // }
       dispatch({
         type: 'SET_OPTIONS',
         options: defaultItem.details,
       })
     }
-  }, [items, selectedModel.id])
+  }, [items, modelId])
 
-  useEffect(() => {
-    if (modelId && modelType) {
-      setSelectedModel({
-        type: modelType,
-        id: modelId,
-      })
-    }
-  }, [modelId, modelType])
-
-  useEffect(() => {
-    setCurrentStep(startStep)
-  }, [startStep])
-
-  // 전체 모델 종류
-  const modelOptions = useMemo(() => {
-    // M: Mac, P: iPad, W: Watch, A: AirPods, I: iPhone
-    const models = items
-      .filter((item) => item.type === 'M' || item.type === 'P')
-      .map((item) => ({ ...item.model, type: item.type }))
-
-    return removeDuplicates(models, 'id')
-  }, [items])
-
-  // 같은 모델 ID를 가진 아이템들
-  const candidateItems = useMemo(() => {
-    return items.filter((item) => item.model.id === selectedModel.id)
-  }, [items, selectedModel])
+  const macItems = items as MacItemResponse[]
+  const ipadItems = items as IpadItemResponse[]
+  const iphoneItems = items as IphoneItemResponse[]
 
   // Mac과 관련된 옵션들
   // chip 과 cpu 를 합쳐서 chipCore 로 표시
   const chipCoreOptions = useMemo(
-    () => [...new Set(candidateItems.map((item) => `${item.details.chip} ${item.details.cpu}`))],
-    [candidateItems]
+    () => [...new Set(macItems.map((item) => `${item.details.chip} ${item.details.cpu}`))],
+    [macItems]
   )
   const gpuOptions = useMemo(
-    () => [...new Set(candidateItems.map((item) => item.details.gpu))],
-    [candidateItems]
+    () => [...new Set(macItems.map((item) => item.details.gpu))],
+    [macItems]
   )
   const ramOptions = useMemo(
-    () => [...new Set(candidateItems.map((item) => item.details.ram))],
-    [candidateItems]
+    () => [...new Set(macItems.map((item) => item.details.ram))],
+    [macItems]
   )
   const ssdOptions = useMemo(
-    () => [...new Set(candidateItems.map((item) => item.details.ssd))],
-    [candidateItems]
+    () => [...new Set(macItems.map((item) => item.details.ssd))],
+    [macItems]
   )
 
   // iPad와 관련된 옵션들
   const chipOptions = useMemo(
-    () => [...new Set(candidateItems.map((item) => item.details.chip))],
-    [candidateItems]
+    () => [...new Set(ipadItems.map((item) => item.details.chip))],
+    [ipadItems]
   )
 
   const cellularOptions = useMemo(
-    () => [...new Set(candidateItems.map((item) => item.details.cellular))],
-    [candidateItems]
+    () => [...new Set(ipadItems.map((item) => item.details.cellular))],
+    [ipadItems]
   )
   const storageOptions = useMemo(
-    () => [...new Set(candidateItems.map((item) => item.details.storage))],
-    [candidateItems]
+    () => [...new Set(ipadItems.map((item) => item.details.storage))],
+    [ipadItems]
   )
 
   // 현재 선택된 CPU에서 선택 가능한 맥 옵션들
@@ -161,73 +145,73 @@ function SelectOptionsModal(
   const availableGpuOptions = useMemo(
     () =>
       gpuOptions.filter((gpuOption) =>
-        candidateItems.some(
+        macItems.some(
           ({ details }) =>
             details.cpu === currentOptions.cpu &&
             details.chip === currentOptions.chip &&
             details.gpu === gpuOption
         )
       ),
-    [candidateItems, gpuOptions, currentOptions]
+    [macItems, gpuOptions, currentOptions]
   )
 
   const availableSsdOptions = useMemo(
     () =>
       ssdOptions.filter((ssdOption) =>
-        candidateItems.some(
+        macItems.some(
           ({ details }) =>
             details.cpu === currentOptions.cpu &&
             details.chip === currentOptions.chip &&
             details.ssd === ssdOption
         )
       ),
-    [candidateItems, ssdOptions, currentOptions]
+    [macItems, ssdOptions, currentOptions]
   )
 
   const availableRamOptions = useMemo(
     () =>
       ramOptions.filter((ramOption) =>
-        candidateItems.some(
+        macItems.some(
           ({ details }) =>
             details.cpu === currentOptions.cpu &&
             details.chip === currentOptions.chip &&
             details.ram === ramOption
         )
       ),
-    [candidateItems, ramOptions, currentOptions]
+    [macItems, ramOptions, currentOptions]
   )
 
   // iPad 옵션
   const availableChipOptions = useMemo(
     () =>
       chipOptions.filter((chipOption) =>
-        candidateItems.some(({ details }) => details.chip === chipOption)
+        ipadItems.some(({ details }) => details.chip === chipOption)
       ),
-    [candidateItems, chipOptions]
+    [ipadItems, chipOptions]
   )
 
   const availableStorageOptions = useMemo(
     () =>
       storageOptions.filter((storageOption) =>
-        candidateItems.some(
+        ipadItems.some(
           ({ details }) => details.chip === currentOptions.chip && details.storage === storageOption
         )
       ),
-    [candidateItems, storageOptions, currentOptions]
+    [ipadItems, storageOptions, currentOptions]
   )
 
   const availableConnectivityOptions = useMemo(
     () =>
       cellularOptions.filter((cellularOption) =>
-        candidateItems.some(
+        ipadItems.some(
           ({ details }) =>
             details.chip === currentOptions.chip && details.cellular === cellularOption
         )
       ),
-    [candidateItems, cellularOptions, currentOptions]
+    [ipadItems, cellularOptions, currentOptions]
   )
 
-  const macOptions = [
+  const macOptions: VisibleOption[] = [
     {
       label: 'CPU 모델명',
       key: 'chip,cpu',
@@ -299,8 +283,8 @@ function SelectOptionsModal(
   const handleModelOptionChange = useCallback(
     (key, value) => {
       amplitudeTrack('click_select_alert_option', {
-        type: selectedModel.type,
-        id: selectedModel.id,
+        type: modelType,
+        id: modelId,
         option: key,
         value,
       })
@@ -323,62 +307,38 @@ function SelectOptionsModal(
         })
       }
     },
-    [dispatch, selectedModel]
+    [modelType, modelId]
   )
 
-  const handleUnusedOptionChange = useCallback(
-    (option) => {
-      amplitudeTrack('click_select_alert_unused_option', {
-        type: selectedModel.type,
-        id: selectedModel.id,
-        unused: option.value,
-      })
-
-      setUnusedOption(option)
-    },
-    [setUnusedOption, selectedModel]
-  )
-
-  const isValidItem = useMemo(() => {
-    const selectedItem = candidateItems.find(({ details }) =>
+  const validItem = useMemo(() => {
+    const selectedItem = items.find(({ details }) =>
       deepEqual(details, currentOptions, Object.keys(currentOptions))
     )
 
     return selectedItem
-  }, [candidateItems, currentOptions])
+  }, [items, currentOptions])
 
   const onClickApply = useCallback(async () => {
-    if (isValidItem) {
+    if (validItem) {
       amplitudeTrack('click_apply_alert', {
-        type: selectedModel.type,
-        id: selectedModel.id,
-        unused: unusedOption.value,
+        type: modelType,
+        id: modelId,
       })
 
-      setCurrentStep(startStep)
       setOpen(false)
 
-      try {
-        await createAlert(selectedModel.type, isValidItem.id, unusedOption.value === 'new')
-      } catch (error) {
-        alert(error.response?.data?.message)
-        return
-      }
-
-      await onApply()
+      onApply(validItem)
     }
-  }, [isValidItem, selectedModel, unusedOption, onApply])
+  }, [validItem, modelType, modelId, onApply])
 
   const closeModal = useCallback(() => {
     amplitudeTrack('click_close_alert_modal')
 
-    setCurrentStep(startStep)
-
     setOpen(false)
-  }, [startStep])
+  }, [])
 
   useImperativeHandle(ref, () => ({
-    setOpen: (isOpen) => setOpen(isOpen),
+    setOpen: (isOpen: boolean) => setOpen(isOpen),
   }))
 
   return (
@@ -419,134 +379,56 @@ function SelectOptionsModal(
                   </button>
                 </div>
 
-                {isUserLoggedIn ? (
-                  <div>
-                    {currentStep === 0 && (
-                      <>
-                        <h2 className="mt-3 font-bold">원하는 제품을 선택해주세요</h2>
-
-                        <div className="mt-5  max-h-80 overflow-scroll">
-                          <ul className="divide-y-[1px] divide-gray-200">
-                            {modelOptions.map((option) => (
-                              <li
-                                className="cursor-pointer py-4"
-                                key={option.id}
-                                onClick={() => {
-                                  handleModelChange(option)
-                                }}
-                              >
-                                <span className="text-sm font-medium text-gray-900">
-                                  {option.name}
-                                </span>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      </>
-                    )}
-                    {currentStep === 1 && (
-                      <>
-                        <div className="mt-2">
-                          {(selectedModel.type === 'M' ? macOptions : ipadOptions).map((option) => (
-                            <div className="mt-3" key={option.label}>
-                              <p className="text-md  text-gray-900 ">{option.label}</p>
-                              <ul className="mt-1 flex flex-wrap items-center">
-                                {option.value.map((candidate, candidateIndex) => (
-                                  <li
-                                    key={candidateIndex}
-                                    className="w-fit pb-2 pr-1"
-                                    onClick={() => {
-                                      handleModelOptionChange(option.key, candidate.value)
-                                    }}
-                                  >
-                                    <button
-                                      type="button"
-                                      className={`rounded-md bg-white px-3.5 py-2.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 ${
-                                        option.availableOptions?.includes(candidate.value)
-                                          ? (candidate.value === currentOptions[option.key] ||
-                                              (option.key === 'chip,cpu' &&
-                                                currentOptions['chip'] ===
-                                                  candidate.value.split(' ')[0] &&
-                                                currentOptions['cpu'] ==
-                                                  candidate.value.split(' ')[1])) &&
-                                            `bg-black text-white ring-black hover:bg-black hover:text-white hover:ring-black`
-                                          : `cursor-not-allowed bg-gray-100 text-gray-400 ring-gray-100 hover:bg-gray-100 hover:text-gray-400 hover:ring-gray-100`
-                                      }`}
-                                    >
-                                      {candidate.option}
-                                    </button>
-                                  </li>
-                                ))}
-                              </ul>
-                            </div>
-                          ))}
-                          <div className="mt-3">
-                            <p className="text-md  text-gray-900 ">상태</p>
-                            <ul className="mt-1 flex flex-wrap items-center">
-                              {unusedOptions.map((option) => (
-                                <li
-                                  key={option.value}
-                                  className="w-fit pb-2 pr-1"
-                                  onClick={() => {
-                                    handleUnusedOptionChange(option)
-                                  }}
-                                >
-                                  <button
-                                    type="button"
-                                    className={`rounded-md bg-white px-3.5 py-2.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 ${
-                                      option.value === unusedOption.value &&
-                                      `bg-black text-white ring-black hover:bg-black hover:text-white hover:ring-black`
-                                    }`}
-                                  >
-                                    {option.label}
-                                  </button>
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                        </div>
-
-                        <div className="mt-4 flex items-center space-x-2 sm:mt-6">
-                          <button
-                            type="button"
-                            className="text-md flex w-full max-w-md flex-[1] justify-center  rounded-md bg-gray-300 px-3 py-2 text-white"
-                            onClick={onClickPrevStep}
+                <div className="mt-2">
+                  {(modelType === 'M' ? macOptions : ipadOptions).map((option) => (
+                    <div className="mt-3" key={option.label}>
+                      <p className="text-md  text-gray-900 ">{option.label}</p>
+                      <ul className="mt-1 flex flex-wrap items-center">
+                        {option.value.map((candidate, candidateIndex) => (
+                          <li
+                            key={candidateIndex}
+                            className="w-fit pb-2 pr-1"
+                            onClick={() => {
+                              handleModelOptionChange(option.key, candidate.value)
+                            }}
                           >
-                            뒤로가기
-                          </button>
-                          <button
-                            type="button"
-                            className={classNames(
-                              isValidItem
-                                ? ' bg-black text-white'
-                                : 'cursor-not-allowed bg-gray-300 text-gray-400 ring-gray-300',
-                              'text-md flex w-full max-w-md flex-[3] justify-center  rounded-md px-3 py-2 font-bold'
-                            )}
-                            onClick={onClickApply}
-                          >
-                            알림받기
-                          </button>
-                        </div>
-                      </>
+                            <button
+                              type="button"
+                              className={`rounded-md bg-white px-3.5 py-2.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 ${
+                                option.availableOptions?.includes(candidate.value)
+                                  ? (candidate.value === currentOptions[option.key] ||
+                                      (option.key === 'chip,cpu' &&
+                                        currentOptions['chip'] ===
+                                          (candidate.value as string).split(' ')[0] &&
+                                        currentOptions['cpu'] ==
+                                          (candidate.value as string).split(' ')[1])) &&
+                                    `bg-black text-white ring-black hover:bg-black hover:text-white hover:ring-black`
+                                  : `cursor-not-allowed bg-gray-100 text-gray-400 ring-gray-100 hover:bg-gray-100 hover:text-gray-400 hover:ring-gray-100`
+                              }`}
+                            >
+                              {candidate.option}
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="mt-4 flex items-center space-x-2 sm:mt-6">
+                  <button
+                    type="button"
+                    className={classNames(
+                      validItem
+                        ? ' bg-black text-white'
+                        : 'cursor-not-allowed bg-gray-300 text-gray-400 ring-gray-300',
+                      'text-md flex w-full max-w-md flex-[3] justify-center  rounded-md px-3 py-2 font-bold'
                     )}
-                  </div>
-                ) : (
-                  <div>
-                    <div className="text-xl font-bold">
-                      알림을 받기 위해서는 <br /> 로그인이 필요해요
-                    </div>
-                    <div className="mt-6">
-                      <Link
-                        href="/login"
-                        className={
-                          'text-md flex w-full max-w-md flex-[3] justify-center rounded-md bg-black  px-3 py-2 font-bold text-white'
-                        }
-                      >
-                        로그인하기
-                      </Link>
-                    </div>
-                  </div>
-                )}
+                    onClick={onClickApply}
+                  >
+                    알림받기
+                  </button>
+                </div>
               </Dialog.Panel>
             </Transition.Child>
           </div>

@@ -37,6 +37,7 @@
     "data/options/*.ts",
     "utils/*.ts",
     "components/**/*.tsx",
+    "hooks/*.ts",
     "type/*"
   ],
   "exclude": ["node_modules"]

@@ -1,7 +1,7 @@
 import amplitudeTrack from '@/lib/amplitude/track'
 import { useScreenSize } from 'hooks/useScreenSize'
 import { useRouter } from 'next/router'
-import React, { ChangeEvent, useCallback, useMemo, useState } from 'react'
+import React, { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { useQuery } from 'react-query'
 import {
@@ -48,7 +48,7 @@ const NewPrices = ({ item }: Props) => {
   }, [totalRegularPrice])
 
   const coupangLastUpdatedTime = useMemo(() => {
-    if (recentCoupangPrice) {
+    if (recentCoupangPrice && recentCoupangPrice.price) {
       const lastUpdatedTime = recentCoupangPrice.date
       const now = new Date()
       const lastUpdated = new Date(lastUpdatedTime)
@@ -146,9 +146,9 @@ const NewPrices = ({ item }: Props) => {
             <div className="text-right text-base font-semibold text-gray-900">
               {loading ? (
                 <Skeleton width={md ? '8rem' : '5rem'} borderRadius="0.5rem" />
-              ) : recentCoupangPrice ? (
+              ) : recentCoupangPrice && recentCoupangPrice.price ? (
                 <>
-                  <span>{recentCoupangPrice.toLocaleString()}</span>
+                  <span>{recentCoupangPrice.price.toLocaleString()}</span>
                   <span className="ml-1 font-normal">원</span>
 
                   <div className="truncate text-xs">

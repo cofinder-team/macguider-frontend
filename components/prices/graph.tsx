@@ -1,10 +1,11 @@
 import amplitudeTrack from '@/lib/amplitude/track'
 import { useScreenSize } from 'hooks/useScreenSize'
 import { useRouter } from 'next/router'
-import React from 'react'
+import React, { useCallback, useMemo } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { useQuery } from 'react-query'
 import { Source, getTotalCoupangPrice, getTotalRegularPrice, getTotalTradePrice } from 'utils/price'
+import { useCookies } from 'react-cookie'
 import {
   Chart,
   CategoryScale,
@@ -76,7 +77,7 @@ const PriceGraph = ({ item, unused, source }: Props) => {
         <Line
           datasetIdKey="id"
           data={{
-            labels: totalPriceData?.map((price) =>
+            labels: totalPriceData?.slice(-90).map((price) =>
               // format to MMDD in en-US locale
               new Date(price.date).toLocaleDateString('en-US', {
                 month: '2-digit',
@@ -85,16 +86,26 @@ const PriceGraph = ({ item, unused, source }: Props) => {
             ),
             datasets: [
               {
-                label: '평균시세',
-                data: totalPriceData?.map((price) => price.average || null),
+                label: `중고${unused ? '(미개봉)' : '(S급)'}`,
+                data: totalPriceData?.slice(-90).map((price) => price.average || null),
+                borderColor: 'rgba(255, 99, 132, 1)', // Set the line color
+                backgroundColor: 'rgba(255, 99, 132, 0.2)', // Set the fill color
+                pointRadius: 0,
               },
               {
-                label: '쿠팡가격',
-                data: totalCoupangPriceData?.map((price) => price.price || null),
+                label: '쿠팡',
+                data: totalCoupangPriceData?.slice(-90).map((price) => price.price || null),
+                borderColor: 'rgba(54, 162, 235, 1)', // Set the line color
+                backgroundColor: 'rgba(54, 162, 235, 0.2)', // Set the fill color
+                pointRadius: 0,
               },
               {
                 label: '정가',
-                data: totalRegularPrice?.map((price) => price.price || null),
+                data: totalRegularPrice?.slice(-90).map((price) => price.price || null),
+                // Set the line color with gray
+                borderColor: 'rgb(119, 124, 124)', // Set the line color
+                backgroundColor: 'rgba(119, 124, 124, 0.2)', // Set the fill color
+                pointRadius: 0,
               },
             ],
           }}

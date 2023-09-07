@@ -1,7 +1,7 @@
 import amplitudeTrack from '@/lib/amplitude/track'
 import { useScreenSize } from 'hooks/useScreenSize'
 import { useRouter } from 'next/router'
-import React, { ChangeEvent, useCallback, useState } from 'react'
+import React, { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { useQuery } from 'react-query'
 import { Source, getRecentTradePrice } from 'utils/price'
@@ -23,7 +23,7 @@ const TradePrices = ({ item, unused, setUnused, source, setSource }: Props) => {
     isLoading: loadingRecentPrice,
     error: errorRecentPrice,
     data: recentPriceData,
-  } = useQuery(['RecentPrice', item.type, item.id, unused, source], () =>
+  } = useQuery(['recentPrice', item.type, item.id, unused, source], () =>
     getRecentTradePrice(item.type, item.id, unused, source)
   )
 
@@ -56,11 +56,6 @@ const TradePrices = ({ item, unused, setUnused, source, setSource }: Props) => {
       }
 
       setSource(platform)
-
-      // scroll to email form
-      // if (layoutRef.current) {
-      //   layoutRef.current.scrollToNewsletterForm()
-      // }
     },
     [setSource]
   )
@@ -78,6 +73,30 @@ const TradePrices = ({ item, unused, setUnused, source, setSource }: Props) => {
     },
     [item.id, item.type, setUnused]
   )
+
+  const lastTradePriceUpdated = useMemo(() => {
+    const now = new Date()
+
+    // Create a Date object for yesterday at 11 PM
+    const yesterdayElevenPM = new Date()
+    yesterdayElevenPM.setDate(now.getDate() - 1) // Go back one day
+    yesterdayElevenPM.setHours(23, 0, 0, 0) // Set the time to 11:00:00 PM
+
+    // Calculate the time difference in milliseconds
+    const timeDifferenceMs = now.getTime() - yesterdayElevenPM.getTime()
+
+    // Convert the time difference to hours, minutes, and seconds
+    const hours = Math.floor(timeDifferenceMs / (1000 * 60 * 60))
+    const minutes = Math.floor((timeDifferenceMs % (1000 * 60 * 60)) / (1000 * 60))
+
+    if (hours > 0) {
+      return `${hours}시간 전`
+    }
+    if (minutes > 0) {
+      return `${minutes}분 전`
+    }
+    return '방금 전'
+  }, [])
 
   //   const daysSinceLastReleaseDate = useMemo(() => {
   //     const today = new Date()
@@ -148,13 +167,13 @@ const TradePrices = ({ item, unused, setUnused, source, setSource }: Props) => {
             </div>
             <div className="inline-flex w-1/3 items-center text-base font-semibold text-gray-900 dark:text-white">
               <select
-                id="cpuOptions"
+                id="source"
                 className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
                 onInput={(e: ChangeEvent<HTMLSelectElement>) => {
                   const value = e.target.value as Source
                   onInputPlatform(value)
                 }}
-                value="중고나라"
+                value={source}
               >
                 <option value="중고나라">중고나라</option>
                 <option value="번개장터">번개장터</option>
@@ -176,7 +195,7 @@ const TradePrices = ({ item, unused, setUnused, source, setSource }: Props) => {
                 id="cpuOptions"
                 className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
                 onInput={(e: ChangeEvent<HTMLSelectElement>) => {
-                  const value = Boolean(e.target.value)
+                  const value = e.target.value === 'true'
                   onInputOptionUnused(value)
                 }}
                 value={unused.toString()}
@@ -204,7 +223,7 @@ const TradePrices = ({ item, unused, setUnused, source, setSource }: Props) => {
                   <div className="truncate text-sm text-gray-500 dark:text-gray-400">
                     <div className="truncate text-xs">
                       <span className="text-gray-500">마지막 업데이트: &nbsp;</span>
-                      <span className="truncate text-gray-600">{'1일 전'}</span>
+                      <span className="truncate text-gray-600">{lastTradePriceUpdated}</span>
                     </div>
                   </div>
                 </>

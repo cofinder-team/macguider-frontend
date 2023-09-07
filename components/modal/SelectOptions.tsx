@@ -13,10 +13,8 @@ import { Dialog, Transition } from '@headlessui/react'
 import { XMarkIcon } from '@heroicons/react/24/outline'
 import { useQuery } from 'react-query'
 import { getItems } from 'utils/item'
-import { classNames, deepEqual, removeDuplicates } from 'utils/basic'
-import { createAlert } from 'utils/alert'
+import { classNames, deepEqual } from 'utils/basic'
 import amplitudeTrack from '@/lib/amplitude/track'
-import Link from '@/components/Link'
 
 interface Props {
   modelId: number
@@ -34,6 +32,9 @@ interface VisibleOption {
   }[]
   availableOptions: unknown[]
 }
+
+const macKeys = ['chip', 'cpu', 'gpu', 'ram', 'ssd']
+const ipadKeys = ['chip', 'storage', 'cellular']
 
 function reducer(state, action) {
   switch (action.type) {
@@ -77,28 +78,23 @@ function SelectOptionsModal(
   const [currentOptions, dispatch] = useReducer(reducer, {})
 
   useEffect(() => {
-    // 해당 모델의 가장 기본형으로 옵션을 초기화
-    const defaultItem = items.find((item) => item.model.id === modelId)
+    const currentItem = items.find((item) => item.id === itemId)
 
-    if (defaultItem) {
-      // if (defaultItem.type === 'P') {
-      //   const ipadItem = defaultItem as IpadItemResponse
+    if (currentItem) {
+      // extract only keys of macKeys from currentItem.details
+      const options = Object.keys(currentItem.details)
+        .filter((key) => macKeys.includes(key))
+        .reduce((obj, key) => {
+          obj[key] = currentItem.details[key]
+          return obj
+        }, {})
 
-      //   // delete ipadItem.details['gen']
-
-      //   dispatch({
-      //     type: 'SET_OPTIONS',
-      //     options: defaultItem.details,
-      //   })
-
-      //   return
-      // }
       dispatch({
         type: 'SET_OPTIONS',
-        options: defaultItem.details,
+        options,
       })
     }
-  }, [items, modelId])
+  }, [itemId, items])
 
   const macItems = items as MacItemResponse[]
   const ipadItems = items as IpadItemResponse[]
@@ -426,7 +422,7 @@ function SelectOptionsModal(
                     )}
                     onClick={onClickApply}
                   >
-                    알림받기
+                    선택하기
                   </button>
                 </div>
               </Dialog.Panel>

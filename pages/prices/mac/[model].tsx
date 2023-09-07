@@ -1,24 +1,12 @@
 import { PageSEO } from '@/components/SEO'
 import React, { ChangeEvent, useCallback, useEffect, useMemo, useRef } from 'react'
-import optionsMac from '@/data/options/mac'
 import { useState } from 'react'
 import { useScreenSize } from 'hooks/useScreenSize'
 import Skeleton from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
-import { pastTime } from '@/lib/utils/pastTime'
 import { Source } from 'utils/price'
-import {
-  getRecentCoupangPrice,
-  getTotalCoupangPrice,
-  getTotalRegularPrice,
-  getTotalTradePrice,
-} from 'utils/price'
-import { getAppleProductInfo } from 'utils/model'
 import amplitudeTrack from '@/lib/amplitude/track'
-import OptionsModalForMac from '@/components/OptionsModalForMac'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import CoupangLogo from '@/data/coupang_logo.svg'
-import { purchaseTiming } from '@/components/guide/GuideBriefRow'
 import { useRouter } from 'next/router'
 import Feedback from '@/components/Feedback'
 import PricesLayout from '@/layouts/PricesLayout'
@@ -36,8 +24,8 @@ interface PageProps {
 }
 
 const MacModel = ({ model, newId }: PageProps) => {
-  const modalRef = useRef(null) as any
-  const layoutRef = useRef(null) as any
+  const modalRef = useRef<HTMLDivElement>(null) as any
+  const layoutRef = useRef<HTMLDivElement>(null) as any
 
   const { md } = useScreenSize()
   const router = useRouter()
@@ -54,51 +42,6 @@ const MacModel = ({ model, newId }: PageProps) => {
     error: errorCurrentItem,
     data: currentItem,
   } = useQuery(['item', 'M', itemId], () => getItem<MacItemResponse>('M', itemId))
-
-  // let currentModel: MacModel
-
-  // switch (model) {
-  //   case 'mac-mini':
-  //     currentModel = optionsMac.find((m) => m.id === '1') as MacModel
-  //     break
-  //   case 'macbook-air-13':
-  //     currentModel = optionsMac.find((m) => m.id === '2') as MacModel
-  //     break
-  //   case 'macbook-pro-13':
-  //     currentModel = optionsMac.find((m) => m.id === '3') as MacModel
-  //     break
-  //   case 'macbook-pro-14':
-  //     currentModel = optionsMac.find((m) => m.id === '4') as MacModel
-  //     break
-  //   case 'macbook-pro-16':
-  //     currentModel = optionsMac.find((m) => m.id === '5') as MacModel
-  //     break
-  //   default:
-  //     currentModel = optionsMac.find((m) => m.id === '1') as MacModel
-  // }
-
-  // const { data: currentModelData, id: currentModelId, releasedDateHistory } = currentModel
-  // const initialItem: MacItem = optionId
-  //   ? (getAppleProductInfo(currentModelId, Number(optionId), 'M') as MacItem)
-  //   : currentModelData[0]
-
-  // currentModel > currentItem > currentOption
-  // const [currentItem, setCurrentItem] = useState(initialItem)
-  // const { title: modelTitle, specs, isDeprecated, releasedDate, colors } = currentItem
-
-  // const initialOption = (
-  //   optionId
-  //     ? currentItem?.options.find((option) => option.id === Number(optionId))
-  //     : currentItem?.options[0]
-  // ) as MacItemDetails
-  // const [currentOption, setCurrentOption] = useState(initialOption)
-
-  // const {
-  //   ram: currentOptionRam,
-  //   ssd: currentOptionSsd,
-  //   id: currentOptionId,
-  //   price: currentOptionPrice,
-  // } = currentOption
 
   const [unused, setUnused] = useState(false)
   const [source, setSource] = useState<Source>('중고나라')
@@ -117,42 +60,9 @@ const MacModel = ({ model, newId }: PageProps) => {
       })
 
       setItemId(item.id)
-
-      // find selected Model which contains optionId
-      // const selectedItem = currentModelData.find((model) =>
-      //   model.options.some((option) => option.id === optionId)
-      // )
-
-      // if (selectedItem) {
-      //   // find selected Option
-      //   const selectedOption = selectedItem.options.find(
-      //     (option) => option.id === optionId
-      //   ) as MacItemDetails
-
-      //   setCurrentItem(selectedItem)
-      //   setCurrentOption(selectedOption)
-      //   // fetchPriceData(currentItemId, optionId, unopened)
-
-      //   amplitudeTrack('click_change_options', {
-      //     item_class: 'mac',
-      //     item_detail: model,
-      //     option_value: selectedItem.specs,
-      //   })
     },
     [itemId]
   )
-
-  // const daysSinceLastReleaseDate = useMemo(() => {
-  //   const today = new Date()
-  //   const [year, month, date] = releasedDateHistory[0].split('-')
-
-  //   const daysSinceLastReleaseDate = Math.floor(
-  //     (today.getTime() - new Date(Number(year), Number(month) - 1, Number(date)).getTime()) /
-  //       (1000 * 60 * 60 * 24)
-  //   )
-
-  //   return daysSinceLastReleaseDate
-  // }, [releasedDateHistory])
 
   return (
     <>
@@ -185,7 +95,7 @@ const MacModel = ({ model, newId }: PageProps) => {
                       <h5 className="mb-1  text-sm text-gray-500">옵션선택</h5>
 
                       <p className="font-semibold text-gray-700 dark:text-gray-400">
-                        {`${currentItem.details.cpu}코어 / ${currentItem.details.gpu}코어 / ${currentItem.details.ssd} / ${currentItem.details.ram}`}
+                        {`${currentItem.details.cpu}코어 / ${currentItem.details.gpu}코어 / ${currentItem.details.ssd} / ${currentItem.details.ram}GB`}
                       </p>
                     </div>
 
@@ -203,11 +113,11 @@ const MacModel = ({ model, newId }: PageProps) => {
                 item={currentItem}
                 unused={unused}
                 setUnused={setUnused}
-                source={'중고나라'}
+                source={source}
                 setSource={setSource}
               />
               <NewPrices item={currentItem} />
-              <PriceGraph item={currentItem} unused={false} source={'중고나라'} />
+              <PriceGraph item={currentItem} unused={unused} source={source} />
 
               {!md && (
                 <div className="mt-10 inline-flex w-full items-center justify-center rounded-lg bg-gray-100  p-5 text-base font-medium text-gray-700">

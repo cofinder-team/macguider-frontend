@@ -1,15 +1,16 @@
 import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useRef } from 'react'
 import Image from 'next/image'
-import optionsMac from '@/data/options/mac'
 import { useState } from 'react'
 import { useScreenSize } from 'hooks/useScreenSize'
 import NewsletterForm from '@/components/NewsletterForm'
 import amplitudeTrack from '@/lib/amplitude/track'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
-import optionsIpad from '@/data/options/ipad'
 import SectionDesk from '@/components/section/desk'
 import Feedback from '@/components/Feedback'
+import { getModels } from 'utils/model'
+import { useQuery } from 'react-query'
+import Link from '@/components/Link'
 
 const leftColumnOffsetY = 150
 
@@ -24,6 +25,12 @@ const PricesLayout = ({ item: currentItem, children }: Props, ref: any) => {
   const newsletterRef = useRef<HTMLDivElement>(null)
   const [fixedElementWidth, setFixedElementWidth] = useState(0)
   const { sm, md, lg } = useScreenSize()
+
+  const {
+    isLoading: loadingModels,
+    error: errorModels,
+    data: models,
+  } = useQuery(['models'], () => getModels())
 
   const onClickUploadDesk = useCallback(() => {
     amplitudeTrack('click_upload_desk')
@@ -152,35 +159,45 @@ const PricesLayout = ({ item: currentItem, children }: Props, ref: any) => {
       <div className="mt-12 border-t py-10 md:mt-24 ">
         <h2 className="text-2xl font-bold tracking-tight text-gray-900">다른 제품 둘러보기</h2>
 
-        <div className="mt-6 grid grid-cols-2 gap-x-6 gap-y-10 lg:grid-cols-4 xl:gap-x-8">
-          {optionsMac
-            .concat(optionsIpad)
-            .slice(0, 8)
-            .map((item) => (
-              <div key={item.id} className="group relative" onClick={() => onClickOtherItem(item)}>
-                <div className=" w-full overflow-hidden rounded-md  bg-white ">
-                  <Image
-                    objectFit="contain"
-                    objectPosition="center"
-                    width="544"
-                    height="306"
-                    src={item.imgSrc}
-                    alt={item.model}
-                  />
-                </div>
-                <div className="mt-2 flex justify-center md:mt-4 lg:justify-start">
-                  <div>
-                    <h3 className="text-sm font-medium text-gray-900">
-                      <a href={item.href}>
-                        <span aria-hidden="true" className="absolute inset-0" />
-                        {item.model}
-                      </a>
-                    </h3>
+        {models && (
+          <div className="mt-6 grid grid-cols-2 gap-x-6 gap-y-10 lg:grid-cols-4 xl:gap-x-8">
+            {models
+              .filter((model) => model.id !== currentItem.model.id)
+              .slice(0, 8)
+              .map((model) => (
+                <div
+                  key={model.id}
+                  className="group relative"
+                  onClick={() => onClickOtherItem(model)}
+                >
+                  <div className=" w-full overflow-hidden rounded-md  bg-white ">
+                    <Image
+                      objectFit="contain"
+                      objectPosition="center"
+                      width="544"
+                      height="306"
+                      src={model.mainItem.image.url}
+                      alt={model.name}
+                    />
+                  </div>
+                  <div className="mt-2 flex justify-center md:mt-4 lg:justify-start">
+                    <div>
+                      <h3 className="text-sm font-medium text-gray-900">
+                        <a
+                          href={`/prices/${
+                            model.type === 'M' ? 'mac' : model.type === 'I' ? 'iphone' : 'ipad'
+                          }/${model.mainItem.id}`}
+                        >
+                          <span aria-hidden="true" className="absolute inset-0" />
+                          {model.name}
+                        </a>
+                      </h3>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
-        </div>
+              ))}
+          </div>
+        )}
       </div>
 
       <div className="mt-5 border-t py-10">

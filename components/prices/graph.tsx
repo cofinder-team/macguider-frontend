@@ -107,7 +107,7 @@ const PriceGraph = ({ item, unused, source }: Props) => {
                   pointRadius: 0,
                 },
                 {
-                  label: '정가',
+                  label: '공홈',
                   data: totalRegularPrice?.slice(-90).map((price) => price.price || null),
                   // Set the line color with gray
                   borderColor: 'rgb(119, 124, 124)', // Set the line color

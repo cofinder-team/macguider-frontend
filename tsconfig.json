@@ -32,7 +32,7 @@
     "strictNullChecks": true
   },
   "include": [
-    "pages/prices/mac/*",
+    "pages/**/*.tsx",
     "custom.d.ts",
     "data/options/*.ts",
     "utils/*.ts",

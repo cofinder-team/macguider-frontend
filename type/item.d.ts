@@ -9,6 +9,17 @@ interface ItemResponse {
   }
 }
 
+// 모델의 대표 아이템
+interface MainItemResponse extends ModelResponse {
+  mainItem: {
+    type: ModelType
+    id: number
+    image: {
+      url: string
+    }
+  }
+}
+
 interface MacItemResponse extends ItemResponse {
   details: MacItemDetailsResponse
 }

@@ -2,12 +2,10 @@ import { PageSEO } from '@/components/SEO'
 import React, { ChangeEvent, useCallback, useEffect, useMemo, useRef } from 'react'
 import { useState } from 'react'
 import { useScreenSize } from 'hooks/useScreenSize'
-import Skeleton from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
 import { Source } from 'utils/price'
 import amplitudeTrack from '@/lib/amplitude/track'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { useRouter } from 'next/router'
 import Feedback from '@/components/Feedback'
 import PricesLayout from '@/layouts/PricesLayout'
 import { useQuery } from 'react-query'
@@ -19,16 +17,14 @@ import PriceGraph from '@/components/prices/graph'
 import SelectOptionsModal from '@/components/modal/SelectOptions'
 
 interface PageProps {
-  model: string
   newId: number
 }
 
-const MacModel = ({ model, newId }: PageProps) => {
+const MacModel = ({ newId }: PageProps) => {
   const modalRef = useRef<HTMLDivElement>(null) as any
   const layoutRef = useRef<HTMLDivElement>(null) as any
 
   const { md } = useScreenSize()
-  const router = useRouter()
 
   useEffect(() => {
     amplitudeTrack('enter_price_detail', { type: 'M', id: newId })
@@ -43,6 +39,10 @@ const MacModel = ({ model, newId }: PageProps) => {
     data: currentItem,
   } = useQuery(['item', 'M', itemId], () => getItem<MacItemResponse>('M', itemId))
 
+  if (errorCurrentItem) {
+    alert('데이터 조회에 실패했습니다. 잠시 후 다시 시도해주세요.')
+  }
+
   const [unused, setUnused] = useState(false)
   const [source, setSource] = useState<Source>('중고나라')
 
@@ -52,21 +52,18 @@ const MacModel = ({ model, newId }: PageProps) => {
     }
   }, [])
 
-  const changeModelOptions = useCallback(
-    (item: ItemResponse) => {
-      amplitudeTrack('click_change_options', {
-        type: 'M',
-        id: item.id,
-      })
+  const changeModelOptions = useCallback((item: ItemResponse) => {
+    amplitudeTrack('click_change_options', {
+      type: 'M',
+      id: item.id,
+    })
 
-      setItemId(item.id)
-    },
-    [itemId]
-  )
+    setItemId(item.id)
+  }, [])
 
   return (
     <>
-      <PageSEO title={'맥 시세'} description={'ChatGPT가 알려주는 사양별 맥 시세'} />
+      <PageSEO title={'오늘의 Mac 시세'} description={'중고 맥 시세를 알려드립니다'} />
 
       {currentItem && (
         <>
@@ -133,40 +130,21 @@ const MacModel = ({ model, newId }: PageProps) => {
 }
 
 export async function getServerSideProps(context) {
-  const { model, optionId = null } = context.query
-  let newId: number
+  const { itemId: newId } = context.query
 
-  if (optionId) {
-    newId = Number(optionId)
-  } else {
-    switch (model) {
-      case 'mac-mini':
-        newId = 1
-        break
-      case 'macbook-air-13':
-        newId = 21
-        break
-      case 'macbook-pro-13':
-        newId = 45
-        break
-      case 'macbook-pro-14':
-        newId = 47
-        break
-      case 'macbook-pro-16':
-        newId = 93
-        break
-      case 'macbook-air-15':
-        newId = 117
-        break
-      default:
-        newId = 1
-        break
+  try {
+    await getItem<MacItemResponse>('M', newId)
+  } catch {
+    return {
+      redirect: {
+        destination: '/prices/mac/1',
+        permanent: true,
+      },
     }
   }
 
   return {
     props: {
-      model,
       newId,
     },
   }

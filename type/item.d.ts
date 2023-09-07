@@ -3,7 +3,10 @@ interface ItemResponse {
   id: number
   model: ModelResponse
   option: number
-  details: unknown
+  details: ItemDetailsResponse
+  image: {
+    url: string
+  }
 }
 
 interface MacItemResponse extends ItemResponse {
@@ -18,7 +21,13 @@ interface IphoneItemResponse extends ItemResponse {
   details: IphoneItemDetailsResponse
 }
 
-interface MacItemDetailsResponse {
+interface ItemDetailsResponse {
+  year: number
+  releasedAt: string
+  colors: string[]
+}
+
+interface MacItemDetailsResponse extends ItemDetailsResponse {
   chip: string
   cpu: number
   gpu: number
@@ -26,14 +35,14 @@ interface MacItemDetailsResponse {
   ssd: string
 }
 
-interface IpadItemDetailsResponse {
+interface IpadItemDetailsResponse extends ItemDetailsResponse {
   storage: string
   gen: number
   cellular: boolean
   chip: string
 }
 
-interface IphoneItemDetailsResponse {
+interface IphoneItemDetailsResponse extends ItemDetailsResponse {
   modelSuffix: 'DEFAULT' | 'PRO' | 'PLUS' | 'PROMAX' | 'MINI'
   storage: string
 }

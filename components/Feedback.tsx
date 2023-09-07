@@ -30,7 +30,7 @@ export default function Feedback({ item }: Props) {
   }, [item])
 
   return (
-    <div className="inline-flex items-center justify-center rounded-lg bg-gray-100  text-base font-medium text-gray-700 md:p-5">
+    <div className="inline-flex items-center justify-center rounded-lg bg-gray-100  p-5 text-base font-medium text-gray-700">
       {currentStep === 0 ? (
         <>
           <span className="font-semibold">정보가 도움이 되었나요?</span>

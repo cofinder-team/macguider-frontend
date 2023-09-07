@@ -28,7 +28,7 @@ import TradePrices from '@/components/prices/trade'
 import { getItem } from 'utils/item'
 import NewPrices from '@/components/prices/new'
 import PriceGraph from '@/components/prices/graph'
-import SelectOptions from '@/components/modal/SelectOptions'
+import SelectOptionsModal from '@/components/modal/SelectOptions'
 
 interface PageProps {
   model: string
@@ -158,16 +158,9 @@ const MacModel = ({ model, newId }: PageProps) => {
     <>
       <PageSEO title={'맥 시세'} description={'ChatGPT가 알려주는 사양별 맥 시세'} />
 
-      {/* <OptionsModalForMac
-        ref={modalRef}
-        currentModel={currentModel}
-        currentItem={currentItem}
-        currentOption={currentOption}
-        onApply={changeModelOptions}
-      /> */}
       {currentItem && (
         <>
-          <SelectOptions
+          <SelectOptionsModal
             ref={modalRef}
             modelId={currentItem.model.id}
             modelType={currentItem.type}
@@ -178,7 +171,7 @@ const MacModel = ({ model, newId }: PageProps) => {
           />
           <PricesLayout item={currentItem} ref={layoutRef}>
             <h1 className="text-xl font-bold leading-9 tracking-tight text-gray-900 dark:text-gray-100 sm:leading-10 md:text-2xl">
-              {`연도 ${currentItem.model.name} ${currentItem.details.chip}`}
+              {`${currentItem.details.year} ${currentItem.model.name} ${currentItem.details.chip}`}
             </h1>
 
             <div className="max-w-xl">

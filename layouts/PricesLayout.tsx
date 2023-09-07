@@ -25,9 +25,6 @@ const PricesLayout = ({ item: currentItem, children }: Props, ref: any) => {
   const [fixedElementWidth, setFixedElementWidth] = useState(0)
   const { sm, md, lg } = useScreenSize()
 
-  // const { id: currentItemId } = currentModel
-  // const { imgSrc, title, specs } = currentItem
-
   const onClickUploadDesk = useCallback(() => {
     amplitudeTrack('click_upload_desk')
     window.open('https://tally.so/r/w54A6v', '_blank')
@@ -132,15 +129,15 @@ const PricesLayout = ({ item: currentItem, children }: Props, ref: any) => {
             visibility: fixedElementWidth ? 'visible' : 'hidden',
           }}
         >
-          {/* <Image
-            alt={`${specs.year} ${title}`}
-            src={imgSrc}
+          <Image
+            alt={`${currentItem.details.year} ${currentItem.model.name}`}
+            src={currentItem.image.url}
             width={576}
             height={306}
             priority={true}
             objectFit="contain"
             objectPosition="center"
-          /> */}
+          />
 
           {md && (
             <div className="mt-2 flex justify-center xl:px-10">

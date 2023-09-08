@@ -33,8 +33,9 @@ interface VisibleOption {
   availableOptions: unknown[]
 }
 
-const macKeys = ['chip', 'cpu', 'gpu', 'ram', 'ssd']
-const ipadKeys = ['chip', 'storage', 'cellular']
+const macKeys: string[] = ['chip', 'cpu', 'gpu', 'ram', 'ssd']
+const ipadKeys: string[] = ['chip', 'storage', 'cellular']
+const iphoneKeys: string[] = ['modelSuffix', 'storage']
 
 function reducer(state, action) {
   switch (action.type) {
@@ -81,9 +82,11 @@ function SelectOptionsModal(
     const currentItem = items.find((item) => item.id === itemId)
 
     if (currentItem) {
+      const targetKeys = modelType === 'M' ? macKeys : modelType === 'P' ? ipadKeys : iphoneKeys
+
       // extract only keys of macKeys from currentItem.details
       const options = Object.keys(currentItem.details)
-        .filter((key) => macKeys.includes(key))
+        .filter((key) => targetKeys.includes(key))
         .reduce((obj, key) => {
           obj[key] = currentItem.details[key]
           return obj
@@ -94,7 +97,7 @@ function SelectOptionsModal(
         options,
       })
     }
-  }, [itemId, items])
+  }, [itemId, items, modelType])
 
   const macItems = items as MacItemResponse[]
   const ipadItems = items as IpadItemResponse[]
@@ -132,6 +135,12 @@ function SelectOptionsModal(
   const storageOptions = useMemo(
     () => [...new Set(ipadItems.map((item) => item.details.storage))],
     [ipadItems]
+  )
+
+  // iPhone와 관련된 옵션들
+  const modelSuffixOptions = useMemo(
+    () => [...new Set(iphoneItems.map((item) => item.details.modelSuffix))],
+    [iphoneItems]
   )
 
   // 현재 선택된 CPU에서 선택 가능한 맥 옵션들
@@ -207,6 +216,15 @@ function SelectOptionsModal(
     [ipadItems, cellularOptions, currentOptions]
   )
 
+  // iPhone 옵션
+  const availableModelSuffixOptions = useMemo(
+    () =>
+      modelSuffixOptions.filter((modelSuffixOption) =>
+        iphoneItems.some(({ details }) => details.modelSuffix === modelSuffixOption)
+      ),
+    [iphoneItems, modelSuffixOptions]
+  )
+
   const macOptions: VisibleOption[] = [
     {
       label: 'CPU 모델명',
@@ -246,7 +264,7 @@ function SelectOptionsModal(
     },
   ]
 
-  const ipadOptions = [
+  const ipadOptions: VisibleOption[] = [
     {
       label: 'CPU 모델명',
       key: 'chip',
@@ -273,6 +291,27 @@ function SelectOptionsModal(
         option: option ? 'Wi-Fi + Cellular' : 'Wi-Fi',
       })),
       availableOptions: availableConnectivityOptions,
+    },
+  ]
+
+  const iphoneOptions: VisibleOption[] = [
+    {
+      label: '모델',
+      key: 'modelSuffix',
+      value: modelSuffixOptions.map((option) => ({
+        value: option,
+        option: option,
+      })),
+      availableOptions: availableModelSuffixOptions,
+    },
+    {
+      label: '저장용량',
+      key: 'storage',
+      value: storageOptions.map((option) => ({
+        value: option,
+        option: option,
+      })),
+      availableOptions: availableStorageOptions,
     },
   ]
 
@@ -376,7 +415,12 @@ function SelectOptionsModal(
                 </div>
 
                 <div className="mt-2">
-                  {(modelType === 'M' ? macOptions : ipadOptions).map((option) => (
+                  {(modelType === 'M'
+                    ? macOptions
+                    : modelType === 'P'
+                    ? ipadOptions
+                    : iphoneOptions
+                  ).map((option) => (
                     <div className="mt-3" key={option.label}>
                       <p className="text-md  text-gray-900 ">{option.label}</p>
                       <ul className="mt-1 flex flex-wrap items-center">

@@ -18,6 +18,10 @@ interface MainItemResponse extends ModelResponse {
       url: string
     }
   }
+  histories: {
+    date: string
+    info: string
+  }[]
 }
 
 interface MacItemResponse extends ItemResponse {

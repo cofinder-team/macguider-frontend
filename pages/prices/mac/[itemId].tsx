@@ -15,6 +15,7 @@ import { getItem } from 'utils/item'
 import NewPrices from '@/components/prices/new'
 import PriceGraph from '@/components/prices/graph'
 import SelectOptionsModal from '@/components/modal/SelectOptions'
+import { getModel } from 'utils/model'
 
 interface PageProps {
   newId: number
@@ -39,7 +40,16 @@ const MacModel = ({ newId }: PageProps) => {
     data: currentItem,
   } = useQuery(['item', 'M', itemId], () => getItem<MacItemResponse>('M', itemId))
 
-  if (errorCurrentItem) {
+  // 모델 조회
+  const {
+    isLoading: loadingCurrentModel,
+    error: errorCurrentModel,
+    data: currentModel,
+  } = useQuery(['model', 'M', itemId], () => getModel('M', currentItem!.model.id), {
+    enabled: !!currentItem,
+  })
+
+  if (errorCurrentItem || errorCurrentModel) {
     alert('데이터 조회에 실패했습니다. 잠시 후 다시 시도해주세요.')
   }
 
@@ -65,7 +75,7 @@ const MacModel = ({ newId }: PageProps) => {
     <>
       <PageSEO title={'오늘의 Mac 시세'} description={'중고 맥 시세를 알려드립니다'} />
 
-      {currentItem && (
+      {currentModel && currentItem && (
         <>
           <SelectOptionsModal
             ref={modalRef}
@@ -107,13 +117,14 @@ const MacModel = ({ newId }: PageProps) => {
               </div>
 
               <TradePrices
+                model={currentModel}
                 item={currentItem}
                 unused={unused}
                 setUnused={setUnused}
                 source={source}
                 setSource={setSource}
               />
-              <NewPrices item={currentItem} />
+              <NewPrices model={currentModel} item={currentItem} />
               <PriceGraph item={currentItem} unused={unused} source={source} />
 
               {!md && (

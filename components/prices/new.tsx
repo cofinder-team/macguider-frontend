@@ -13,12 +13,14 @@ import {
 import CoupangLogo from '@/data/coupang_logo.svg'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { purchaseTiming } from '../guide/GuideBriefRow'
+import { faChevronRight } from '@fortawesome/free-solid-svg-icons'
 
 interface Props {
+  model: MainItemResponse
   item: ItemResponse
 }
 
-const NewPrices = ({ item }: Props) => {
+const NewPrices = ({ model, item }: Props) => {
   const router = useRouter()
   const { md } = useScreenSize()
 
@@ -68,44 +70,49 @@ const NewPrices = ({ item }: Props) => {
     }
   }, [recentCoupangPrice])
 
-  //   const averageReleaseCycle = useMemo(() => {
-  //     const releaseCycles: number[] = []
-  //     for (let i = 0; i < releasedDateHistory.length - 1; i++) {
-  //       // convert YYYY-MM-DD string to Date object
-  //       const prev = releasedDateHistory[i].split('-')
-  //       const next = releasedDateHistory[i + 1].split('-')
+  const averageReleaseCycle = useMemo(() => {
+    const releaseCycles: number[] = []
+    for (let i = 0; i < model.histories.length - 1; i++) {
+      // convert YYYY-MM-DD string to Date object
+      const prev = model.histories[i].date.split('-')
+      const next = model.histories[i + 1].date.split('-')
 
-  //       const date1 = new Date(Number(prev[0]), Number(prev[1]) - 1, Number(prev[2]))
-  //       const date2 = new Date(Number(next[0]), Number(next[1]) - 1, Number(next[2]))
-  //       const diffTime = Math.abs(date2.getTime() - date1.getTime())
-  //       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
-  //       releaseCycles.push(diffDays)
-  //     }
+      const date1 = new Date(Number(prev[0]), Number(prev[1]) - 1, Number(prev[2]))
+      const date2 = new Date(Number(next[0]), Number(next[1]) - 1, Number(next[2]))
+      const diffTime = Math.abs(date2.getTime() - date1.getTime())
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+      releaseCycles.push(diffDays)
+    }
 
-  //     const averageReleaseCycle = Math.round(
-  //       releaseCycles.reduce((a, b) => a + b, 0) / releaseCycles.length
-  //     )
+    const averageReleaseCycle = Math.round(
+      releaseCycles.reduce((a, b) => a + b, 0) / releaseCycles.length
+    )
 
-  //     return averageReleaseCycle
-  //   }, [releasedDateHistory])
+    return averageReleaseCycle
+  }, [model.histories])
 
-  //   const newPurchaseTiming = useMemo(() => {
-  //     const latestReleaseDate = releasedDateHistory[0]
+  const newPurchaseTiming = useMemo(() => {
+    const latestReleaseDate = model.histories[0].date
 
-  //     const today = new Date()
-  //     const [year, month, day] = latestReleaseDate.split('-')
-  //     const date = new Date(Number(year), Number(month) - 1, Number(day))
-  //     const diffTime = Math.abs(today.getTime() - date.getTime())
-  //     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+    const today = new Date()
+    const [year, month, day] = latestReleaseDate.split('-')
+    const date = new Date(Number(year), Number(month) - 1, Number(day))
+    const diffTime = Math.abs(today.getTime() - date.getTime())
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
 
-  //     if (diffDays > averageReleaseCycle * 0.85) {
-  //       return purchaseTiming.bad
-  //     } else if (diffDays > averageReleaseCycle * 0.6) {
-  //       return purchaseTiming.normal
-  //     } else {
-  //       return purchaseTiming.good
-  //     }
-  //   }, [releasedDateHistory, averageReleaseCycle])
+    if (diffDays > averageReleaseCycle * 0.85) {
+      return purchaseTiming.bad
+    } else if (diffDays > averageReleaseCycle * 0.6) {
+      return purchaseTiming.normal
+    } else {
+      return purchaseTiming.good
+    }
+  }, [averageReleaseCycle, model.histories])
+
+  const onClickBuyersGuide = useCallback(() => {
+    amplitudeTrack('click_route_buyers_guide', { type: item.type, id: item.id })
+    router.push('/buyers-guide')
+  }, [item.id, item.type, router])
 
   return (
     <div className="mt-5">
@@ -164,41 +171,39 @@ const NewPrices = ({ item }: Props) => {
         </li>
       </ul>
 
-      {/* {
+      {
         // 현재 애플스토어에 판매 중인 제품에 대해서만 가이드 표시
-        !isDeprecated &&
-          (loading ? (
-            <Skeleton className="max-w-md" height="4rem" borderRadius="0.5rem" />
-          ) : (
-            purchaseTiming && (
-              <div
-                onClick={onClickBuyersGuide}
-                className="max-w-md cursor-pointer rounded bg-gray-100 py-3 sm:py-4"
-              >
-                <div className="flex items-center space-x-4 pr-2">
-                  <div className="flex-shrink-0"></div>
-                  <div className="min-w-0 flex-1 ">
-                    <p className="truncate text-sm font-semibold text-gray-900 dark:text-white">
-                      구매시기 가이드
-                    </p>
-                    <p className="truncate text-sm text-gray-500 dark:text-gray-400">
-                      지금 새제품을 사도 괜찮을까요?
-                    </p>
-                  </div>
-                  <div
-                    className="inline-flex cursor-pointer items-center rounded-md  px-2 py-0.5 text-xs font-semibold  text-white"
-                    style={{
-                      backgroundColor: purchaseTiming.color,
-                    }}
-                  >
-                    {newPurchaseTiming.text}
-                    <FontAwesomeIcon className="ml-1" icon={faChevronRight} />
-                  </div>
-                </div>
+
+        loading ? (
+          <Skeleton className="max-w-md" height="4rem" borderRadius="0.5rem" />
+        ) : (
+          <div
+            onClick={onClickBuyersGuide}
+            className="max-w-md cursor-pointer rounded bg-gray-100 py-3 sm:py-4"
+          >
+            <div className="flex items-center space-x-4 pr-2">
+              <div className="flex-shrink-0"></div>
+              <div className="min-w-0 flex-1 ">
+                <p className="truncate text-sm font-semibold text-gray-900 dark:text-white">
+                  구매시기 가이드
+                </p>
+                <p className="truncate text-sm text-gray-500 dark:text-gray-400">
+                  지금 새제품을 사도 괜찮을까요?
+                </p>
               </div>
-            )
-          ))
-      } */}
+              <div
+                className="inline-flex cursor-pointer items-center rounded-md  px-2 py-0.5 text-xs font-semibold  text-white"
+                style={{
+                  backgroundColor: newPurchaseTiming.color,
+                }}
+              >
+                {newPurchaseTiming.text}
+                <FontAwesomeIcon className="ml-1" icon={faChevronRight} />
+              </div>
+            </div>
+          </div>
+        )
+      }
     </div>
   )
 }

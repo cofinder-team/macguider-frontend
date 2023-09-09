@@ -22,3 +22,8 @@ export async function getModels(type?: ModelType): Promise<MainItemResponse[]> {
   })
   return response.data
 }
+
+export async function getModel(type: ModelType, id: number): Promise<MainItemResponse> {
+  const response = await axiosInstanceV2.get(`/model/${type}/${id}`)
+  return response.data
+}

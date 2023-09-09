@@ -1,12 +1,16 @@
 import amplitudeTrack from '@/lib/amplitude/track'
+import { faChevronRight } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useScreenSize } from 'hooks/useScreenSize'
 import { useRouter } from 'next/router'
 import React, { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { useQuery } from 'react-query'
-import { Source, getRecentTradePrice } from 'utils/price'
+import { Source, getRecentTradePrice, getTotalRegularPrice } from 'utils/price'
+import { purchaseTiming } from '../guide/GuideBriefRow'
 
 interface Props {
+  model: MainItemResponse
   item: ItemResponse
   unused: boolean
   source: Source
@@ -14,7 +18,7 @@ interface Props {
   setUnused: (unused: boolean) => void
 }
 
-const TradePrices = ({ item, unused, setUnused, source, setSource }: Props) => {
+const TradePrices = ({ model, item, unused, setUnused, source, setSource }: Props) => {
   const router = useRouter()
   const { md } = useScreenSize()
 
@@ -27,10 +31,22 @@ const TradePrices = ({ item, unused, setUnused, source, setSource }: Props) => {
     getRecentTradePrice(item.type, item.id, unused, source)
   )
 
+  // 전체 정가 조회
+  const {
+    isLoading: loadingTotalRegularPrice,
+    error: errorTotalRegularPrice,
+    data: totalRegularPrice,
+  } = useQuery(['totalRegularPrice', item.id], () => getTotalRegularPrice(item.type, item.id))
+
   // 가격 데이터 fetch 실패시 alert창 띄우기
-  if (errorRecentPrice) {
+  if (errorRecentPrice || errorTotalRegularPrice) {
     alert('데이터를 불러오는데 실패했습니다. 잠시 후 다시 시도해주세요.')
   }
+
+  const recentRegularPrice = useMemo(() => {
+    if (!totalRegularPrice) return null
+    return totalRegularPrice.slice(-1)[0].price
+  }, [totalRegularPrice])
 
   const getPriceByLevel = useCallback(
     (level: 'average' | 'price_20' | 'price_80') => {
@@ -98,59 +114,59 @@ const TradePrices = ({ item, unused, setUnused, source, setSource }: Props) => {
     return '방금 전'
   }, [])
 
-  //   const daysSinceLastReleaseDate = useMemo(() => {
-  //     const today = new Date()
-  //     const [year, month, date] = releasedDateHistory[0].split('-')
+  const daysSinceLastReleaseDate = useMemo(() => {
+    const today = new Date()
+    const [year, month, date] = model.histories[0].date.split('-')
 
-  //     const daysSinceLastReleaseDate = Math.floor(
-  //       (today.getTime() - new Date(Number(year), Number(month) - 1, Number(date)).getTime()) /
-  //         (1000 * 60 * 60 * 24)
-  //     )
+    const daysSinceLastReleaseDate = Math.floor(
+      (today.getTime() - new Date(Number(year), Number(month) - 1, Number(date)).getTime()) /
+        (1000 * 60 * 60 * 24)
+    )
 
-  //     return daysSinceLastReleaseDate
-  //   }, [releasedDateHistory])
+    return daysSinceLastReleaseDate
+  }, [model.histories])
 
-  //   const averageReleaseCycle = useMemo(() => {
-  //     const releaseCycles: number[] = []
-  //     for (let i = 0; i < releasedDateHistory.length - 1; i++) {
-  //       // convert YYYY-MM-DD string to Date object
-  //       const prev = releasedDateHistory[i].split('-')
-  //       const next = releasedDateHistory[i + 1].split('-')
+  const averageReleaseCycle = useMemo(() => {
+    const releaseCycles: number[] = []
+    for (let i = 0; i < model.histories.length - 1; i++) {
+      // convert YYYY-MM-DD string to Date object
+      const prev = model.histories[i].date.split('-')
+      const next = model.histories[i + 1].date.split('-')
 
-  //       const date1 = new Date(Number(prev[0]), Number(prev[1]) - 1, Number(prev[2]))
-  //       const date2 = new Date(Number(next[0]), Number(next[1]) - 1, Number(next[2]))
-  //       const diffTime = Math.abs(date2.getTime() - date1.getTime())
-  //       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
-  //       releaseCycles.push(diffDays)
-  //     }
+      const date1 = new Date(Number(prev[0]), Number(prev[1]) - 1, Number(prev[2]))
+      const date2 = new Date(Number(next[0]), Number(next[1]) - 1, Number(next[2]))
+      const diffTime = Math.abs(date2.getTime() - date1.getTime())
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+      releaseCycles.push(diffDays)
+    }
 
-  //     const averageReleaseCycle = Math.round(
-  //       releaseCycles.reduce((a, b) => a + b, 0) / releaseCycles.length
-  //     )
+    const averageReleaseCycle = Math.round(
+      releaseCycles.reduce((a, b) => a + b, 0) / releaseCycles.length
+    )
 
-  //     return averageReleaseCycle
-  //   }, [releasedDateHistory])
+    return averageReleaseCycle
+  }, [model.histories])
 
-  //   const usedPurchaseTiming = useMemo(() => {
-  //     if (totalPriceData) {
-  //       const latestUsedPrice = totalPriceData.filter((data) => data.average).slice(-1)[0].average
+  const usedPurchaseTiming = useMemo(() => {
+    if (recentPriceData) {
+      const latestUsedPrice = recentPriceData.average
 
-  //       if (latestUsedPrice && currentOptionPrice) {
-  //         const getPriceFitScore = () => (latestUsedPrice / currentOptionPrice) * 100
-  //         const getReleaseDateFitScore = () =>
-  //           (1 - daysSinceLastReleaseDate / averageReleaseCycle) * 100
-  //         const overallFitScore = getPriceFitScore() * 0.6 + getReleaseDateFitScore() * 0.4
+      if (latestUsedPrice && recentRegularPrice) {
+        const getPriceFitScore = () => (latestUsedPrice / recentRegularPrice) * 100
+        const getReleaseDateFitScore = () =>
+          (1 - daysSinceLastReleaseDate / averageReleaseCycle) * 100
+        const overallFitScore = getPriceFitScore() * 0.6 + getReleaseDateFitScore() * 0.4
 
-  //         if (overallFitScore >= 61) {
-  //           return purchaseTiming.good
-  //         } else if (overallFitScore >= 40) {
-  //           return purchaseTiming.normal
-  //         } else {
-  //           return purchaseTiming.bad
-  //         }
-  //       }
-  //     }
-  //   }, [totalPriceData, currentOptionPrice, daysSinceLastReleaseDate, averageReleaseCycle])
+        if (overallFitScore >= 61) {
+          return purchaseTiming.good
+        } else if (overallFitScore >= 40) {
+          return purchaseTiming.normal
+        } else {
+          return purchaseTiming.bad
+        }
+      }
+    }
+  }, [recentPriceData, recentRegularPrice, daysSinceLastReleaseDate, averageReleaseCycle])
 
   return (
     <div className="mt-5">
@@ -274,39 +290,41 @@ const TradePrices = ({ item, unused, setUnused, source, setSource }: Props) => {
         </li>
       </ul>
 
-      {/* {
+      {
         // 현재 애플스토어에 판매 중인 제품에 대해서만 가이드 표시
-        !isDeprecated &&
-          (loading ? (
-            <Skeleton className="max-w-md" height="4rem" borderRadius="0.5rem" />
-          ) : (
-            usedPurchaseTiming && (
-              <div
-                onClick={onClickBuyersGuide}
-                className="max-w-md cursor-pointer rounded bg-gray-100  py-3 sm:py-4"
-              >
-                <div className="flex items-center space-x-4 pr-2">
-                  <div className="flex-shrink-0"></div>
-                  <div className="min-w-0 flex-1 ">
-                    <p className="truncate text-sm font-semibold text-gray-900 ">구매시기 가이드</p>
-                    <p className="truncate text-sm text-gray-500 dark:text-gray-400">
-                      지금 중고로 사도 괜찮을까요?
-                    </p>
-                  </div>
-                  <div
-                    className="inline-flex cursor-pointer items-center rounded-md  px-2 py-0.5 text-xs font-semibold  text-white"
-                    style={{
-                      backgroundColor: usedPurchaseTiming.color,
-                    }}
-                  >
-                    {usedPurchaseTiming.text}
-                    <FontAwesomeIcon className="ml-1" icon={faChevronRight} />
-                  </div>
-                </div>
+
+        loadingRecentPrice || loadingTotalRegularPrice ? (
+          <Skeleton className="max-w-md" height="4rem" borderRadius="0.5rem" />
+        ) : (
+          <div
+            onClick={onClickBuyersGuide}
+            className="max-w-md cursor-pointer rounded bg-gray-100  py-3 sm:py-4"
+          >
+            <div className="flex items-center space-x-4 pr-2">
+              <div className="flex-shrink-0"></div>
+              <div className="min-w-0 flex-1 ">
+                <p className="truncate text-sm font-semibold text-gray-900 ">구매시기 가이드</p>
+                <p className="truncate text-sm text-gray-500 dark:text-gray-400">
+                  지금 중고로 사도 괜찮을까요?
+                </p>
               </div>
-            )
-          ))
-      } */}
+
+              {usedPurchaseTiming && (
+                <div
+                  className="inline-flex cursor-pointer items-center rounded-md  px-2 py-0.5 text-xs font-semibold  text-white"
+                  style={{
+                    backgroundColor: usedPurchaseTiming.color,
+                  }}
+                >
+                  {usedPurchaseTiming.text}
+
+                  <FontAwesomeIcon className="ml-1" icon={faChevronRight} />
+                </div>
+              )}
+            </div>
+          </div>
+        )
+      }
     </div>
   )
 }

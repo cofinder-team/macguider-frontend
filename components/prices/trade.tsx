@@ -115,6 +115,8 @@ const TradePrices = ({ model, item, unused, setUnused, source, setSource }: Prop
   }, [])
 
   const daysSinceLastReleaseDate = useMemo(() => {
+    if (model.histories.length === 0) return
+
     const today = new Date()
     const [year, month, date] = model.histories[0].date.split('-')
 
@@ -151,7 +153,12 @@ const TradePrices = ({ model, item, unused, setUnused, source, setSource }: Prop
     if (recentPriceData) {
       const latestUsedPrice = recentPriceData.average
 
-      if (latestUsedPrice && recentRegularPrice) {
+      if (
+        latestUsedPrice &&
+        recentRegularPrice &&
+        averageReleaseCycle &&
+        daysSinceLastReleaseDate
+      ) {
         const getPriceFitScore = () => (latestUsedPrice / recentRegularPrice) * 100
         const getReleaseDateFitScore = () =>
           (1 - daysSinceLastReleaseDate / averageReleaseCycle) * 100

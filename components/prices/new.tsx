@@ -92,6 +92,8 @@ const NewPrices = ({ model, item }: Props) => {
   }, [model.histories])
 
   const newPurchaseTiming = useMemo(() => {
+    if (model.histories.length === 0) return
+
     const latestReleaseDate = model.histories[0].date
 
     const today = new Date()
@@ -191,15 +193,18 @@ const NewPrices = ({ model, item }: Props) => {
                   지금 새제품을 사도 괜찮을까요?
                 </p>
               </div>
-              <div
-                className="inline-flex cursor-pointer items-center rounded-md  px-2 py-0.5 text-xs font-semibold  text-white"
-                style={{
-                  backgroundColor: newPurchaseTiming.color,
-                }}
-              >
-                {newPurchaseTiming.text}
-                <FontAwesomeIcon className="ml-1" icon={faChevronRight} />
-              </div>
+
+              {newPurchaseTiming && (
+                <div
+                  className="inline-flex cursor-pointer items-center rounded-md  px-2 py-0.5 text-xs font-semibold  text-white"
+                  style={{
+                    backgroundColor: newPurchaseTiming.color,
+                  }}
+                >
+                  {newPurchaseTiming.text}
+                  <FontAwesomeIcon className="ml-1" icon={faChevronRight} />
+                </div>
+              )}
             </div>
           </div>
         )

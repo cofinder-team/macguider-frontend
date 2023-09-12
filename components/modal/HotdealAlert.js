@@ -11,7 +11,7 @@ import {
 import { Dialog, Transition } from '@headlessui/react'
 import { XMarkIcon } from '@heroicons/react/24/outline'
 import { useQuery } from 'react-query'
-import { getItem } from 'utils/item'
+import { getItems } from 'utils/item'
 import { classNames, deepEqual, removeDuplicates } from 'utils/basic'
 import { createAlert } from 'utils/alert'
 import amplitudeTrack from '@/lib/amplitude/track'
@@ -65,7 +65,7 @@ function HotdealAlert({ modelId, modelType, startStep = 0, onApply = async () =>
 
   // 현재 단계
   const [currentStep, setCurrentStep] = useState(startStep)
-  const { isLoading, error, data: items = [] } = useQuery('item', () => getItem())
+  const { isLoading, error, data: items = [] } = useQuery('item', () => getItems())
 
   if (error) {
     alert('데이터를 불러오는데 실패했습니다. 잠시 후 다시 시도해주세요.')

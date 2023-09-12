@@ -1,33 +1,48 @@
 import { PageSEO } from '@/components/SEO'
-import React, { useEffect } from 'react'
+import React, { useCallback, useEffect } from 'react'
 import siteMetadata from '@/data/siteMetadata'
-import { getAllFilesFrontMatter } from '@/lib/mdx'
 import NewsletterForm from '@/components/NewsletterForm'
 import ModelCard from '@/components/ModelCard'
 import SectionDesk from '@/components/section/desk'
 import Link from '@/components/Link'
 import Promo from '@/components/Promo'
 import amplitudeTrack from '@/lib/amplitude/track'
-import optionsMac from '@/data/options/mac'
-import optionsIpad from '@/data/options/ipad'
-import Image from 'next/image'
+import { getModels } from 'utils/model'
 
-export async function getStaticProps() {
-  const posts = await getAllFilesFrontMatter('blog')
-
-  return { props: { posts } }
+interface Props {
+  models: MainItemResponse[]
 }
 
-export default function Home() {
+export default function Home({ models }: Props) {
   useEffect(() => {
     amplitudeTrack('enter_home')
+  }, [])
+
+  const getModelsByType = useCallback(
+    (type: ModelType) => {
+      if (!models) return []
+
+      return models.filter((model) => model.type === type)
+    },
+    [models]
+  )
+
+  const generateModelHref = useCallback((model: MainItemResponse) => {
+    switch (model.type) {
+      case 'M':
+        return `/prices/mac/${model.mainItem.id}`
+      case 'P':
+        return `/prices/ipad/${model.mainItem.id}`
+      case 'I':
+        return `/prices/iphone/${model.mainItem.id}`
+    }
   }, [])
 
   return (
     <>
       <PageSEO title={siteMetadata.title} description={siteMetadata.description} />
       <section className="mt-md-6 mt-3">
-        <div className="space-y-2 pb-2 md:pt-6">
+        <div className="space-y-2 pb-2 pt-6">
           <h1 className="text-3xl font-extrabold leading-9 tracking-tight text-gray-900 dark:text-gray-100  sm:leading-10">
             맥 시세
           </h1>
@@ -37,8 +52,13 @@ export default function Home() {
         </div>
         <div className="mt-2">
           <div className="-m-4 flex flex-wrap">
-            {optionsMac.map((mac) => (
-              <ModelCard key={mac.id} title={mac.model} imgSrc={mac.imgSrc} href={mac.href} />
+            {getModelsByType('M').map((model) => (
+              <ModelCard
+                key={model.id}
+                title={model.name}
+                imgSrc={model.mainItem.image.url}
+                href={generateModelHref(model)}
+              />
             ))}
           </div>
         </div>
@@ -58,8 +78,39 @@ export default function Home() {
         </div>
         <div className="mt-2">
           <div className="-m-4 flex flex-wrap">
-            {optionsIpad.map((ipad) => (
-              <ModelCard key={ipad.id} title={ipad.model} imgSrc={ipad.imgSrc} href={ipad.href} />
+            {getModelsByType('P').map((model) => (
+              <ModelCard
+                key={model.id}
+                title={model.name}
+                imgSrc={model.mainItem.image.url}
+                href={generateModelHref(model)}
+              />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="mt-md-6 mt-3">
+        <div className="space-y-2 pb-2 pt-6">
+          <div className="flex items-center">
+            <h1 className="text-3xl font-extrabold leading-9 tracking-tight text-gray-900 dark:text-gray-100  sm:leading-10">
+              아이폰 시세
+            </h1>
+          </div>
+
+          <p className="text-lg leading-7 text-gray-500 dark:text-gray-400">
+            사양별 아이폰 시세를 알려드립니다
+          </p>
+        </div>
+        <div className="mt-2">
+          <div className="-m-4 flex flex-wrap">
+            {getModelsByType('I').map((model) => (
+              <ModelCard
+                key={model.id}
+                title={model.name}
+                imgSrc={model.mainItem.image.url}
+                href={generateModelHref(model)}
+              />
             ))}
           </div>
         </div>
@@ -90,4 +141,14 @@ export default function Home() {
       </div>
     </>
   )
+}
+
+export async function getServerSideProps(context) {
+  const models = await getModels()
+
+  return {
+    props: {
+      models,
+    },
+  }
 }

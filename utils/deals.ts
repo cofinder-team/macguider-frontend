@@ -5,17 +5,21 @@ export async function getDeals(
   size = 10,
   sort = 'date',
   direction = 'desc',
-  type,
-  model,
-  source
-) {
-  const optionalParams = type && model ? { type, model } : {}
-
-  if (source) {
-    optionalParams.source = source
+  type?: ModelType,
+  model?: number,
+  source?: Source
+): Promise<DealResponse[]> {
+  const optionalParams: {
+    type?: ModelType
+    model?: number
+    source?: Source
+  } = {
+    ...(type && { type }),
+    ...(model && { model }),
+    ...(source && { source }),
   }
 
-  let { data: deals } = await axiosInstanceV2.get(`/deal`, {
+  const { data: deals } = await axiosInstanceV2.get(`/deal`, {
     params: {
       page,
       size,
@@ -28,12 +32,12 @@ export async function getDeals(
   return deals
 }
 
-export async function getDealRaw(id) {
+export async function getDealRaw(id: number) {
   const response = await axiosInstanceV2.get(`/deal/raw/${id}`)
   return response.data
 }
 
-export async function getDeal(id) {
+export async function getDeal(id: number): Promise<DealResponse> {
   const response = await axiosInstanceV2.get(`/deal/${id}`)
   return response.data
 }

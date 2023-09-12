@@ -1,4 +1,4 @@
-const optionsMac = [
+const optionsMac: MacModel[] = [
   {
     id: '1',
     model: 'Mac mini',
@@ -851,6 +851,7 @@ const optionsMac = [
         alias: 'MacBook Pro 14',
         imgSrc: '/static/images/macs/macbook-pro-14-2023.jpeg',
         href: '/prices/mac/macbook-pro-14?optionId=33',
+        colors: ['실버', '스페이스 그레이'],
         specs: {
           year: '2023',
           cpuType: 'M2 Max',

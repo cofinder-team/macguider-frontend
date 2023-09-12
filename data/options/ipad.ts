@@ -1,4 +1,4 @@
-const optionsIpad = [
+const optionsIpad: IpadModel[] = [
   {
     id: '6',
     model: 'iPad mini',

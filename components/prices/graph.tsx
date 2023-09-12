@@ -4,7 +4,7 @@ import { useRouter } from 'next/router'
 import React, { useCallback, useMemo } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { useQuery } from 'react-query'
-import { Source, getTotalCoupangPrice, getTotalRegularPrice, getTotalTradePrice } from 'utils/price'
+import { getTotalCoupangPrice, getTotalRegularPrice, getTotalTradePrice } from 'utils/price'
 import Link from '@/components/Link'
 import {
   Chart,

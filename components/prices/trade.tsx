@@ -6,7 +6,7 @@ import { useRouter } from 'next/router'
 import React, { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { useQuery } from 'react-query'
-import { Source, getRecentTradePrice, getTotalRegularPrice } from 'utils/price'
+import { getRecentTradePrice, getTotalRegularPrice } from 'utils/price'
 import { purchaseTiming } from '../guide/GuideBriefRow'
 
 interface Props {
@@ -198,6 +198,7 @@ const TradePrices = ({ model, item, unused, setUnused, source, setSource }: Prop
                 }}
                 value={source}
               >
+                <option value="전체">전체</option>
                 <option value="중고나라">중고나라</option>
                 <option value="번개장터">번개장터</option>
                 <option value="당근마켓">당근마켓</option>

@@ -27,7 +27,9 @@ export default function DealCard({ deal, clickHandler }) {
           </span>
           {item.type === 'M'
             ? `${item.model.name} ${item.details.chip}`
-            : `${item.model.name} ${item.details.gen}세대`}
+            : item.type === 'P'
+            ? `${item.model.name} ${item.details.gen}세대`
+            : `${item.model.name} ${item.details.modelSuffix}`}
         </div>
         <div className="truncate text-xs font-normal text-gray-500">
           <span className="mr-1 inline-block  font-semibold text-gray-700">{source}</span>

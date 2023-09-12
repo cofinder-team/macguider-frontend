@@ -4,12 +4,7 @@ import { useRouter } from 'next/router'
 import React, { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { useQuery } from 'react-query'
-import {
-  Source,
-  getRecentCoupangPrice,
-  getRecentTradePrice,
-  getTotalRegularPrice,
-} from 'utils/price'
+import { getRecentCoupangPrice, getRecentTradePrice, getTotalRegularPrice } from 'utils/price'
 import CoupangLogo from '@/data/coupang_logo.svg'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { purchaseTiming } from '../guide/GuideBriefRow'

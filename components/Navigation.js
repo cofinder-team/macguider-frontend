@@ -13,9 +13,13 @@ const Navigation = () => {
             key={link.title}
             href={link.href}
             className={`p-1 font-semibold ${
-              router.pathname.startsWith(link.href)
-                ? 'text-blue-700'
-                : 'text-gray-900 dark:text-gray-100'
+              link.exact
+                ? router.pathname === link.href
+                  ? 'text-black'
+                  : 'text-gray-500'
+                : router.pathname.startsWith(link.href)
+                ? 'text-black'
+                : 'text-gray-500'
             } sm:p-4`}
           >
             {link.title}

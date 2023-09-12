@@ -11,6 +11,9 @@ import Feedback from '@/components/Feedback'
 import { getModels } from 'utils/model'
 import { useQuery } from 'react-query'
 import Link from '@/components/Link'
+import { getDeals } from 'utils/deals'
+import DealCard from '@/components/deals/DealCard'
+import { useRouter } from 'next/router'
 
 const leftColumnOffsetY = 150
 
@@ -26,11 +29,25 @@ const PricesLayout = ({ item: currentItem, children }: Props, ref: any) => {
   const [fixedElementWidth, setFixedElementWidth] = useState(0)
   const { sm, md, lg } = useScreenSize()
 
+  const router = useRouter()
+
   const {
     isLoading: loadingModels,
     error: errorModels,
     data: models,
   } = useQuery(['models'], () => getModels())
+
+  const {
+    isLoading: loadingDeals,
+    error: errorDeals,
+    data: deals,
+  } = useQuery(
+    ['deals', currentItem.model.id],
+    () => getDeals(1, 4, 'date', 'desc', currentItem.model.type, currentItem.model.id),
+    {
+      staleTime: 30000,
+    }
+  )
 
   const onClickUploadDesk = useCallback(() => {
     amplitudeTrack('click_upload_desk')
@@ -121,13 +138,23 @@ const PricesLayout = ({ item: currentItem, children }: Props, ref: any) => {
     }
   }, [])
 
+  const onClickOtherDeal = useCallback(
+    (dealId) => {
+      router.push(`/deals/${dealId}`)
+      amplitudeTrack('click_other_deal', {
+        dealId,
+      })
+    },
+    [router]
+  )
+
   useImperativeHandle(ref, () => ({
     scrollToNewsletterForm,
   }))
 
   return (
     <>
-      <div ref={container} className="container relative md:pt-6">
+      <div ref={container} className="container relative mb-12 md:pt-6">
         <div
           ref={leftColumn}
           className="md:fixed"
@@ -156,7 +183,18 @@ const PricesLayout = ({ item: currentItem, children }: Props, ref: any) => {
         <div className="ml-auto flex-grow md:w-1/2 md:px-3">{children}</div>
       </div>
 
-      <div className="mt-12 border-t py-10 md:mt-24 ">
+      {deals && deals.length > 0 && (
+        <div className="border-t py-10 md:mt-24 ">
+          <h2 className="text-2xl font-bold tracking-tight text-gray-900">중고 핫딜 </h2>
+          <div className="mt-6 grid grid-cols-1 gap-x-6 gap-y-10 md:grid-cols-2  xl:gap-x-20">
+            {deals.map((deal) => (
+              <DealCard deal={deal} key={deal.id} clickHandler={() => onClickOtherDeal(deal.id)} />
+            ))}
+          </div>
+        </div>
+      )}
+
+      <div className="border-t py-10">
         <h2 className="text-2xl font-bold tracking-tight text-gray-900">다른 제품 둘러보기</h2>
 
         {models && (
@@ -200,7 +238,7 @@ const PricesLayout = ({ item: currentItem, children }: Props, ref: any) => {
         )}
       </div>
 
-      <div className="mt-5 border-t py-10">
+      <div className="border-t py-10">
         <div className="flex items-center justify-between">
           <h2 className="text-2xl font-bold tracking-tight text-gray-900">오늘의 데스크</h2>
           <button

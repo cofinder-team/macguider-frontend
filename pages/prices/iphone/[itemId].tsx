@@ -3,7 +3,6 @@ import React, { ChangeEvent, useCallback, useEffect, useMemo, useRef } from 'rea
 import { useState } from 'react'
 import { useScreenSize } from 'hooks/useScreenSize'
 import 'react-loading-skeleton/dist/skeleton.css'
-import { Source } from 'utils/price'
 import amplitudeTrack from '@/lib/amplitude/track'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import Feedback from '@/components/Feedback'
@@ -54,7 +53,7 @@ const IponeModel = ({ newId }: PageProps) => {
   }
 
   const [unused, setUnused] = useState(false)
-  const [source, setSource] = useState<Source>('중고나라')
+  const [source, setSource] = useState<Source>('전체')
 
   const onClickOption = useCallback(() => {
     if (modalRef.current) {

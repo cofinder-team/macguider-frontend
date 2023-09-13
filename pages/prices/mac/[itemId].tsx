@@ -140,7 +140,16 @@ const MacModel = ({ newId }: PageProps) => {
 }
 
 export async function getServerSideProps(context) {
-  const { itemId: newId } = context.query
+  const { itemId: newId, optionId: oldId } = context.query
+
+  if (oldId) {
+    return {
+      redirect: {
+        destination: `/prices/mac/1`,
+        permanent: true,
+      },
+    }
+  }
 
   return {
     props: {

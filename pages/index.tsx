@@ -8,15 +8,18 @@ import Link from '@/components/Link'
 import Promo from '@/components/Promo'
 import amplitudeTrack from '@/lib/amplitude/track'
 import { getModels } from 'utils/model'
+import { useQuery } from 'react-query'
 
-interface Props {
-  models: MainItemResponse[]
-}
-
-export default function Home({ models }: Props) {
+export default function Home() {
   useEffect(() => {
     amplitudeTrack('enter_home')
   }, [])
+
+  const {
+    isLoading: loadingModels,
+    error: errorModels,
+    data: models,
+  } = useQuery(['models'], () => getModels())
 
   const getModelsByType = useCallback(
     (type: ModelType) => {
@@ -141,14 +144,4 @@ export default function Home({ models }: Props) {
       </div>
     </>
   )
-}
-
-export async function getServerSideProps(context) {
-  const models = await getModels()
-
-  return {
-    props: {
-      models,
-    },
-  }
 }

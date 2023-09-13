@@ -4,7 +4,7 @@ import amplitudeTrack from '@/lib/amplitude/track'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faHandPointUp, faXmark } from '@fortawesome/free-solid-svg-icons'
 import Skeleton from 'react-loading-skeleton'
-import { getRecentTradePrice } from 'utils/price'
+import { getLastTradePriceUpdated, getRecentTradePrice } from 'utils/price'
 import { useRouter } from 'next/router'
 import { useScreenSize } from 'hooks/useScreenSize'
 import { ArrowUpRightIcon } from '@heroicons/react/24/outline'
@@ -332,7 +332,7 @@ export default function Deal({ dealId }) {
                           ? `${deal.tradePrice.average.toLocaleString()}원`
                           : 'N/A'}
                         <span className="ml-2 inline-block text-sm font-normal text-gray-400">
-                          {pastTime()}
+                          {getLastTradePriceUpdated()}
                         </span>
                       </p>
                     </div>

@@ -272,9 +272,9 @@ const TradePrices = ({ model, item, unused, setUnused, source, setSource }: Prop
               <div className="mb-1 text-right text-sm font-medium text-gray-900 dark:text-white">
                 {loadingRecentPrice ? (
                   <Skeleton width={md ? '8rem' : '5rem'} borderRadius="0.5rem" />
-                ) : getPriceByLevel('average') ? (
+                ) : getPriceByLevel('price_20') ? (
                   <>
-                    <span>{getPriceByLevel('average')?.toLocaleString()}</span>
+                    <span>{getPriceByLevel('price_20')?.toLocaleString()}</span>
                     <span className="ml-1 font-normal">원</span>
                   </>
                 ) : (

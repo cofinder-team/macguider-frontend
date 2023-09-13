@@ -34,7 +34,7 @@ const PricesLayout = ({ item: currentItem, children }: Props, ref: any) => {
   const {
     isLoading: loadingModels,
     error: errorModels,
-    data: models,
+    data: models = [],
   } = useQuery(['models'], () => getModels())
 
   const {
@@ -197,45 +197,43 @@ const PricesLayout = ({ item: currentItem, children }: Props, ref: any) => {
       <div className="border-t py-10">
         <h2 className="text-2xl font-bold tracking-tight text-gray-900">다른 제품 둘러보기</h2>
 
-        {models && (
-          <div className="mt-6 grid grid-cols-2 gap-x-6 gap-y-10 lg:grid-cols-4 xl:gap-x-8">
-            {models
-              .filter((model) => model.id !== currentItem.model.id)
-              .slice(0, 8)
-              .map((model) => (
-                <div
-                  key={model.id}
-                  className="group relative"
-                  onClick={() => onClickOtherItem(model)}
-                >
-                  <div className=" w-full overflow-hidden rounded-md  bg-white ">
-                    <Image
-                      objectFit="contain"
-                      objectPosition="center"
-                      width="544"
-                      height="306"
-                      src={model.mainItem.image.url}
-                      alt={model.name}
-                    />
-                  </div>
-                  <div className="mt-2 flex justify-center md:mt-4 lg:justify-start">
-                    <div>
-                      <h3 className="text-sm font-medium text-gray-900">
-                        <a
-                          href={`/prices/${
-                            model.type === 'M' ? 'mac' : model.type === 'I' ? 'iphone' : 'ipad'
-                          }/${model.mainItem.id}`}
-                        >
-                          <span aria-hidden="true" className="absolute inset-0" />
-                          {model.name}
-                        </a>
-                      </h3>
-                    </div>
+        <div className="mt-6 grid grid-cols-2 gap-x-6 gap-y-10 lg:grid-cols-4 xl:gap-x-8">
+          {models
+            .filter((model) => model.id !== currentItem.model.id)
+            .slice(0, 8)
+            .map((model) => (
+              <div
+                key={model.id}
+                className="group relative"
+                onClick={() => onClickOtherItem(model)}
+              >
+                <div className=" w-full overflow-hidden rounded-md  bg-white ">
+                  <Image
+                    objectFit="contain"
+                    objectPosition="center"
+                    width="544"
+                    height="306"
+                    src={model.mainItem.image.url}
+                    alt={model.name}
+                  />
+                </div>
+                <div className="mt-2 flex justify-center md:mt-4 lg:justify-start">
+                  <div>
+                    <h3 className="text-sm font-medium text-gray-900">
+                      <a
+                        href={`/prices/${
+                          model.type === 'M' ? 'mac' : model.type === 'I' ? 'iphone' : 'ipad'
+                        }/${model.mainItem.id}`}
+                      >
+                        <span aria-hidden="true" className="absolute inset-0" />
+                        {model.name}
+                      </a>
+                    </h3>
                   </div>
                 </div>
-              ))}
-          </div>
-        )}
+              </div>
+            ))}
+        </div>
       </div>
 
       <div className="border-t py-10">

@@ -144,17 +144,6 @@ const IponeModel = ({ newId }: PageProps) => {
 export async function getServerSideProps(context) {
   const { itemId: newId } = context.query
 
-  try {
-    await getItem<IphoneItemResponse>('I', newId)
-  } catch {
-    return {
-      redirect: {
-        destination: '/prices/iphone/1',
-        permanent: true,
-      },
-    }
-  }
-
   return {
     props: {
       newId,

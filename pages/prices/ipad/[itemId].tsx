@@ -144,17 +144,6 @@ const IpadModel = ({ newId }: PageProps) => {
 export async function getServerSideProps(context) {
   const { itemId: newId } = context.query
 
-  try {
-    await getItem<IpadItemResponse>('P', newId)
-  } catch {
-    return {
-      redirect: {
-        destination: '/prices/ipad/1',
-        permanent: true,
-      },
-    }
-  }
-
   return {
     props: {
       newId,

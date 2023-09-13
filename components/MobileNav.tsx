@@ -1,6 +1,6 @@
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import Link from './Link'
-import headerNavLinks from '@/data/headerNavLinks'
+import headerNavLinks, { HeaderNavLink } from '@/data/headerNavLinks'
 import { useRouter } from 'next/router'
 import amplitudeTrack from '@/lib/amplitude/track'
 
@@ -21,6 +21,21 @@ const MobileNav = () => {
       return !status
     })
   }
+
+  const isCurrentCategory = useCallback(
+    (link: HeaderNavLink) => {
+      if (router.pathname.startsWith('/prices') && link.href === '/') {
+        return true
+      }
+
+      if (link.exact) {
+        return router.pathname === link.href
+      }
+
+      return router.pathname.startsWith(link.href)
+    },
+    [router.pathname]
+  )
 
   return (
     <div className="xl:hidden">
@@ -75,9 +90,7 @@ const MobileNav = () => {
               <Link
                 href={link.href}
                 className={`text-2xl font-bold tracking-widest ${
-                  router.pathname.startsWith(link.href)
-                    ? 'text-blue-700'
-                    : 'text-gray-900 dark:text-gray-100'
+                  isCurrentCategory(link) ? 'text-black' : 'text-gray-500'
                 }`}
                 onClick={onToggleNav}
               >

@@ -1,0 +1,44 @@
+{
+  "compilerOptions": {
+    "incremental": true,
+    "target": "ES6",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": false,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
+    // "composite": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "baseUrl": ".",
+    "paths": {
+      "@/lib/*": ["lib/*"],
+      "@/components/*": ["components/*"],
+      "@/data/*": ["data/*"],
+      "@/layouts/*": ["layouts/*"],
+      "@/css/*": ["css/*"],
+      "contentlayer/generated": ["./.contentlayer/generated"]
+    },
+    // "plugins": [
+    //   {
+    //     "name": "next"
+    //   }
+    // ],
+    "strictNullChecks": true
+  },
+  "include": [
+    "pages/**/*.tsx",
+    "custom.d.ts",
+    "data/**/*.ts",
+    "utils/*.ts",
+    "components/**/*.tsx",
+    "hooks/*.ts",
+    "type/*"
+  ],
+  "exclude": ["node_modules"]
+}

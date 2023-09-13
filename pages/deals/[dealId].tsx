@@ -1,79 +1,37 @@
 import { PageSEO } from '@/components/SEO'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import amplitudeTrack from '@/lib/amplitude/track'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faHandPointUp, faPlus, faXmark } from '@fortawesome/free-solid-svg-icons'
+import { faHandPointUp, faXmark } from '@fortawesome/free-solid-svg-icons'
 import Skeleton from 'react-loading-skeleton'
-import { getPrices } from 'utils/price'
+import { getLastTradePriceUpdated, getRecentTradePrice } from 'utils/price'
 import { useRouter } from 'next/router'
 import { useScreenSize } from 'hooks/useScreenSize'
-import { ArrowUpRightIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import { ArrowUpRightIcon } from '@heroicons/react/24/outline'
 import { getDeal, getDeals } from 'utils/deals'
-import optionsMac from '@/data/options/mac'
-import optionsIpad from '@/data/options/ipad'
 import { pastTime } from '@/lib/utils/pastTime'
 import 'react-loading-skeleton/dist/skeleton.css'
 import { useQuery, useQueries } from 'react-query'
 import DealCard from '@/components/deals/DealCard'
 import Link from '@/components/Link'
+import { getModels } from 'utils/model'
 
 const rightColumnOffsetY = 112
 const numberOfSampleDevices = 6
-
-const sampleDevices = optionsMac
-  .sort(() => Math.random() - Math.random())
-  .slice(0, 3)
-  .concat(optionsIpad.slice(0, numberOfSampleDevices - 3))
 
 export default function Deal({ dealId }) {
   const router = useRouter()
   const { sm, md, lg } = useScreenSize()
   const [isCoverRemoved, setIsCoverRemoved] = useState(false)
   const [fixedElementWidth, setFixedElementWidth] = useState(0)
-  const rightColumn = useRef(null)
-  const container = useRef(null)
+  const rightColumn = useRef<HTMLDivElement>(null)
+  const container = useRef<HTMLDivElement>(null)
 
-  const {
-    isLoading: loadingDeal,
-    error: errorDeal,
-    data: deal,
-  } = useQuery(['deal', dealId], () => getDeal(dealId), {
-    staleTime: 30000,
-  })
-
-  const {
-    isLoading: loadingDeals,
-    error: errorDeals,
-    data: deals,
-  } = useQuery(
-    ['deal', 'other_deals', dealId, deal],
-    () => getDeals(1, 4, 'date', 'desc', deal?.item.type, deal?.item.model.id),
-    {
-      enabled: deal && Object.keys(deal).length > 0,
-      staleTime: 30000,
-    }
-  )
-
-  const queryResults = useQueries(
-    sampleDevices.map((device) => ({
-      queryKey: ['deal', 'other_price_info', device.id],
-      queryFn: () => getPrices(device.id, device.data[0].options[0].id, false),
-      staleTime: 30000,
-    }))
-  )
-
-  const errorPriceInfos = queryResults.some((result) => result.isError)
-  const priceInfos = queryResults.map((result) => result.data)
-
-  // Fetch 실패시
-  if (errorDeal) {
-    router.push('/deals')
-  } else if (errorDeals || errorPriceInfos) {
-    alert('데이터를 불러오는데 실패했습니다. 잠시 후 다시 시도해주세요.')
-  }
-
-  // 전체 로딩
-  const loading = loadingDeal || loadingDeals
+  useEffect(() => {
+    amplitudeTrack('enter_page_deal_detail', {
+      dealId,
+    })
+  }, [dealId])
 
   useEffect(() => {
     let lastScrollTop = 0
@@ -82,7 +40,7 @@ export default function Deal({ dealId }) {
       const isMobile = window.innerWidth <= 768
 
       if (!isMobile && container.current && rightColumn.current) {
-        let st = window.pageYOffset || document.documentElement.scrollTop
+        const st = window.scrollY || document.documentElement.scrollTop
 
         if (st > lastScrollTop) {
           // when scroll down
@@ -115,15 +73,16 @@ export default function Deal({ dealId }) {
       const isMobile = window.innerWidth <= 768
 
       if (rightColumn.current && rightColumn.current.parentNode) {
-        const parentWidth = rightColumn.current.parentNode.offsetWidth
+        const parentElement = rightColumn.current.parentElement as HTMLDivElement
+
+        if (!parentElement) return
+
+        const parentWidth = parentElement.offsetWidth
+
         if (isMobile) {
-          //   rightColumn.current.style.position = 'static'
-          //   rightColumn.current.style.top = 'auto'
-          //   rightColumn.current.style.bottom = 'auto'
           setFixedElementWidth(parentWidth)
         } else {
           const newWidth = parentWidth // Set to 50% of parent width
-
           setFixedElementWidth(newWidth)
         }
       }
@@ -139,11 +98,59 @@ export default function Deal({ dealId }) {
     }
   }, [])
 
-  useEffect(() => {
-    amplitudeTrack('enter_page_deal_detail', {
-      dealId,
-    })
-  }, [dealId])
+  const {
+    isLoading: loadingModels,
+    error: errorModels,
+    data: models = [],
+  } = useQuery(['models'], () => getModels())
+
+  const {
+    isLoading: loadingDeal,
+    error: errorDeal,
+    data: deal,
+  } = useQuery(['deal', dealId], () => getDeal(dealId), {
+    staleTime: 30000,
+  })
+
+  const {
+    isLoading: loadingDeals,
+    error: errorDeals,
+    data: deals,
+  } = useQuery(
+    ['deal', 'other_deals', dealId, deal],
+    () => getDeals(1, 4, 'date', 'desc', deal?.item.type, deal?.item.model.id),
+    {
+      enabled: !!deal,
+      staleTime: 30000,
+    }
+  )
+
+  const sampleModels = useMemo(() => {
+    if (!models) return []
+
+    return models.slice(0, 6)
+  }, [models])
+
+  const queryResults = useQueries(
+    sampleModels.map((model) => ({
+      queryKey: ['deal', 'other_price_info', model.id],
+      queryFn: () => getRecentTradePrice(model.type, model.mainItem.id),
+      staleTime: 30000,
+    }))
+  )
+
+  const errorPriceInfos = queryResults.some((result) => result.isError)
+  const priceInfos = queryResults.map((result) => result.data)
+
+  // Fetch 실패시
+  if (errorDeal) {
+    router.push('/deals')
+  } else if (errorDeals || errorPriceInfos) {
+    alert('데이터를 불러오는데 실패했습니다. 잠시 후 다시 시도해주세요.')
+  }
+
+  // 전체 로딩
+  const loading = loadingDeal || loadingDeals
 
   const parseUrl = useCallback(() => {
     if (!deal) return
@@ -153,40 +160,50 @@ export default function Deal({ dealId }) {
     return url.replace('https://cafe.naver.com', 'https://m.cafe.naver.com')
   }, [deal])
 
+  const generateModelHref = useCallback((type: ModelType, id: number) => {
+    switch (type) {
+      case 'M':
+        return `/prices/mac/${id}`
+      case 'P':
+        return `/prices/ipad/${id}`
+      case 'I':
+        return `/prices/iphone/${id}`
+    }
+  }, [])
+
   const onClickPriceDetails = useCallback(() => {
     if (!deal) return
-
-    const { url, item, unused } = deal
-    const itemId = item.model.id
-    const optionId = item.option
 
     amplitudeTrack('click_price_details', {
       dealId,
     })
 
-    const { href } =
-      item.type === 'M'
-        ? optionsMac.find((option) => option.id == itemId)
-        : optionsIpad.find((option) => option.id == itemId)
+    const url = generateModelHref(deal.item.type, deal.item.id)
 
-    const convertedUrl = href.replace(/optionId=\d+/, `optionId=${optionId}`)
-    window.open(convertedUrl, '_blank')
-  }, [dealId, deal])
+    window.open(url, '_blank')
+  }, [dealId, deal, generateModelHref])
+
+  const onClickOtherPriceDetails = useCallback(
+    (item: MainItemResponse) => {
+      amplitudeTrack('click_other_price_details', {
+        itemId: item.id,
+      })
+
+      window.open(generateModelHref(item.mainItem.type, item.mainItem.id), '_blank')
+    },
+    [generateModelHref]
+  )
 
   const onClickIframeCover = useCallback(() => {
-    setIsCoverRemoved(true)
+    if (!deal) return
+
     amplitudeTrack('click_iframe_cover', {
       dealId,
     })
-  }, [dealId])
 
-  const onClickOtherPriceDetails = useCallback((item) => {
-    amplitudeTrack('click_other_price_details', {
-      itemId: item.id,
-    })
-
-    window.open(item.href, '_blank')
-  }, [])
+    if (deal.source === '번개장터') return
+    setIsCoverRemoved(true)
+  }, [deal, dealId])
 
   const onClickOtherDeal = useCallback(
     (dealId) => {
@@ -210,21 +227,15 @@ export default function Deal({ dealId }) {
     window.open(url, '_blank')
   }, [dealId, deal])
 
-  const getCoupangPrice = useCallback(() => {
+  const coupangLastUpdatedTime = useMemo(() => {
     if (!deal) return
 
-    return deal?.coupangPrice?.price
-  }, [deal])
-
-  const getCoupangLastUpdatedTime = useCallback(() => {
-    if (!deal) return
-
-    const coupangLastUpdatedTime = deal?.coupangPrice?.log
+    const coupangLastUpdatedTime = deal.coupangPrice.date
 
     if (coupangLastUpdatedTime) {
       const now = new Date()
       const lastUpdated = new Date(coupangLastUpdatedTime)
-      const diffTime = Math.abs(now - lastUpdated)
+      const diffTime = Math.abs(now.getTime() - lastUpdated.getTime())
       const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24))
       const diffMinutes = Math.ceil(diffTime / (1000 * 60))
 
@@ -254,17 +265,33 @@ export default function Deal({ dealId }) {
                 <p className="text-base font-semibold text-gray-500">
                   {deal.item.type === 'M' ? (
                     <>
-                      {`${deal.item.model.name} ${deal.item.details.chip}`}
+                      {`${deal.item.model.name} ${(deal.item as MacItemResponse).details.chip}`}
                       <br />
-                      {`CPU ${deal.item.details.cpu}코어, GPU ${deal.item.details.gpu}코어, RAM ${deal.item.details.ram}GB, SSD ${deal.item.details.ssd}`}
+                      {`CPU ${(deal.item as MacItemResponse).details.cpu}코어, GPU ${
+                        (deal.item as MacItemResponse).details.gpu
+                      }코어, RAM ${(deal.item as MacItemResponse).details.ram}GB, SSD ${
+                        (deal.item as MacItemResponse).details.ssd
+                      }`}
+                    </>
+                  ) : deal.item.type === 'P' ? (
+                    <>
+                      {`${(deal.item as IpadItemResponse).model.name} ${
+                        (deal.item as IpadItemResponse).details.gen
+                      }세대`}
+                      <br />
+                      {`${
+                        (deal.item as IpadItemResponse).details.cellular
+                          ? 'Wi-Fi + Cellular'
+                          : 'Wi-Fi'
+                      }, ${(deal.item as IpadItemResponse).details.storage}`}
                     </>
                   ) : (
                     <>
-                      {`${deal.item.model.name} ${deal.item.details.gen}세대`}
-                      <br />
-                      {`${deal.item.details.cellular ? 'Wi-Fi + Cellular' : 'Wi-Fi'}, ${
-                        deal.item.details.storage
+                      {`${(deal.item as IphoneItemResponse).model.name} ${
+                        (deal.item as IphoneItemResponse).details.modelSuffix
                       }`}
+                      <br />
+                      {`${(deal.item as IphoneItemResponse).details.storage}`}
                     </>
                   )}
                 </p>
@@ -279,9 +306,11 @@ export default function Deal({ dealId }) {
 
                 <div>
                   <span className="text-blue-500 ">
-                    {(deal.tradePrice.average - deal.price).toLocaleString()}원
+                    {deal.tradePrice.average
+                      ? `${(deal.tradePrice.average - deal.price).toLocaleString()}`
+                      : 'N/A'}
                   </span>
-                  &nbsp;더 저렴해요
+                  원&nbsp;더 저렴해요
                 </div>
               </>
             )}
@@ -303,7 +332,7 @@ export default function Deal({ dealId }) {
                           ? `${deal.tradePrice.average.toLocaleString()}원`
                           : 'N/A'}
                         <span className="ml-2 inline-block text-sm font-normal text-gray-400">
-                          {pastTime()}
+                          {getLastTradePriceUpdated()}
                         </span>
                       </p>
                     </div>
@@ -318,16 +347,18 @@ export default function Deal({ dealId }) {
                 )}
               </li>
               <li className="pt-3 pb-0 sm:pt-4">
-                {loading ? (
+                {loading || !deal ? (
                   <Skeleton height="2rem" />
                 ) : (
                   <div className="flex items-center space-x-4">
                     <div className="min-w-0 flex-1">
                       <p className="truncate text-sm text-gray-500 dark:text-gray-400">쿠팡</p>
                       <p className="truncate text-base font-bold text-gray-900 dark:text-white">
-                        {getCoupangPrice() ? `${getCoupangPrice().toLocaleString()}원` : '품절'}
+                        {deal.coupangPrice.price
+                          ? `${deal.coupangPrice.price.toLocaleString()}원`
+                          : '품절'}
                         <span className="ml-2 inline-block text-sm font-normal text-gray-400">
-                          {getCoupangLastUpdatedTime()}
+                          {coupangLastUpdatedTime}
                         </span>
                       </p>
                     </div>
@@ -364,7 +395,7 @@ export default function Deal({ dealId }) {
               </div>
             )}
 
-            {loadingDeals ? (
+            {!deal ? (
               <Skeleton height={500} />
             ) : (
               <div className="relative mt-1 overflow-hidden rounded-lg border-2 border-gray-400">
@@ -376,9 +407,15 @@ export default function Deal({ dealId }) {
                     className="absolute top-0 left-0 flex h-full w-full flex-col items-center justify-center bg-black text-white opacity-80"
                   >
                     <div className="mb-3">
-                      <FontAwesomeIcon icon={faHandPointUp} className="text-4xl" />
+                      {deal.source === '번개장터' ? (
+                        <FontAwesomeIcon icon={faXmark} className="text-4xl" />
+                      ) : (
+                        <FontAwesomeIcon icon={faHandPointUp} className="text-4xl" />
+                      )}
                     </div>
-                    스크롤해서 정보를 확인할 수 있어요
+                    {deal.source === '번개장터'
+                      ? '번개장터에서 확인해주세요'
+                      : '스크롤해서 정보를 확인할 수 있어요'}
                   </div>
                 )}
               </div>
@@ -422,31 +459,33 @@ export default function Deal({ dealId }) {
           <div className="mt-5">
             <h3 className=" text-lg font-bold">적정 중고시세를 알려드려요</h3>
             <div className="mt-1 space-y-2">
-              {sampleDevices.map((device, index) => (
+              {sampleModels.map((model, index) => (
                 <div
-                  key={device.id}
+                  key={model.id}
                   className="flex h-[110px] w-full cursor-pointer items-center overflow-hidden  bg-white "
                   onClick={() => {
-                    onClickOtherPriceDetails(device)
+                    onClickOtherPriceDetails(model)
                   }}
                 >
                   <div className="relative h-full w-1/3">
                     <img
-                      alt={device.model}
-                      src={device.imgSrc}
+                      alt={model.name}
+                      src={model.mainItem.image.url}
                       className="h-full w-full object-contain object-center"
                     />
                   </div>
                   <div className="flex-1 truncate pl-3">
                     <h5 className="mt-1 truncate  text-sm  font-semibold tracking-tight text-gray-600 ">
-                      {device.model}
+                      {model.name}
                     </h5>
 
                     {priceInfos.filter((data) => data).length !== numberOfSampleDevices ? (
                       <Skeleton containerClassName="flex-1" borderRadius="0.5rem" width="120px" />
                     ) : (
                       <div className="font-bold text-gray-900">
-                        {priceInfos[index].data.slice(-1)[0].mid.toLocaleString()}원 부터
+                        {priceInfos[index]?.average
+                          ? `${priceInfos[index]?.average?.toLocaleString()}원 부터`
+                          : 'N/A'}
                       </div>
                     )}
                   </div>

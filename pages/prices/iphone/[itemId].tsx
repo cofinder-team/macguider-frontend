@@ -44,7 +44,7 @@ const IponeModel = ({ newId }: PageProps) => {
     isLoading: loadingCurrentModel,
     error: errorCurrentModel,
     data: currentModel,
-  } = useQuery(['model', 'P', itemId], () => getModel('I', currentItem!.model.id), {
+  } = useQuery(['model', 'I', itemId], () => getModel('I', currentItem!.model.id), {
     enabled: !!currentItem,
   })
 

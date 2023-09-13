@@ -45,8 +45,8 @@ const PriceGraph = ({ item, unused, source }: Props) => {
     isLoading: loadingTotalPrice,
     error: errorTotalPrice,
     data: totalPriceData,
-  } = useQuery(['totalPrice', 'M', item.id, unused, source], () =>
-    getTotalTradePrice('M', item.id, unused, source)
+  } = useQuery(['totalPrice', item.type, item.id, unused, source], () =>
+    getTotalTradePrice(item.type, item.id, unused, source)
   )
 
   // 전체 쿠팡 가격 조회

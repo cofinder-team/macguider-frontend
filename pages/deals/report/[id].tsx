@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import { reportDeal, getDeal } from 'utils/deals'
+import { reportDeal, getDeal, getDealOrigin } from 'utils/deals'
 import { getAuthUser } from 'utils/user'
 import { getItems } from 'utils/item'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -54,7 +54,7 @@ export default function DealReport({ id }: { id: number }) {
 
   useEffect(() => {
     if (user) {
-      getDeal(id)
+      getDealOrigin(id)
         .then((data) => {
           setDeal(data)
         })

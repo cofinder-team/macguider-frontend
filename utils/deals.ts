@@ -38,7 +38,12 @@ export async function getDealRaw(id: number) {
   return response.data
 }
 
-export async function getDeal(id: number): Promise<DealOriginResponse> {
+export async function getDeal(id: number): Promise<DealResponse> {
+  const response = await axiosInstanceV2.get(`/deal/${id}`)
+  return response.data
+}
+
+export async function getDealOrigin(id: number): Promise<DealOriginResponse> {
   const response = await axiosInstanceV2.get(`/deal/${id}/origin`)
   return response.data
 }

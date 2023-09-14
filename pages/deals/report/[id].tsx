@@ -1,22 +1,26 @@
 import { useCallback, useEffect, useState } from 'react'
-import { reportDeal, getDeal, getItems } from 'utils/deals'
+import { reportDeal, getDeal } from 'utils/deals'
 import { getAuthUser } from 'utils/user'
+import { getItems } from 'utils/item'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons'
 import { useQuery } from 'react-query'
 import { useCookies } from 'react-cookie'
 import { useRouter } from 'next/router'
+import { AxiosError } from 'axios'
 
-export default function DealReport({ id }) {
-  const [cookies, _setCookie, _removeCookie] = useCookies(['refreshToken'])
+export default function DealReport({ id }: { id: number }) {
+  const [cookies, _setCookie, _removeCookie] = useCookies<'refreshToken', { refreshToken: string }>(
+    ['refreshToken']
+  )
   const refreshToken = cookies['refreshToken']
-  const { data: accessToken } = useQuery('accessToken', () => {})
+  const { data: accessToken } = useQuery<string>('accessToken')
 
   const router = useRouter()
-  const [user, setUser] = useState()
+  const [user, setUser] = useState<AuthUser>()
 
-  const [deal, setDeal] = useState()
-  const [items, setItems] = useState([])
+  const [deal, setDeal] = useState<DealOriginResponse>()
+  const [items, setItems] = useState<ItemResponse[]>()
 
   useEffect(() => {
     if (!refreshToken) {
@@ -54,7 +58,7 @@ export default function DealReport({ id }) {
         .then((data) => {
           setDeal(data)
         })
-        .catch((e) => {
+        .catch((e: AxiosError) => {
           console.log(e)
           if (e?.response?.status === 400) {
             window.alert('접근할 수 없는 정보입니다.')
@@ -64,8 +68,20 @@ export default function DealReport({ id }) {
     }
   }, [id, user])
 
+  const extractTypeDetails = useCallback(
+    (details: ItemDetailsResponse): Omit<ItemDetailsResponse, 'year' | 'releasedAt' | 'colors'> => {
+      if (!details) {
+        return {}
+      }
+
+      const { year, releasedAt, colors, ...rest } = details
+      return rest
+    },
+    []
+  )
+
   const onClickSelect = useCallback(
-    (payload) => {
+    (payload: DealManageRequest): void => {
       reportDeal(id, payload)
         .then(() => {
           window.alert('성공적으로 처리되었습니다.')
@@ -87,7 +103,7 @@ export default function DealReport({ id }) {
               {Object.entries({
                 source: deal?.source,
                 model: deal?.item?.model?.name,
-                ...deal.item?.details,
+                ...extractTypeDetails(deal?.item?.details),
                 unused: deal?.unused,
                 sold: deal?.sold,
                 price: deal?.price?.toLocaleString(),
@@ -131,8 +147,11 @@ export default function DealReport({ id }) {
             ]
               .filter((option) => option.unused !== deal?.unused)
               .map((option) => (
-                <div key={option?.unused} className="flex justify-between py-1 font-semibold">
-                  <a>{`미개봉 여부 변경 [변경 후 '${option.text}' 상태]`}</a>
+                <div
+                  key={option.unused.toString()}
+                  className="flex justify-between py-1 font-semibold"
+                >
+                  <a>{`미개봉 여부 변경 [변경 후: '${option.text}' 상태]`}</a>
                   <div
                     className="inline-flex cursor-pointer items-center px-2 py-0.5 text-xs font-semibold text-white"
                     style={{ backgroundColor: 'green' }}
@@ -151,8 +170,11 @@ export default function DealReport({ id }) {
             ]
               .filter((option) => option.sold !== deal?.sold)
               .map((option) => (
-                <div key={option?.sold} className="flex justify-between py-1 font-semibold">
-                  <a>{`판매완료 여부 변경 [변경 후 '${option.text}' 상태]`}</a>
+                <div
+                  key={option.sold.toString()}
+                  className="flex justify-between py-1 font-semibold"
+                >
+                  <a>{`판매완료 여부 변경 [변경 후: '${option.text}' 상태]`}</a>
                   <div
                     className="inline-flex cursor-pointer items-center px-2 py-0.5 text-xs font-semibold text-white"
                     style={{ backgroundColor: 'green' }}
@@ -173,7 +195,7 @@ export default function DealReport({ id }) {
                 onClick={() => {
                   onClickSelect({
                     remove: false,
-                    price: parseInt(prompt('변경할 가격을 입력해주세요.')),
+                    price: parseInt(prompt('변경할 가격을 입력해주세요.') ?? ''),
                   })
                 }}
               >
@@ -193,7 +215,7 @@ export default function DealReport({ id }) {
                 >
                   {Object.entries({
                     model: item?.model?.name.replace(/(Mac\w*\s)|(iPad\s)/, ''),
-                    ...item.details,
+                    ...extractTypeDetails(item?.details),
                   }).map(([k, v]) => (
                     <a key={k} className="mx-1 w-16">
                       {v?.toString()}
@@ -203,7 +225,7 @@ export default function DealReport({ id }) {
                     className="inline-flex cursor-pointer items-center px-2 py-0.5 text-xs font-semibold text-white"
                     style={{ backgroundColor: 'black' }}
                     onClick={() => {
-                      onClickSelect({ remove: false, type: item.type, itemId: item.id })
+                      onClickSelect({ remove: false, type: item?.type, itemId: item?.id })
                     }}
                   >
                     옵션 변경

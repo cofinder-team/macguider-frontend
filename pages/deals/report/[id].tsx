@@ -121,18 +121,48 @@ export default function DealReport({ id }: { id: number }) {
                 </li>
               ))}
             </ul>
-            <iframe
-              src={deal.url?.replace('s://c', 's://m.c')}
-              sandbox="allow-scripts allow-same-origin"
-              className="h-[720px] w-full py-2"
-            />
+            <div className="py-2"></div>
+            <div
+              className="flex justify-between px-2 py-2 font-semibold"
+              style={{ backgroundColor: '#eeeeee' }}
+            >
+              <div>{deal?.title}</div>
+              <div style={{ color: 'blue' }}>
+                <a href={deal?.url}>[Link]</a>
+              </div>
+            </div>
+            <div
+              className="px-2 py-2"
+              style={{ whiteSpace: 'break-spaces', backgroundColor: '#eeeeee' }}
+            >
+              {deal?.content}
+            </div>
           </div>
           <div className="w-full md:w-1/2 md:px-2">
             <div className="flex justify-between py-1 font-semibold">
+              매물 상태
+              <a className="font-bold" style={{ color: deal?.pending ? 'red' : 'green' }}>
+                {`[ ${deal?.pending ? '등록 대기' : '등록 완료'} ]`}
+              </a>
+            </div>
+            <div className="flex justify-between py-1 font-semibold">
+              <a>현재 상태 그대로 매물에 등록</a>
+              <div
+                className="inline-flex cursor-pointer items-center px-2 py-0.5 text-xs font-semibold"
+                style={{ backgroundColor: 'lightgreen' }}
+                onClick={() => {
+                  onClickSelect({ remove: false })
+                }}
+              >
+                매물 등록
+                <FontAwesomeIcon className="ml-1" icon={faChevronRight} />
+              </div>
+            </div>
+            <div className="flex justify-between py-1 font-semibold">
               <a>목록에서 매물 제거</a>
               <div
-                className="inline-flex cursor-pointer items-center px-2 py-0.5 text-xs font-semibold text-white"
-                style={{ backgroundColor: 'red' }}
+                className="inline-flex cursor-pointer items-center px-2 py-0.5 text-xs font-semibold"
+                style={{ backgroundColor: 'lightpink' }}
                 onClick={() => {
                   onClickSelect({ remove: true })
                 }}
@@ -153,8 +183,8 @@ export default function DealReport({ id }: { id: number }) {
                 >
                   <a>{`미개봉 여부 변경 [변경 후: '${option.text}' 상태]`}</a>
                   <div
-                    className="inline-flex cursor-pointer items-center px-2 py-0.5 text-xs font-semibold text-white"
-                    style={{ backgroundColor: 'green' }}
+                    className="inline-flex cursor-pointer items-center px-2 py-0.5 text-xs font-semibold"
+                    style={{ backgroundColor: 'lightblue' }}
                     onClick={() => {
                       onClickSelect({ remove: false, unused: option.unused })
                     }}
@@ -176,8 +206,8 @@ export default function DealReport({ id }: { id: number }) {
                 >
                   <a>{`판매완료 여부 변경 [변경 후: '${option.text}' 상태]`}</a>
                   <div
-                    className="inline-flex cursor-pointer items-center px-2 py-0.5 text-xs font-semibold text-white"
-                    style={{ backgroundColor: 'green' }}
+                    className="inline-flex cursor-pointer items-center px-2 py-0.5 text-xs font-semibold"
+                    style={{ backgroundColor: 'lightblue' }}
                     onClick={() => {
                       onClickSelect({ remove: false, sold: option.sold })
                     }}
@@ -190,8 +220,8 @@ export default function DealReport({ id }: { id: number }) {
             <div className="flex justify-between py-1 font-semibold">
               <a>가격 직접 입력해서 변경</a>
               <div
-                className="inline-flex cursor-pointer items-center px-2 py-0.5 text-xs font-semibold text-white"
-                style={{ backgroundColor: 'blue' }}
+                className="inline-flex cursor-pointer items-center px-2 py-0.5 text-xs font-semibold"
+                style={{ backgroundColor: 'lightblue' }}
                 onClick={() => {
                   onClickSelect({
                     remove: false,
@@ -209,12 +239,12 @@ export default function DealReport({ id }: { id: number }) {
                 <div
                   key={item?.id}
                   className={
-                    (item.id === deal?.item?.id ? 'font- emibold text-[blue] ' : '') +
+                    (item.id === deal?.item?.id ? 'font-semibold text-[blue] ' : '') +
                     'flex justify-between py-1'
                   }
                 >
                   {Object.entries({
-                    model: item?.model?.name.replace(/(Mac\w*\s)|(iPad\s)/, ''),
+                    model: item?.model?.name.replace(/(Mac\w*|iPad|iPhone)\s/, ''),
                     ...extractTypeDetails(item?.details),
                   }).map(([k, v]) => (
                     <a key={k} className="mx-1 w-16">
@@ -222,8 +252,8 @@ export default function DealReport({ id }: { id: number }) {
                     </a>
                   ))}
                   <div
-                    className="inline-flex cursor-pointer items-center px-2 py-0.5 text-xs font-semibold text-white"
-                    style={{ backgroundColor: 'black' }}
+                    className="inline-flex cursor-pointer items-center px-2 py-0.5 text-xs font-semibold text-black"
+                    style={{ backgroundColor: 'lightgray' }}
                     onClick={() => {
                       onClickSelect({ remove: false, type: item?.type, itemId: item?.id })
                     }}
@@ -242,15 +272,6 @@ export default function DealReport({ id }: { id: number }) {
 
 export async function getServerSideProps(context) {
   const { id } = context.query
-
-  if (process.env.NEXT_PUBLIC_NODE_ENV === 'prod') {
-    return {
-      redirect: {
-        destination: '/',
-        permanent: false,
-      },
-    }
-  }
 
   return {
     props: {

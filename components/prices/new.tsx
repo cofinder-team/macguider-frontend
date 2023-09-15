@@ -1,10 +1,10 @@
 import amplitudeTrack from '@/lib/amplitude/track'
 import { useScreenSize } from 'hooks/useScreenSize'
 import { useRouter } from 'next/router'
-import React, { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useMemo } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { useQuery } from 'react-query'
-import { getRecentCoupangPrice, getRecentTradePrice, getTotalRegularPrice } from 'utils/price'
+import { getRecentCoupangPrice, getTotalRegularPrice } from 'utils/price'
 import CoupangLogo from '@/data/coupang_logo.svg'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { purchaseTiming } from '../guide/GuideBriefRow'
@@ -45,10 +45,10 @@ const NewPrices = ({ model, item }: Props) => {
   }, [totalRegularPrice])
 
   const coupangLastUpdatedTime = useMemo(() => {
-    if (recentCoupangPrice && recentCoupangPrice.price) {
-      const lastUpdatedTime = recentCoupangPrice.date
+    if (recentCoupangPrice && recentCoupangPrice.log) {
       const now = new Date()
-      const lastUpdated = new Date(lastUpdatedTime)
+      const lastUpdated = new Date(recentCoupangPrice.log)
+
       const diffTime = Math.abs(now.getTime() - lastUpdated.getTime())
       const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24))
       const diffMinutes = Math.ceil(diffTime / (1000 * 60))
@@ -160,8 +160,16 @@ const NewPrices = ({ model, item }: Props) => {
                     <span className="truncate text-gray-600">{coupangLastUpdatedTime}</span>
                   </div>
                 </>
+              ) : recentCoupangPrice && recentCoupangPrice.log ? (
+                <>
+                  <span>품절</span>
+                  <div className="truncate text-xs">
+                    <span className="text-gray-500">마지막 업데이트: &nbsp;</span>
+                    <span className="truncate text-gray-600">{coupangLastUpdatedTime}</span>
+                  </div>
+                </>
               ) : (
-                <span>품절</span>
+                <span>단종</span>
               )}
             </div>
           </div>

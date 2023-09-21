@@ -1,13 +1,12 @@
 import amplitudeTrack from '@/lib/amplitude/track'
-import { faChevronRight } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useScreenSize } from 'hooks/useScreenSize'
 import { useRouter } from 'next/router'
-import React, { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react'
+import React, { ChangeEvent, useCallback, useMemo } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { useQuery } from 'react-query'
 import { getRecentTradePrice, getTotalRegularPrice } from 'utils/price'
-import { purchaseTiming } from '../guide/GuideBriefRow'
+import { getReleaseAmountFromHistories } from '@/components/guide/GuideBriefRow'
+import { OverallPurchaseTiming } from '@/components/guide/PurchaseTiming'
 
 interface Props {
   model: MainItemResponse
@@ -36,7 +35,9 @@ const TradePrices = ({ model, item, unused, setUnused, source, setSource }: Prop
     isLoading: loadingTotalRegularPrice,
     error: errorTotalRegularPrice,
     data: totalRegularPrice,
-  } = useQuery(['totalRegularPrice', item.id], () => getTotalRegularPrice(item.type, item.id))
+  } = useQuery(['totalRegularPrice', item.type, item.id], () =>
+    getTotalRegularPrice(item.type, item.id)
+  )
 
   // 가격 데이터 fetch 실패시 alert창 띄우기
   if (errorRecentPrice || errorTotalRegularPrice) {
@@ -114,66 +115,20 @@ const TradePrices = ({ model, item, unused, setUnused, source, setSource }: Prop
     return '방금 전'
   }, [])
 
-  const daysSinceLastReleaseDate = useMemo(() => {
-    if (model.histories.length === 0) return
+  const getReleaseAmount = useCallback(
+    () => getReleaseAmountFromHistories(model.histories),
+    [model]
+  )
 
-    const today = new Date()
-    const [year, month, date] = model.histories[0].date.split('-')
+  const getPriceAmount = useCallback(() => {
+    const latestTradePrice: number = Number(recentPriceData?.average)
+    const latestRegularPrice: number = Number(recentRegularPrice)
 
-    const daysSinceLastReleaseDate = Math.floor(
-      (today.getTime() - new Date(Number(year), Number(month) - 1, Number(date)).getTime()) /
-        (1000 * 60 * 60 * 24)
-    )
-
-    return daysSinceLastReleaseDate
-  }, [model.histories])
-
-  const averageReleaseCycle = useMemo(() => {
-    const releaseCycles: number[] = []
-    for (let i = 0; i < model.histories.length - 1; i++) {
-      // convert YYYY-MM-DD string to Date object
-      const prev = model.histories[i].date.split('-')
-      const next = model.histories[i + 1].date.split('-')
-
-      const date1 = new Date(Number(prev[0]), Number(prev[1]) - 1, Number(prev[2]))
-      const date2 = new Date(Number(next[0]), Number(next[1]) - 1, Number(next[2]))
-      const diffTime = Math.abs(date2.getTime() - date1.getTime())
-      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
-      releaseCycles.push(diffDays)
+    return {
+      latestTradePrice,
+      latestRegularPrice,
     }
-
-    const averageReleaseCycle = Math.round(
-      releaseCycles.reduce((a, b) => a + b, 0) / releaseCycles.length
-    )
-
-    return averageReleaseCycle
-  }, [model.histories])
-
-  const usedPurchaseTiming = useMemo(() => {
-    if (recentPriceData) {
-      const latestUsedPrice = recentPriceData.average
-
-      if (
-        latestUsedPrice &&
-        recentRegularPrice &&
-        averageReleaseCycle &&
-        daysSinceLastReleaseDate
-      ) {
-        const getPriceFitScore = () => (latestUsedPrice / recentRegularPrice) * 100
-        const getReleaseDateFitScore = () =>
-          (1 - daysSinceLastReleaseDate / averageReleaseCycle) * 100
-        const overallFitScore = getPriceFitScore() * 0.6 + getReleaseDateFitScore() * 0.4
-
-        if (overallFitScore >= 61) {
-          return purchaseTiming.good
-        } else if (overallFitScore >= 40) {
-          return purchaseTiming.normal
-        } else {
-          return purchaseTiming.bad
-        }
-      }
-    }
-  }, [recentPriceData, recentRegularPrice, daysSinceLastReleaseDate, averageReleaseCycle])
+  }, [recentPriceData, recentRegularPrice])
 
   return (
     <div className="mt-5">
@@ -317,17 +272,12 @@ const TradePrices = ({ model, item, unused, setUnused, source, setSource }: Prop
                 </p>
               </div>
 
-              {usedPurchaseTiming && (
-                <div
-                  className="inline-flex cursor-pointer items-center rounded-md  px-2 py-0.5 text-xs font-semibold  text-white"
-                  style={{
-                    backgroundColor: usedPurchaseTiming.color,
-                  }}
-                >
-                  {usedPurchaseTiming.text}
-
-                  <FontAwesomeIcon className="ml-1" icon={faChevronRight} />
-                </div>
+              {model.histories.length >= 2 && (
+                <OverallPurchaseTiming
+                  badge={true}
+                  releaseAmount={getReleaseAmount()}
+                  priceAmount={getPriceAmount()}
+                />
               )}
             </div>
           </div>

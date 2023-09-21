@@ -38,7 +38,8 @@
     "utils/*.ts",
     "components/**/*.tsx",
     "hooks/*.ts",
-    "type/*"
+    "type/*",
+    "lib/**/*.ts"
   ],
   "exclude": ["node_modules"]
 }

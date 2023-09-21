@@ -1,27 +1,29 @@
-import optionsIpad from '../options/ipad'
-import optionsMac from '../options/mac'
+interface Category {
+  name: string
+  code?: ModelType
+}
 
-const categories = [
+const categories: Category[] = [
   {
-    categoryName: 'iPhone',
-    categoryData: [],
+    name: 'iPhone',
+    code: undefined,
   },
   {
-    categoryName: 'iPad',
-    categoryData: optionsIpad,
+    name: 'iPad',
+    code: 'P',
   },
   {
-    categoryName: 'Mac',
-    categoryData: optionsMac,
+    name: 'Mac',
+    code: 'M',
   },
   {
-    categoryName: 'Apple Watch',
-    categoryData: [],
+    name: 'Apple Watch',
+    code: undefined,
   },
   {
-    categoryName: 'Music',
-    categoryData: [],
+    name: 'Music',
+    code: undefined,
   },
 ]
 
-export default categories
+export { type Category, categories }

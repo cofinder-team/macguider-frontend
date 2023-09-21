@@ -19,7 +19,7 @@ interface MainItemResponse extends ModelResponse {
     }
   }
   histories: {
-    date: string
+    date: Date
     info: string
   }[]
 }

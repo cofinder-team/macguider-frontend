@@ -9,19 +9,19 @@ import { useRouter } from 'next/router'
 import { useScreenSize } from 'hooks/useScreenSize'
 import { ArrowUpRightIcon } from '@heroicons/react/24/outline'
 import { getDeal, getDeals } from 'utils/deals'
-import { pastTime } from '@/lib/utils/pastTime'
 import 'react-loading-skeleton/dist/skeleton.css'
 import { useQuery, useQueries } from 'react-query'
 import DealCard from '@/components/deals/DealCard'
 import Link from '@/components/Link'
 import { getModels } from 'utils/model'
+import { ItemDetail } from '@/components/items/ItemDetail'
 
 const rightColumnOffsetY = 112
 const numberOfSampleDevices = 6
 
 export default function Deal({ dealId }) {
   const router = useRouter()
-  const { sm, md, lg } = useScreenSize()
+  const { md } = useScreenSize()
   const [isCoverRemoved, setIsCoverRemoved] = useState(false)
   const [fixedElementWidth, setFixedElementWidth] = useState(0)
   const rightColumn = useRef<HTMLDivElement>(null)
@@ -263,37 +263,7 @@ export default function Deal({ dealId }) {
             ) : (
               <>
                 <p className="text-base font-semibold text-gray-500">
-                  {deal.item.type === 'M' ? (
-                    <>
-                      {`${deal.item.model.name} ${(deal.item as MacItemResponse).details.chip}`}
-                      <br />
-                      {`CPU ${(deal.item as MacItemResponse).details.cpu}코어, GPU ${
-                        (deal.item as MacItemResponse).details.gpu
-                      }코어, RAM ${(deal.item as MacItemResponse).details.ram}GB, SSD ${
-                        (deal.item as MacItemResponse).details.ssd
-                      }`}
-                    </>
-                  ) : deal.item.type === 'P' ? (
-                    <>
-                      {`${(deal.item as IpadItemResponse).model.name} ${
-                        (deal.item as IpadItemResponse).details.gen
-                      }세대`}
-                      <br />
-                      {`${
-                        (deal.item as IpadItemResponse).details.cellular
-                          ? 'Wi-Fi + Cellular'
-                          : 'Wi-Fi'
-                      }, ${(deal.item as IpadItemResponse).details.storage}`}
-                    </>
-                  ) : (
-                    <>
-                      {`${(deal.item as IphoneItemResponse).model.name} ${
-                        (deal.item as IphoneItemResponse).details.modelSuffix
-                      }`}
-                      <br />
-                      {`${(deal.item as IphoneItemResponse).details.storage}`}
-                    </>
-                  )}
+                  <ItemDetail item={deal.item} />
                 </p>
 
                 <div className="flex items-center" onClick={onClickPriceDetails}>

@@ -1,12 +1,10 @@
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons'
-import optionsMac from '@/data/options/mac'
-import useAsyncAll from 'hooks/useAsyncAll'
-import Skeleton from 'react-loading-skeleton'
-import optionsIpad from '@/data/options/ipad'
-import { getPrices } from 'utils/price'
 import amplitudeTrack from '@/lib/amplitude/track'
+import { getItem } from 'utils/item'
+import { getModelType } from '@/lib/utils/model'
+import { ItemDetail } from '@/components/items/ItemDetail'
 
 export default function DeskSection({ deskId, section }) {
   const { id: sectionId, images, productInfo, desc, appleProducts } = section
@@ -37,28 +35,36 @@ export default function DeskSection({ deskId, section }) {
   )
 
   const onClickAppleProduct = useCallback(
-    (itemId, optionId, href) => {
+    (type, itemId) => {
       amplitudeTrack('click_show_more_price_info_desk', {
         deskId,
         sectionId,
+        type,
         itemId,
-        optionId,
       })
 
-      window.open(href, '_blank')
+      window.open(`/prices/${getModelType(type)}/${itemId}`, '_blank')
     },
     [deskId, sectionId]
   )
 
-  const getAppleProductInfo = useCallback((id, optionId, category) => {
-    const target = category === 'mac' ? optionsMac : optionsIpad
+  const [appleProductInfo, setAppleProductInfo] = useState<
+    (MacItemResponse | IpadItemResponse | IphoneItemResponse)[]
+  >([])
 
-    const product = target
-      .find((e) => e.id === id)
-      ?.data.find((spec) => spec.options.map((option) => option.id).includes(optionId))
-
-    return product
-  }, [])
+  useEffect(() => {
+    Promise.all(
+      [...appleProducts].map(({ type, itemId }: { type: ModelType; itemId: number }) =>
+        getItem<MacItemResponse>(type, itemId)
+      )
+    )
+      .then((res) => {
+        setAppleProductInfo(res)
+      })
+      .catch(() => {
+        alert('데이터를 불러오는데 실패했습니다. 잠시 후 다시 시도해주세요.')
+      })
+  }, [appleProducts])
 
   return (
     <div>
@@ -99,28 +105,30 @@ export default function DeskSection({ deskId, section }) {
         <h3 className="text-xl font-bold">사진 속 제품들</h3>
 
         <ul role="list" className="divide-y divide-gray-100">
-          {appleProducts.map(({ id, optionId, category }, index) => {
-            const { title, imgSrc, specs, href } = getAppleProductInfo(id, optionId, category)
-
+          {appleProductInfo.map((item) => {
             return (
-              <li key={`${id}-${optionId}`} className="relative flex w-full justify-between py-5">
+              <li
+                key={`${item.type}-${item.id}`}
+                className="relative flex w-full justify-between py-5"
+              >
                 <div className="flex max-w-[65%] gap-x-4 pr-6 sm:w-1/2 sm:flex-none ">
                   <img
                     className="h-12 w-12 flex-none rounded-md bg-gray-50 object-contain"
-                    src={imgSrc}
-                    alt={title}
+                    src={item.image.url}
+                    alt={item.model.name}
                   />
                   <div className="min-w-0 flex-auto truncate">
-                    <p className="truncate text-sm font-semibold leading-6 text-gray-900">
-                      {title}
-                    </p>
-                    <p className="mt-1 truncate text-xs leading-5 text-gray-500">{specs.cpu}</p>
+                    <ItemDetail
+                      item={item}
+                      mainClass="truncate text-sm font-semibold leading-6 text-gray-900"
+                      detailClass="mt-1 truncate text-xs leading-5 text-gray-500"
+                    />
                   </div>
                 </div>
 
                 <button
                   onClick={() => {
-                    onClickAppleProduct(id, optionId, href)
+                    onClickAppleProduct(item.type, item.id)
                   }}
                   className="flex h-fit items-center rounded-lg  border border-blue-700 bg-blue-800  px-3 py-2 text-center text-sm font-medium text-white hover:bg-white hover:text-blue-800 focus:outline-none focus:ring-4 "
                 >

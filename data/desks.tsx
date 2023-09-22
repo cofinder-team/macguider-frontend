@@ -113,8 +113,8 @@ const desks = [
         ],
         appleProducts: [
           {
-            id: '5',
-            optionId: 1,
+            type: 'M',
+            itemId: 93,
             category: category.mac,
           },
         ],
@@ -152,8 +152,8 @@ const desks = [
         ],
         appleProducts: [
           {
-            id: '5',
-            optionId: 1,
+            type: 'M',
+            itemId: 93,
             category: category.mac,
           },
         ],
@@ -237,8 +237,8 @@ const desks = [
         ],
         appleProducts: [
           {
-            id: '4',
-            optionId: 1,
+            type: 'M',
+            itemId: 57,
             category: category.mac,
           },
         ],
@@ -304,8 +304,8 @@ const desks = [
         ],
         appleProducts: [
           {
-            id: '1',
-            optionId: 1,
+            type: 'M',
+            itemId: 1,
             category: category.mac,
           },
         ],
@@ -403,8 +403,8 @@ const desks = [
         ],
         appleProducts: [
           {
-            id: '4',
-            optionId: 1,
+            type: 'M',
+            itemId: 57,
             category: category.mac,
           },
         ],
@@ -511,8 +511,8 @@ const desks = [
         ],
         appleProducts: [
           {
-            id: '4',
-            optionId: 1,
+            type: 'M',
+            itemId: 57,
             category: category.mac,
           },
         ],
@@ -596,13 +596,13 @@ const desks = [
         ],
         appleProducts: [
           {
-            id: '2',
-            optionId: 1,
+            type: 'M',
+            itemId: 21,
             category: category.mac,
           },
           {
-            id: '9',
-            optionId: 9,
+            type: 'P',
+            itemId: 33,
             category: category.ipad,
           },
         ],
@@ -701,13 +701,13 @@ const desks = [
         ],
         appleProducts: [
           {
-            id: '5',
-            optionId: 1,
+            type: '5',
+            itemId: 93,
             category: category.mac,
           },
           {
-            id: '3',
-            optionId: 1,
+            type: '3',
+            itemId: 45,
             category: category.mac,
           },
         ],
@@ -769,8 +769,8 @@ const desks = [
         ],
         appleProducts: [
           {
-            id: '3',
-            optionId: 1,
+            type: 'M',
+            itemId: 45,
             category: category.mac,
           },
         ],

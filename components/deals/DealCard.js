@@ -3,7 +3,7 @@ import Link from '@/components/Link'
 import React from 'react'
 
 export default function DealCard({ deal, clickHandler }) {
-  const { id, item, price, source, sold, unused, tradePrice } = deal
+  const { id, item, price, source, sold, unused, tradePrice, image } = deal
   const { average } = tradePrice
 
   const getDiscountPercentage = useCallback((price, avgPrice) => {
@@ -56,7 +56,7 @@ export default function DealCard({ deal, clickHandler }) {
       <div className="flex h-full w-1/4 max-w-[100px] items-center">
         <div className="relative aspect-1 overflow-hidden rounded-md">
           <img
-            src={`${process.env.NEXT_PUBLIC_API_URL_V2}/deal/${id}/image`}
+            src={image?.url ?? `${process.env.NEXT_PUBLIC_API_URL_V2}/deal/${id}/image`}
             alt={`${item.model.name} 썸네일`}
             className="h-full w-full object-cover object-center"
           />

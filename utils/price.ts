@@ -1,19 +1,4 @@
-import axiosInstance, { axiosInstanceV2 } from '@/lib/axios'
-import { useMemo } from 'react'
-
-// deprecated
-export async function getPrices(
-  itemId = 1,
-  optionId = 1,
-  unopened = false
-): Promise<TradePriceResponse[]> {
-  const response = await axiosInstance.get(`/item/${itemId}/option/${optionId}`, {
-    params: {
-      unopened,
-    },
-  })
-  return response.data
-}
+import { axiosInstanceV2 } from '@/lib/axios'
 
 // 가장 최신 시세정보 조회
 export async function getRecentTradePrice(

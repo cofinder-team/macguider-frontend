@@ -3,44 +3,42 @@ import React, { useCallback, useEffect } from 'react'
 
 import NewsletterForm from '@/components/NewsletterForm'
 import { useState } from 'react'
-import Image from 'next/image'
-import categories from '@/data/guide/categories'
+import { Category, categories } from '@/data/guide/categories'
 import GuideBriefRow from '@/components/guide/GuideBriefRow'
-import useAsyncAll from 'hooks/useAsyncAll'
 import Promo from '@/components/Promo'
-import { getPrices } from 'utils/price'
 import amplitudeTrack from '@/lib/amplitude/track'
+import { getModels } from 'utils/model'
 
 export default function BuyersGuide() {
-  const [currentCategory, setCurrentCategory] = useState(categories[1])
+  const [currentCategory, setCurrentCategory] = useState<Category>(categories[1])
+  const [models, setModels] = useState<MainItemResponse[]>([])
 
-  // 가격 조회
-  const [state, refetch] = useAsyncAll(
-    getPrices,
-    currentCategory.categoryData.map((item) => [item.id, item.data[0].options[0].id, false]),
-    [currentCategory]
-  )
-  const { loading, data: fetchedData, error } = state
+  useEffect(() => {
+    if (!currentCategory.code) return
 
-  // 가격 데이터 fetch 실패시 alert창 띄우기
-  if (error) {
-    alert('데이터를 불러오는데 실패했습니다. 잠시 후 다시 시도해주세요.')
-  }
+    getModels(currentCategory.code)
+      .then((res) => {
+        setModels(res)
+      })
+      .catch(() => {
+        alert('데이터를 불러오는데 실패했습니다. 잠시 후 다시 시도해주세요.')
+      })
+  }, [currentCategory])
 
   useEffect(() => {
     amplitudeTrack('enter_guide')
   }, [])
 
-  const onClickCategory = (category) => {
-    amplitudeTrack('click_select_category', { category: category.categoryName })
+  const onClickCategory = useCallback((category) => {
+    amplitudeTrack('click_select_category', { category: category.name })
 
-    if (category.categoryData.length === 0) {
+    if (!category.code) {
       alert('아직 준비 중입니다! 이메일을 등록해주시면 가장 먼저 업데이트 소식을 알려드릴게요.')
       return
     }
 
     setCurrentCategory(category)
-  }
+  }, [])
 
   return (
     <>
@@ -73,17 +71,15 @@ export default function BuyersGuide() {
               onClick={() => {
                 onClickCategory(category)
               }}
-              key={category.categoryName}
+              key={category.name}
               type="button"
               className={`${
-                currentCategory.categoryName === category.categoryName
-                  ? 'border-blue-600'
-                  : 'border-white'
+                currentCategory.name === category.name ? 'border-blue-600' : 'border-white'
               } ${
-                category.categoryData.length > 0 ? 'text-blue-700' : 'text-gray-300'
+                category.code ? 'text-blue-700' : 'text-gray-300'
               } mb-3 mr-3 rounded-full border  bg-white px-5 py-2.5 text-center text-base font-medium text-blue-700 hover:bg-blue-700 hover:text-white focus:outline-none focus:ring-4 focus:ring-blue-300 dark:border-blue-500 dark:bg-gray-900 dark:text-blue-500 dark:hover:bg-blue-500 dark:hover:text-white dark:focus:ring-blue-800`}
             >
-              {category.categoryName}
+              {category.name}
             </button>
           ))}
         </div>
@@ -119,23 +115,12 @@ export default function BuyersGuide() {
               </tr>
             </thead>
             <tbody>
-              {categories
-                .find((category) => category.categoryName === currentCategory.categoryName)
-                .categoryData.map(
-                  ({ id, model, releasedDateHistory, data, desc, href, price }, index) => (
-                    <GuideBriefRow
-                      key={id}
-                      itemId={id}
-                      data={data}
-                      desc={desc}
-                      href={href}
-                      model={model}
-                      price={price}
-                      releasedDateHistory={releasedDateHistory}
-                      fetchedData={fetchedData?.find((item) => item.itemId == id)}
-                      loading={loading}
-                    />
-                  )
+              {models &&
+                models.map(
+                  (model) =>
+                    model.histories.length >= 2 && (
+                      <GuideBriefRow key={model.mainItem.id} model={model} />
+                    )
                 )}
             </tbody>
           </table>

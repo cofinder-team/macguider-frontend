@@ -1,10 +1,11 @@
 import { forwardRef, useRef, useState } from 'react'
 
-import axiosInstance from '@/lib/axios'
 import amplitudeTrack from '@/lib/amplitude/track'
+import { sendSubscribeByEmail } from 'utils/user'
+import { AxiosError } from 'axios'
 
 const NewsletterForm = ({ title = 'MacGuider 최신 업데이트 소식 받기' }, ref) => {
-  const inputEl = useRef(null)
+  const inputEl = useRef<HTMLInputElement>(null)
   const [error, setError] = useState(false)
   const [message, setMessage] = useState('')
   const [subscribed, setSubscribed] = useState(false)
@@ -14,18 +15,31 @@ const NewsletterForm = ({ title = 'MacGuider 최신 업데이트 소식 받기' 
 
     amplitudeTrack('click_subscribe_newsletter')
 
-    try {
-      await axiosInstance.post(`/email/${inputEl.current.value}`)
-    } catch {
+    if (!inputEl?.current?.value) {
       setError(true)
-      setMessage('이메일 형식이 올바르지 않습니다!')
+      setMessage('이메일을 입력해주세요.')
       return
     }
 
-    inputEl.current.value = ''
-    setError(false)
-    setSubscribed(true)
-    setMessage('감사합니다! 🎉  구독이 완료되었습니다.')
+    sendSubscribeByEmail(inputEl.current.value)
+      .then(() => {
+        if (inputEl.current) {
+          inputEl.current.value = ''
+        }
+
+        setError(false)
+        setSubscribed(true)
+        setMessage('감사합니다! 🎉  구독이 완료되었습니다.')
+      })
+      .catch((e: AxiosError) => {
+        if (e?.response?.status === 400) {
+          setError(true)
+          setMessage('잘못 입력된 이메일 주소입니다. 다시 확인해주세요.')
+        } else {
+          setError(true)
+          setMessage('오류가 발생했습니다. 잠시 후 다시 시도해주세요.')
+        }
+      })
   }
 
   return (

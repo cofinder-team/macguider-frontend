@@ -14,3 +14,20 @@ interface DealResponse {
   coupangPrice: PriceResponse
   tradePrice: TradePriceResponse
 }
+
+interface DealOriginResponse extends DealResponse {
+  pending: boolean
+  title: string
+  content: string
+  writer: string
+}
+
+interface DealManageRequest {
+  remove: boolean
+  type?: ItemType
+  itemId?: number
+  unused?: boolean
+  sold?: boolean
+  appleCare?: boolean
+  price?: number
+}

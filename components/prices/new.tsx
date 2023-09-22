@@ -1,14 +1,13 @@
 import amplitudeTrack from '@/lib/amplitude/track'
 import { useScreenSize } from 'hooks/useScreenSize'
 import { useRouter } from 'next/router'
-import React, { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useMemo } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { useQuery } from 'react-query'
-import { getRecentCoupangPrice, getRecentTradePrice, getTotalRegularPrice } from 'utils/price'
+import { getRecentCoupangPrice, getTotalRegularPrice } from 'utils/price'
 import CoupangLogo from '@/data/coupang_logo.svg'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { purchaseTiming } from '../guide/GuideBriefRow'
-import { faChevronRight } from '@fortawesome/free-solid-svg-icons'
+import { getReleaseAmountFromHistories } from '@/components/guide/GuideBriefRow'
+import { ReleasePurchaseTiming } from '@/components/guide/PurchaseTiming'
 
 interface Props {
   model: MainItemResponse
@@ -24,14 +23,18 @@ const NewPrices = ({ model, item }: Props) => {
     isLoading: loadingRecentCoupangPrice,
     error: errorRecentCoupangPrice,
     data: recentCoupangPrice,
-  } = useQuery(['recentCoupangPrice', item.id], () => getRecentCoupangPrice(item.type, item.id))
+  } = useQuery(['recentCoupangPrice', item.type, item.id], () =>
+    getRecentCoupangPrice(item.type, item.id)
+  )
 
   // 전체 정가 조회
   const {
     isLoading: loadingTotalRegularPrice,
     error: errorTotalRegularPrice,
     data: totalRegularPrice,
-  } = useQuery(['totalRegularPrice', item.id], () => getTotalRegularPrice(item.type, item.id))
+  } = useQuery(['totalRegularPrice', item.type, item.id], () =>
+    getTotalRegularPrice(item.type, item.id)
+  )
 
   const loading = loadingRecentCoupangPrice || loadingTotalRegularPrice
 
@@ -45,10 +48,10 @@ const NewPrices = ({ model, item }: Props) => {
   }, [totalRegularPrice])
 
   const coupangLastUpdatedTime = useMemo(() => {
-    if (recentCoupangPrice && recentCoupangPrice.price) {
-      const lastUpdatedTime = recentCoupangPrice.date
+    if (recentCoupangPrice && recentCoupangPrice.log) {
       const now = new Date()
-      const lastUpdated = new Date(lastUpdatedTime)
+      const lastUpdated = new Date(recentCoupangPrice.log)
+
       const diffTime = Math.abs(now.getTime() - lastUpdated.getTime())
       const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24))
       const diffMinutes = Math.ceil(diffTime / (1000 * 60))
@@ -65,46 +68,10 @@ const NewPrices = ({ model, item }: Props) => {
     }
   }, [recentCoupangPrice])
 
-  const averageReleaseCycle = useMemo(() => {
-    const releaseCycles: number[] = []
-    for (let i = 0; i < model.histories.length - 1; i++) {
-      // convert YYYY-MM-DD string to Date object
-      const prev = model.histories[i].date.split('-')
-      const next = model.histories[i + 1].date.split('-')
-
-      const date1 = new Date(Number(prev[0]), Number(prev[1]) - 1, Number(prev[2]))
-      const date2 = new Date(Number(next[0]), Number(next[1]) - 1, Number(next[2]))
-      const diffTime = Math.abs(date2.getTime() - date1.getTime())
-      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
-      releaseCycles.push(diffDays)
-    }
-
-    const averageReleaseCycle = Math.round(
-      releaseCycles.reduce((a, b) => a + b, 0) / releaseCycles.length
-    )
-
-    return averageReleaseCycle
-  }, [model.histories])
-
-  const newPurchaseTiming = useMemo(() => {
-    if (model.histories.length === 0) return
-
-    const latestReleaseDate = model.histories[0].date
-
-    const today = new Date()
-    const [year, month, day] = latestReleaseDate.split('-')
-    const date = new Date(Number(year), Number(month) - 1, Number(day))
-    const diffTime = Math.abs(today.getTime() - date.getTime())
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
-
-    if (diffDays > averageReleaseCycle * 0.85) {
-      return purchaseTiming.bad
-    } else if (diffDays > averageReleaseCycle * 0.6) {
-      return purchaseTiming.normal
-    } else {
-      return purchaseTiming.good
-    }
-  }, [averageReleaseCycle, model.histories])
+  const getReleaseAmount = useCallback(
+    () => getReleaseAmountFromHistories(model.histories),
+    [model]
+  )
 
   const onClickBuyersGuide = useCallback(() => {
     amplitudeTrack('click_route_buyers_guide', { type: item.type, id: item.id })
@@ -160,8 +127,16 @@ const NewPrices = ({ model, item }: Props) => {
                     <span className="truncate text-gray-600">{coupangLastUpdatedTime}</span>
                   </div>
                 </>
+              ) : recentCoupangPrice && recentCoupangPrice.log ? (
+                <>
+                  <span>품절</span>
+                  <div className="truncate text-xs">
+                    <span className="text-gray-500">마지막 업데이트: &nbsp;</span>
+                    <span className="truncate text-gray-600">{coupangLastUpdatedTime}</span>
+                  </div>
+                </>
               ) : (
-                <span>품절</span>
+                <span>단종</span>
               )}
             </div>
           </div>
@@ -189,16 +164,8 @@ const NewPrices = ({ model, item }: Props) => {
                 </p>
               </div>
 
-              {newPurchaseTiming && (
-                <div
-                  className="inline-flex cursor-pointer items-center rounded-md  px-2 py-0.5 text-xs font-semibold  text-white"
-                  style={{
-                    backgroundColor: newPurchaseTiming.color,
-                  }}
-                >
-                  {newPurchaseTiming.text}
-                  <FontAwesomeIcon className="ml-1" icon={faChevronRight} />
-                </div>
+              {model.histories.length >= 2 && (
+                <ReleasePurchaseTiming badge={true} releaseAmount={getReleaseAmount()} />
               )}
             </div>
           </div>

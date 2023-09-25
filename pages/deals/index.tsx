@@ -13,16 +13,16 @@ import { ChevronDownIcon } from '@heroicons/react/20/solid'
 import { XMarkIcon } from '@heroicons/react/24/outline'
 import useIntersect from 'hooks/useIntersect'
 import React from 'react'
-import { useInfiniteQuery } from 'react-query'
-import { filters } from 'store/deals'
+import { useInfiniteQuery, useQuery } from 'react-query'
 import DealCard from '@/components/deals/DealCard'
 import AdDealCard from '@/components/deals/AdDealCard'
 import { useRouter } from 'next/router'
+import { getModels } from 'utils/model'
 
 const maxPage = 10
 
-const fetchDeals = async ({ pageParam = 1, sortOption, modelId, itemId, source }) => {
-  return await getDeals(pageParam, 10, sortOption, 'desc', modelId, itemId, source)
+const fetchDeals = async ({ pageParam = 1, sortOption, modelType, modelId, source }) => {
+  return await getDeals(pageParam, 10, sortOption, 'desc', modelType, modelId, source)
 }
 
 const adDeals = [
@@ -53,30 +53,92 @@ const adDeals = [
   },
 ]
 
-export default function Deals({ model, source: sourceOption, sort }) {
+interface Props {
+  model: string | null
+  source: Source | null
+  sort: 'date' | 'discount' | null
+}
+
+interface Filter {
+  id: 'sort' | 'source' | 'model'
+  name: string
+  options: {
+    value: unknown
+    label: string
+  }[]
+  type: 'single' | 'multiple'
+}
+
+export default function Deals({ model, source: sourceOption, sort }: Props) {
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false)
   const sortOption = sort || 'date'
-  const [modelId, itemId] = model?.split(',') || [null, null]
+  const modelType: ModelType | null = (model?.split(',')[0] as ModelType) || null
+  const modelId: number | null = Number(model?.split(',')[1]) || null
   const source = sourceOption || null
+  const {
+    isLoading: loadingModels,
+    error: errorModels,
+    data: models,
+  } = useQuery(['models'], () => getModels())
 
-  const currentFilters = useMemo(
-    () =>
-      filters.map((filter) => ({
-        ...filter,
-        options:
-          filter.id === 'sort'
-            ? [filter.options.find((option) => option.value === sortOption) || filter.options[0]]
-            : filter.id === 'model'
-            ? [filter.options.find((option) => option.value[1] === itemId) || filter.options[0]]
-            : filter.id === 'source'
-            ? [
-                filter.options.find((option) => option.value === (source || '')) ||
-                  filter.options[0],
-              ]
-            : [filter.options[0]],
-      })),
-    [sortOption, itemId, source]
+  const filters: Filter[] = useMemo(
+    () => [
+      {
+        id: 'sort',
+        name: '정렬',
+        options: [
+          { value: 'date', label: '최신 순' },
+          { value: 'discount', label: '할인 순' },
+        ],
+        type: 'single',
+      },
+      {
+        id: 'source',
+        name: '중고 플랫폼',
+        options: [
+          { value: '', label: '전체' },
+          { value: '중고나라', label: '중고나라' },
+          { value: '번개장터', label: '번개장터' },
+        ],
+        type: 'single',
+      },
+      {
+        id: 'model',
+        name: '제품',
+        options: [
+          {
+            value: [],
+            label: '전체',
+          },
+          ...(models || []).map((model) => ({
+            value: [model.type, model.id],
+            label: model.name,
+          })),
+        ],
+        type: 'single',
+      },
+    ],
+    [models]
   )
+
+  const currentFilters = useMemo(() => {
+    if (!models) return []
+
+    return filters.map((filter) => ({
+      ...filter,
+      options:
+        filter.id === 'sort'
+          ? [filter.options.find((option) => option.value === sortOption) || filter.options[0]]
+          : filter.id === 'model'
+          ? [
+              filter.options.find((option) => (option.value as number[])[1] === modelId) ||
+                filter.options[0],
+            ]
+          : filter.id === 'source'
+          ? [filter.options.find((option) => option.value === (source || '')) || filter.options[0]]
+          : [filter.options[0]],
+    }))
+  }, [sortOption, modelId, source, models, filters])
 
   const router = useRouter()
 
@@ -86,7 +148,7 @@ export default function Deals({ model, source: sourceOption, sort }) {
 
   const {
     status,
-    data,
+    data: deals,
     error,
     isFetching,
     isFetchingNextPage,
@@ -94,13 +156,13 @@ export default function Deals({ model, source: sourceOption, sort }) {
     hasNextPage,
     refetch,
   } = useInfiniteQuery(
-    ['deals', sortOption, modelId, itemId, source],
+    ['deals', sortOption, modelType, modelId, source],
     (params) =>
       fetchDeals({
         ...params,
         sortOption,
+        modelType,
         modelId,
-        itemId,
         source,
       }),
     {
@@ -116,9 +178,11 @@ export default function Deals({ model, source: sourceOption, sort }) {
   }
 
   const [_, setRef] = useIntersect(async (entry, observer) => {
+    if (!deals) return
     observer.unobserve(entry.target)
+
     amplitudeTrack('scroll_load_more_deals', {
-      page: data?.pages.length + 1,
+      page: deals.pages.length + 1,
     })
     fetchNextPage()
     observer.observe(entry.target)
@@ -150,7 +214,6 @@ export default function Deals({ model, source: sourceOption, sort }) {
       router.push({
         pathname: '/deals',
         query: newQuery,
-        shallow: true,
       })
     },
     [router]
@@ -213,14 +276,14 @@ export default function Deals({ model, source: sourceOption, sort }) {
           <div className="hidden lg:block">
             <form className="space-y-10 divide-y divide-gray-200">
               {filters.map((section, sectionIdx) => (
-                <div key={section.name} className={sectionIdx === 0 ? null : 'pt-10'}>
+                <div key={section.name} className={sectionIdx === 0 ? undefined : 'pt-10'}>
                   <fieldset>
                     <legend className="block text-sm font-medium text-gray-900">
                       {section.name}
                     </legend>
                     <div className="space-y-3 pt-6">
                       {section.options.map((option, optionIdx) => (
-                        <div key={option.value} className="flex items-center">
+                        <div key={option.label} className="flex items-center">
                           <input
                             id={`${section.id}-${optionIdx}`}
                             name={`${section.id}[]`}
@@ -230,13 +293,24 @@ export default function Deals({ model, source: sourceOption, sort }) {
                               onChangeFilter(section.id, option.value)
                             }}
                             checked={
-                              currentFilters.find(
+                              !!currentFilters.find(
                                 (filter) =>
                                   filter.id === section.id &&
-                                  filter.options.find(
-                                    (currentOption) => currentOption.value === option.value
-                                  )
-                              ) || false
+                                  filter.options.find((currentOption) => {
+                                    if (
+                                      typeof currentOption.value === 'object' &&
+                                      currentOption.value &&
+                                      option.value
+                                    ) {
+                                      return (
+                                        currentOption.value[0] === option.value[0] &&
+                                        currentOption.value[1] === option.value[1]
+                                      )
+                                    } else {
+                                      return currentOption.value === option.value
+                                    }
+                                  })
+                              )
                             }
                           />
                           <label
@@ -276,10 +350,10 @@ export default function Deals({ model, source: sourceOption, sort }) {
               ))
             ) : (
               <>
-                {(itemId == 2 || !modelId) &&
+                {(modelId == 2 || !modelType) &&
                   adDeals.map((deal) => <AdDealCard key={deal.id} deal={deal} />)}
 
-                {data.pages.map((page, index) => (
+                {deals?.pages.map((page, index) => (
                   <React.Fragment key={index}>
                     {page.map((deal) => (
                       <DealCard
@@ -321,11 +395,15 @@ export default function Deals({ model, source: sourceOption, sort }) {
       </div>
 
       {hasNextPage && !isFetching && (
-        <div role="status" className="mt-5 flex h-[20px] justify-center lg:mt-8" ref={setRef}></div>
+        <div
+          role="status"
+          className="mt-5 flex h-[20px] justify-center lg:mt-8"
+          ref={setRef as any}
+        ></div>
       )}
-      <HotdealBanner
-        currentFilter={currentFilters.find((filter) => filter.id === 'model').options[0]}
-      />
+      {/* <HotdealBanner
+        currentFilter={currentFilters.find((filter) => filter.id === 'model')?.options[0]}
+      /> */}
       {/* Mobile 모달 */}
       <Transition.Root show={mobileFiltersOpen} as={Fragment}>
         <Dialog as="div" className="relative z-40 lg:hidden" onClose={setMobileFiltersOpen}>
@@ -366,7 +444,7 @@ export default function Deals({ model, source: sourceOption, sort }) {
 
                 <form className="mt-4">
                   {filters.map((section) => (
-                    <div as="div" key={section.name} className="border-t border-gray-200 pb-4 pt-4">
+                    <div key={section.name} className="border-t border-gray-200 pb-4 pt-4">
                       <fieldset>
                         <legend className="w-full px-2">
                           <div className="flex w-full items-center justify-between p-2 text-gray-400 hover:text-gray-500">
@@ -378,18 +456,29 @@ export default function Deals({ model, source: sourceOption, sort }) {
                         <div className="px-4 pb-2 pt-4">
                           <div className="space-y-6">
                             {section.options.map((option, optionIdx) => (
-                              <div key={option.value} className="flex items-center">
+                              <div key={option.label} className="flex items-center">
                                 <input
                                   id={`${section.id}-${optionIdx}-mobile`}
                                   name={`${section.id}[]`}
                                   checked={
-                                    currentFilters.find(
+                                    !!currentFilters.find(
                                       (filter) =>
                                         filter.id === section.id &&
-                                        filter.options.find(
-                                          (currentOption) => currentOption.value === option.value
-                                        )
-                                    ) || false
+                                        filter.options.find((currentOption) => {
+                                          if (
+                                            typeof currentOption.value === 'object' &&
+                                            currentOption.value &&
+                                            option.value
+                                          ) {
+                                            return (
+                                              currentOption.value[0] === option.value[0] &&
+                                              currentOption.value[1] === option.value[1]
+                                            )
+                                          } else {
+                                            return currentOption.value === option.value
+                                          }
+                                        })
+                                    )
                                   }
                                   onChange={() => {
                                     onChangeFilter(section.id, option.value)

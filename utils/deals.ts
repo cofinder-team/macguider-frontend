@@ -5,9 +5,9 @@ export async function getDeals(
   size = 10,
   sort = 'date',
   direction = 'desc',
-  type: ModelType | null,
-  model: number | null,
-  source: Source | null
+  type?: ModelType,
+  model?: number,
+  source?: Source
 ): Promise<DealResponse[]> {
   const optionalParams: {
     type?: ModelType

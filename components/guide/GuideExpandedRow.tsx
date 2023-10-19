@@ -1,4 +1,3 @@
-import Image from 'next/image'
 import { useScreenSize } from 'hooks/useScreenSize'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowRight, faCaretDown, faCaretUp } from '@fortawesome/free-solid-svg-icons'
@@ -23,6 +22,7 @@ import { getTotalTradePrice } from 'utils/price'
 import { PriceAmount, ReleaseAmount } from '@/components/guide/GuideBriefRow'
 import { ReleasePurchaseDetail } from '@/components/guide/PurchaseTiming'
 import { getModelType } from '@/lib/utils/model'
+import Image from '@/components/Image'
 
 Chart.register({
   CategoryScale,
@@ -77,8 +77,8 @@ const GuideExpandedRow = ({
           <div className="xl:w-1/2">
             <div className="flex flex-col items-start bg-white dark:bg-gray-800 dark:hover:bg-gray-700 md:flex-row md:items-center">
               <Image
-                width="452"
-                height="420"
+                width={452}
+                height={420}
                 className="h-48 w-full rounded-t-lg object-contain md:h-auto md:rounded-none md:rounded-l-lg"
                 src={model.mainItem.image.url}
                 alt={model.name}

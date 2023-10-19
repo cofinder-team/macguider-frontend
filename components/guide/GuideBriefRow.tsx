@@ -7,6 +7,7 @@ import amplitudeTrack from '@/lib/amplitude/track'
 import { useQuery } from 'react-query'
 import { getRecentRegularPrice, getRecentTradePrice } from 'utils/price'
 import { OverallPurchaseTiming, ReleasePurchaseTiming } from '@/components/guide/PurchaseTiming'
+import Image from '@/components/Image'
 
 export interface ReleaseAmount {
   latestRelease: Date
@@ -102,11 +103,9 @@ const GuideBriefRow = ({ model }: { model: MainItemResponse }) => {
           scope="row"
           className="flex items-center whitespace-nowrap px-3 py-3 text-gray-900 dark:text-white md:px-6 md:py-4"
         >
-          <img
-            className="hidden h-10 w-10 md:block"
-            src={model.mainItem.image.url}
-            alt={model.name}
-          />
+          <div className="hidden h-10 w-10 md:block">
+            <Image width={300} height={300} src={model.mainItem.image.url} alt={model.name} />
+          </div>
           <div className="md:pl-3">
             <div className="text-base font-semibold">{model.name}</div>
           </div>

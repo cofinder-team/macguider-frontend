@@ -72,7 +72,7 @@ export const PurchaseTiming = ({
   const { md } = useScreenSize()
 
   return loading ? (
-    <Skeleton width={md ? '5rem' : '3rem'} borderRadius="0.5rem" />
+    <Skeleton width={md ? '5rem' : '4rem'} borderRadius="0.5rem" />
   ) : badge ? (
     <div
       className="inline-flex cursor-pointer items-center rounded-md  px-2 py-0.5 text-xs font-semibold  text-white"
@@ -84,7 +84,7 @@ export const PurchaseTiming = ({
       <FontAwesomeIcon className="ml-1" icon={faChevronRight} />
     </div>
   ) : (
-    <div style={{ width: md ? '5rem' : '3rem' }} className="flex items-center">
+    <div style={{ width: md ? '5rem' : '4rem' }} className="flex items-center">
       <div
         className="mr-2 h-2.5 w-2.5 rounded-full"
         style={{

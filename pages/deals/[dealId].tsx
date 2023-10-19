@@ -15,6 +15,7 @@ import DealCard from '@/components/deals/DealCard'
 import Link from '@/components/Link'
 import { getModels } from 'utils/model'
 import { ItemDetail } from '@/components/items/ItemDetail'
+import Image from '@/components/Image'
 
 const rightColumnOffsetY = 112
 const numberOfSampleDevices = 6
@@ -438,7 +439,9 @@ export default function Deal({ dealId }) {
                   }}
                 >
                   <div className="relative h-full w-1/3">
-                    <img
+                    <Image
+                      width={544}
+                      height={306}
                       alt={model.name}
                       src={model.mainItem.image.url}
                       className="h-full w-full object-contain object-center"

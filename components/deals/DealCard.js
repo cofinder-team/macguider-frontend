@@ -1,6 +1,7 @@
 import { useCallback } from 'react'
 import Link from '@/components/Link'
 import React from 'react'
+import Image from '@/components/Image'
 
 export default function DealCard({ deal, clickHandler }) {
   const { id, item, price, source, sold, unused, tradePrice, image } = deal
@@ -53,23 +54,22 @@ export default function DealCard({ deal, clickHandler }) {
         )}
       </div>
 
-      <div className="flex h-full w-1/4 max-w-[100px] items-center">
-        <div className="relative aspect-1 overflow-hidden rounded-md">
-          <img
-            src={image?.url ?? `${process.env.NEXT_PUBLIC_API_URL_V2}/deal/${id}/image`}
-            alt={`${item.model.name} 썸네일`}
-            className="h-full w-full object-cover object-center"
-          />
+      <div className="relative flex aspect-1 w-1/4 max-w-[100px] items-center overflow-hidden rounded-md">
+        <Image
+          src={image?.url ?? `${process.env.NEXT_PUBLIC_API_URL_V2}/deal/${id}/image`}
+          alt={`${item.model.name} 썸네일`}
+          width={300}
+          layout="fill"
+        />
 
-          {sold && (
-            <div className="absolute top-0  left-0 flex h-full w-full items-center justify-center text-sm font-bold text-white ">
-              <div className="absolute top-0 left-0 h-full w-full bg-black opacity-40" />
-              <div className="absolute top-0 left-0 flex h-full w-full items-center justify-center">
-                판매완료
-              </div>
+        {sold && (
+          <div className="absolute top-0  left-0 flex h-full w-full items-center justify-center text-sm font-bold text-white ">
+            <div className="absolute top-0 left-0 h-full w-full bg-black opacity-40" />
+            <div className="absolute top-0 left-0 flex h-full w-full items-center justify-center">
+              판매완료
             </div>
-          )}
-        </div>
+          </div>
+        )}
       </div>
     </Link>
   )

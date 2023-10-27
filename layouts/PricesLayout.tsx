@@ -1,5 +1,5 @@
 import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useRef } from 'react'
-import Image from 'next/image'
+import Image from '@/components/Image'
 import { useState } from 'react'
 import { useScreenSize } from 'hooks/useScreenSize'
 import NewsletterForm from '@/components/NewsletterForm'
@@ -211,8 +211,8 @@ const PricesLayout = ({ item: currentItem, children }: Props, ref: any) => {
                   <Image
                     objectFit="contain"
                     objectPosition="center"
-                    width="544"
-                    height="306"
+                    width={544}
+                    height={306}
                     src={model.mainItem.image.url}
                     alt={model.name}
                   />

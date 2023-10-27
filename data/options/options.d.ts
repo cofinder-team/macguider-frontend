@@ -9,10 +9,6 @@ interface Model {
   data: Item[]
 }
 
-interface MacModel extends Model {
-  data: MacItem[]
-}
-
 interface IpadModel extends Model {
   data: IpadItem[]
 }
@@ -28,11 +24,6 @@ interface Item {
   specs: any
   options: ItemDetails[]
 }
-
-interface MacItem extends Item {
-  options: MacItemDetails[]
-}
-
 interface IpadItem extends Item {
   summaries: string[]
   options: IpadItemDetails[]
@@ -43,12 +34,6 @@ interface ItemDetails {
   id: number
   price?: number
 }
-
-interface MacItemDetails extends ItemDetails {
-  ram: string
-  ssd: string
-}
-
 interface IpadItemDetails extends ItemDetails {
   connectivity: 'wifi' | 'cellular'
   ssd: string

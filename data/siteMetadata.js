@@ -6,10 +6,11 @@ const siteMetadata = {
   language: 'ko-KR',
   theme: 'light', // system, dark or light
   siteUrl: 'https://macguider.io',
-  siteRepo: 'https://github.com/timlrx/tailwind-nextjs-starter-blog',
+  imageBase: process.env.NEXT_PUBLIC_IMAGE_BASE,
+  siteRepo: 'hhttps://github.com/cofinder-team/macguider-frontend',
   siteLogo: '/static/images/logo.png',
   image: '/static/images/avatar.png',
-  socialBanner: '/static/images/twitter-card.png',
+  socialBanner: '/banner.jpeg',
   email: process.env.NEXT_PUBLIC_EMAIL_ADDR,
   github: 'https://github.com',
   twitter: 'https://twitter.com/Twitter',

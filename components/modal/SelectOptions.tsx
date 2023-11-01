@@ -110,11 +110,11 @@ function SelectOptionsModal(
     [macItems]
   )
   const gpuOptions = useMemo(
-    () => [...new Set(macItems.map((item) => item.details.gpu))],
+    () => [...new Set(macItems.map((item) => item.details.gpu))].sort((a, b) => a - b),
     [macItems]
   )
   const ramOptions = useMemo(
-    () => [...new Set(macItems.map((item) => item.details.ram))],
+    () => [...new Set(macItems.map((item) => item.details.ram))].sort((a, b) => a - b),
     [macItems]
   )
   const ssdOptions = useMemo(

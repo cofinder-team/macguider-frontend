@@ -59,7 +59,7 @@ module.exports = withBundleAnalyzer({
     dirs: ['pages', 'components', 'lib', 'layouts', 'scripts'],
   },
   images: {
-    domains: ['macguider.io', 'image.macguider.io'],
+    domains: ['api.macguider.io', 'macguider.io', 'image.macguider.io'],
   },
   async headers() {
     return [

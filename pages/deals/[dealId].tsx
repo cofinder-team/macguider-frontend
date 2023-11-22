@@ -440,6 +440,7 @@ export default function Deal({ dealId }) {
                 >
                   <div className="relative h-full w-1/3">
                     <Image
+                      unoptimized
                       width={544}
                       height={306}
                       alt={model.name}

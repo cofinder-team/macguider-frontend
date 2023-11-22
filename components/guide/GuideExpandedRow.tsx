@@ -77,6 +77,7 @@ const GuideExpandedRow = ({
           <div className="xl:w-1/2">
             <div className="flex flex-col items-start bg-white dark:bg-gray-800 dark:hover:bg-gray-700 md:flex-row md:items-center">
               <Image
+                unoptimized
                 width={452}
                 height={420}
                 className="h-48 w-full rounded-t-lg object-contain md:h-auto md:rounded-none md:rounded-l-lg"

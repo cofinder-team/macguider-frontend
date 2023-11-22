@@ -56,6 +56,7 @@ export default function DealCard({ deal, clickHandler }) {
 
       <div className="relative flex aspect-1 w-1/4 max-w-[100px] items-center overflow-hidden rounded-md">
         <Image
+          unoptimized
           src={image?.url ?? `${process.env.NEXT_PUBLIC_API_URL_V2}/deal/${id}/image`}
           alt={`${item.model.name} 썸네일`}
           width={300}

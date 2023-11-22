@@ -164,7 +164,6 @@ const PricesLayout = ({ item: currentItem, children }: Props, ref: any) => {
           }}
         >
           <Image
-            unoptimized
             alt={`${currentItem.details.year} ${currentItem.model.name}`}
             src={currentItem.image.url}
             width={576}
@@ -210,7 +209,6 @@ const PricesLayout = ({ item: currentItem, children }: Props, ref: any) => {
               >
                 <div className=" w-full overflow-hidden rounded-md  bg-white ">
                   <Image
-                    unoptimized
                     objectFit="contain"
                     objectPosition="center"
                     width={544}

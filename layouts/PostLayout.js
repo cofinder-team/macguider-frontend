@@ -58,7 +58,6 @@ export default function PostLayout({ frontMatter, authorDetails, next, prev, chi
                     <li className="flex items-center space-x-2" key={author.name}>
                       {author.avatar && (
                         <Image
-                          unoptimized
                           src={author.avatar}
                           width={38}
                           height={38}

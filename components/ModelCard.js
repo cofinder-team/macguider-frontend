@@ -12,7 +12,6 @@ const ModelCard = ({ title, imgSrc, href }) => (
         (href ? (
           <Link href={href} aria-label={`Link to ${title}`}>
             <Image
-              unoptimized
               alt={title}
               src={imgSrc}
               className="object-contain object-center md:h-36 lg:h-48"
@@ -23,7 +22,6 @@ const ModelCard = ({ title, imgSrc, href }) => (
           </Link>
         ) : (
           <Image
-            unoptimized
             alt={title}
             src={imgSrc}
             className="object-cover object-center md:h-36 lg:h-48"
